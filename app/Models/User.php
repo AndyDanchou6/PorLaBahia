@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -41,5 +42,20 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'role' => 'integer'
     ];
+
+    public function isAdmin() {
+        return $this->role === 1;
+    }
+
+    public function roleLabel(): string
+    {
+        switch($this->role) {
+            case 1:
+                return 'Admin';
+            case 0:
+                return 'Staff';
+        }
+    }
 }
