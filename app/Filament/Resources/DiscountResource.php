@@ -8,11 +8,13 @@ use App\Models\Discount;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
@@ -35,37 +37,50 @@ class DiscountResource extends Resource
                     ->integer()
                     ->maxLength(10)
                     ->minLength(10),
+
                 TextInput::make('description_code')
                     ->label('Description Code')
                     ->required()
                     ->integer()
                     ->maxLength(10)
                     ->minLength(10),
+
                 TextInput::make('description')->nullable(),
-                TextInput::make('discount_type')
+
+                Select::make('discount_type')
                     ->label('Discount Type')
+                    ->options([
+                        'fixed' => 'Fixed',
+                        'percentage' => 'Percentage'
+                    ])
                     ->required(),
+
                 TextInput::make('value')
+                    ->integer()
                     ->required(),
+
                 DateTimePicker::make('expiration_date')
                     ->label('Expiration Date')
                     ->required(),
-
 
                 Section::make('Restrictions')
                     ->schema([
                         Toggle::make('usage_limit')
                             ->label('Usage Limit')
                             ->nullable(),
+
                         Toggle::make('stacking_restriction')
                             ->label('Stacking Restriction')
                             ->nullable(),
+
                         TextInput::make('minimum_order')
                             ->label('Minimum Order')
                             ->nullable(),
+
                         TextInput::make('maximum_order')
                             ->label('Maximum Order')
                             ->nullable(),
+
                         TextInput::make('applicability')
                             ->nullable(),
                     ])
@@ -102,33 +117,33 @@ class DiscountResource extends Resource
                     ->dateTime()
                     ->toggleable(),
 
-                TextColumn::make('description')
-                    ->toggleable(),
+                // TextColumn::make('description')
+                //     ->toggleable(),
 
-                TextColumn::make('usage_limit')
-                    ->sortable()
-                    ->toggleable()
-                    ->formatStateUsing(fn($state) => $state === 1 ? 'Yes' : 'No'),
+                // TextColumn::make('usage_limit')
+                //     ->sortable()
+                //     ->toggleable()
+                //     ->formatStateUsing(fn($state) => $state === 1 ? 'Yes' : 'No'),
 
-                TextColumn::make('stacking_restriction')
-                    ->sortable()
-                    ->toggleable()
-                    ->formatStateUsing(fn($state) => $state === 1 ? 'Yes' : 'No'),
+                // TextColumn::make('stacking_restriction')
+                //     ->sortable()
+                //     ->toggleable()
+                //     ->formatStateUsing(fn($state) => $state === 1 ? 'Yes' : 'No'),
 
-                TextColumn::make('minimum_order')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(),
+                // TextColumn::make('minimum_order')
+                //     ->sortable()
+                //     ->searchable()
+                //     ->toggleable(),
 
-                TextColumn::make('maximum_order')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(),
+                // TextColumn::make('maximum_order')
+                //     ->sortable()
+                //     ->searchable()
+                //     ->toggleable(),
 
-                TextColumn::make('applicability')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(),
+                // TextColumn::make('applicability')
+                //     ->sortable()
+                //     ->searchable()
+                //     ->toggleable(),
             ])
             ->filters([
                 //
