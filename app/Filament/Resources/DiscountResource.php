@@ -77,65 +77,72 @@ class DiscountResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('discount_code')
-                ->sortable()
-                ->searchable()
-                ->toggleable(),
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
 
                 TextColumn::make('description_code')
-                ->sortable()
-                ->searchable()
-                ->toggleable(),
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
 
                 TextColumn::make('discount_type')
-                ->sortable()
-                ->searchable()
-                ->toggleable(),
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
 
                 TextColumn::make('value')
-                ->sortable()
-                ->searchable()
-                ->toggleable(),
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
 
                 TextColumn::make('expiration_date')
-                ->sortable()
-                ->searchable()
-                ->dateTime()
-                ->toggleable(),
+                    ->sortable()
+                    ->searchable()
+                    ->dateTime()
+                    ->toggleable(),
 
                 TextColumn::make('description')
-                ->toggleable(),
+                    ->toggleable(),
 
                 TextColumn::make('usage_limit')
-                ->sortable()
-                ->toggleable()
-                ->formatStateUsing(fn ($state) => $state === 1 ? 'Yes' : 'No'),
+                    ->sortable()
+                    ->toggleable()
+                    ->formatStateUsing(fn($state) => $state === 1 ? 'Yes' : 'No'),
 
                 TextColumn::make('stacking_restriction')
-                ->sortable()
-                ->toggleable()
-                ->formatStateUsing(fn ($state) => $state === 1 ? 'Yes' : 'No'),
+                    ->sortable()
+                    ->toggleable()
+                    ->formatStateUsing(fn($state) => $state === 1 ? 'Yes' : 'No'),
 
                 TextColumn::make('minimum_order')
-                ->sortable()
-                ->searchable()
-                ->toggleable(),
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
 
                 TextColumn::make('maximum_order')
-                ->sortable()
-                ->searchable()
-                ->toggleable(),
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
 
                 TextColumn::make('applicability')
-                ->sortable()
-                ->searchable()
-                ->toggleable(),
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->icon('heroicon-o-eye')
+                    ->label(''),
+                Tables\Actions\EditAction::make()
+                    ->icon('heroicon-o-pencil')
+                    ->label(''),
+                Tables\Actions\DeleteAction::make()
+                    ->icon('heroicon-o-trash')
+                    ->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
