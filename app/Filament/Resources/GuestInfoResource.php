@@ -61,14 +61,17 @@ class GuestInfoResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('first_name')
                     ->searchable()
-                    ->label('First Name'),
+                    ->label('First Name')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('last_name')
                     ->searchable()
-                    ->label('Last Name'),
+                    ->label('Last Name')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('contact_no')
                     ->searchable()
                     ->formatStateUsing(fn($state) => '0' . ltrim($state, '0'))
-                    ->label('Contact Number'),
+                    ->label('Contact Number')
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('address')
@@ -95,6 +98,9 @@ class GuestInfoResource extends Resource
                     ->label(''),
                 Tables\Actions\EditAction::make()
                     ->icon('heroicon-o-pencil')
+                    ->label(''),
+                Tables\Actions\DeleteAction::make()
+                    ->icon('heroicon-o-trash')
                     ->label(''),
             ])
             ->bulkActions([

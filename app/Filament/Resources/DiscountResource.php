@@ -151,9 +151,13 @@ class DiscountResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make()
                     ->icon('heroicon-o-eye')
-                    ->label('View'),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                    ->label(''),
+                Tables\Actions\EditAction::make()
+                    ->icon('heroicon-o-pencil')
+                    ->label(''),
+                Tables\Actions\DeleteAction::make()
+                    ->icon('heroicon-o-trash')
+                    ->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

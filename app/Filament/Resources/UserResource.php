@@ -53,14 +53,19 @@ class UserResource extends Resource
                 TextColumn::make('role')
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn ($record) => $record->roleLabel()),
+                    ->formatStateUsing(fn($record) => $record->roleLabel()),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()->visible(fn($record) => $record->role !== 1),
+                Tables\Actions\EditAction::make()
+                    ->icon('heroicon-o-pencil')
+                    ->label(''),
+                Tables\Actions\DeleteAction::make()
+                    ->icon('heroicon-o-trash')
+                    ->label('')
+                    ->visible(fn($record) => $record->role !== 1),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
