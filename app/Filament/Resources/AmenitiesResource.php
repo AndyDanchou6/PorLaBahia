@@ -17,7 +17,7 @@ class AmenitiesResource extends Resource
 {
     protected static ?string $model = Amenities::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-gift';
 
     public static function form(Form $form): Form
     {
@@ -90,5 +90,10 @@ class AmenitiesResource extends Resource
             'view' => Pages\ViewAmenities::route('/{record}'),
             'edit' => Pages\EditAmenities::route('/{record}/edit'),
         ];
+    }
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role == 1;
     }
 }
