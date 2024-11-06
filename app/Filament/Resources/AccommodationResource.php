@@ -35,6 +35,7 @@ class AccommodationResource extends Resource
                     ->integer()
                     ->required(),
                 TextInput::make('price')
+                    ->prefix('₱')
                     ->integer()
                     ->required(),
                 FileUpload::make('main_image')
@@ -46,7 +47,8 @@ class AccommodationResource extends Resource
     {
         return $table
             ->columns([
-                ImageColumn::make('main_image'),
+                ImageColumn::make('main_image')
+                    ->circular(),
                 TextColumn::make('room_name')
                     ->sortable()
                     ->searchable()
@@ -70,9 +72,13 @@ class AccommodationResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make()
                     ->icon('heroicon-o-eye')
-                    ->label('View'),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                    ->label(''),
+                Tables\Actions\EditAction::make()
+                    ->icon('heroicon-o-pencil')
+                    ->label(''),
+                Tables\Actions\DeleteAction::make()
+                    ->icon('heroicon-o-trash')
+                    ->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
