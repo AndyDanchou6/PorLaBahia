@@ -14,6 +14,10 @@ class ViewGuestInfo extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+            Actions\Action::make('back')
+                ->url(GuestInfoResource::getUrl())
+                ->button()
+                ->color('danger'),
         ];
     }
 }
