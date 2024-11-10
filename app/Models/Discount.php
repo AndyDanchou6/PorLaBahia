@@ -29,8 +29,6 @@ class Discount extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'description_code' => 'integer',
-        'discount_code' => 'integer',
         'minimum_order' => 'integer',
         'maximum_order' => 'integer',
         'value' => 'integer',
