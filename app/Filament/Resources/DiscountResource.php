@@ -34,14 +34,12 @@ class DiscountResource extends Resource
                 TextInput::make('discount_code')
                     ->label('Discount Code')
                     ->required()
-                    ->integer()
                     ->maxLength(10)
                     ->minLength(10),
 
                 TextInput::make('description_code')
                     ->label('Description Code')
                     ->required()
-                    ->integer()
                     ->maxLength(10)
                     ->minLength(10),
 
@@ -116,34 +114,6 @@ class DiscountResource extends Resource
                     ->searchable()
                     ->dateTime()
                     ->toggleable(),
-
-                // TextColumn::make('description')
-                //     ->toggleable(),
-
-                // TextColumn::make('usage_limit')
-                //     ->sortable()
-                //     ->toggleable()
-                //     ->formatStateUsing(fn($state) => $state === 1 ? 'Yes' : 'No'),
-
-                // TextColumn::make('stacking_restriction')
-                //     ->sortable()
-                //     ->toggleable()
-                //     ->formatStateUsing(fn($state) => $state === 1 ? 'Yes' : 'No'),
-
-                // TextColumn::make('minimum_order')
-                //     ->sortable()
-                //     ->searchable()
-                //     ->toggleable(),
-
-                // TextColumn::make('maximum_order')
-                //     ->sortable()
-                //     ->searchable()
-                //     ->toggleable(),
-
-                // TextColumn::make('applicability')
-                //     ->sortable()
-                //     ->searchable()
-                //     ->toggleable(),
             ])
             ->filters([
                 //
@@ -175,6 +145,7 @@ class DiscountResource extends Resource
             'index' => Pages\ListDiscounts::route('/'),
             'create' => Pages\CreateDiscount::route('/create'),
             'edit' => Pages\EditDiscount::route('/{record}/edit'),
+            'view' => Pages\ViewDiscount::route('/{record}'),
         ];
     }
 

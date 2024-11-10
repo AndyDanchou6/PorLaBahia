@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('discount_code');
-            $table->bigInteger('description_code');
+            $table->string('discount_code');
+            $table->string('description_code');
             $table->string('description');
             $table->string('discount_type');
             $table->integer('value');

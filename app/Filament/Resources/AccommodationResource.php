@@ -94,6 +94,7 @@ class AccommodationResource extends Resource
             'index' => Pages\ListAccommodations::route('/'),
             'create' => Pages\CreateAccommodation::route('/create'),
             'edit' => Pages\EditAccommodation::route('/{record}/edit'),
+            'view' => Pages\ViewAccommodation::route('/{record}')
         ];
     }
 }
