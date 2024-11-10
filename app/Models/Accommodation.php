@@ -19,4 +19,8 @@ class Accommodation extends Model
         'main_image',
         'promo_id',
     ];
+
+    public function reservation() {
+        return $this->hasMany(Reservation::class);
+    }
 }
