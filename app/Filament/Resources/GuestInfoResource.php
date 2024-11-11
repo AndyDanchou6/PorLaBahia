@@ -49,7 +49,6 @@ class GuestInfoResource extends Resource
                     ->maxLength(255)
                     ->placeholder('Enter Address'),
                 Forms\Components\TextInput::make('fb_name')
-                    ->required()
                     ->maxLength(255)
                     ->placeholder('Enter Facebook Name (Optional)'),
             ]);
@@ -77,7 +76,7 @@ class GuestInfoResource extends Resource
                 Tables\Columns\TextColumn::make('address')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('fb_name')
-                    ->formatStateUsing(fn($state) => $state ?: 'N/A')
+                    ->default('No Information')
                     ->searchable()
                     ->label('Facebook Name'),
                 Tables\Columns\TextColumn::make('created_at')

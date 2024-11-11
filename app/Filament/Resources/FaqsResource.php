@@ -39,8 +39,23 @@ class FaqsResource extends Resource
                 Forms\Components\TextInput::make('questions')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('answer')
-                    ->columnSpanFull(),
+                Forms\Components\MarkdownEditor::make('answer')
+                    ->toolbarButtons([
+                        'attachFiles',
+                        'blockquote',
+                        'bold',
+                        'bulletList',
+                        'codeBlock',
+                        'heading',
+                        'italic',
+                        'link',
+                        'orderedList',
+                        'redo',
+                        'strike',
+                        'table',
+                        'undo',
+                    ])
+                    ->columnSpan(2),
             ]);
     }
 
@@ -48,19 +63,15 @@ class FaqsResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('category')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('questions')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('category')
-                    ->searchable(),
-                Tables\Columns\BadgeColumn::make('created_at')
-                    ->label('Question Created')
-                    ->date()
-                    ->sortable(),
-                // Tables\Columns\TextColumn::make('created_at')
-                //     ->dateTime()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -70,15 +81,8 @@ class FaqsResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->icon('heroicon-o-eye')
-                    ->label(''),
-                Tables\Actions\EditAction::make()
-                    ->icon('heroicon-o-pencil')
-                    ->label(''),
-                Tables\Actions\DeleteAction::make()
-                    ->icon('heroicon-o-trash')
-                    ->label(''),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

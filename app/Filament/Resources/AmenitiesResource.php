@@ -29,10 +29,9 @@ class AmenitiesResource extends Resource
                 Forms\Components\TextInput::make('amenity_name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->maxLength(65535)
+                Forms\Components\MarkdownEditor::make('description')
                     ->columnSpan('full'),
-            ]);
+            ])->columns(1);
     }
 
     public static function table(Table $table): Table
@@ -42,8 +41,6 @@ class AmenitiesResource extends Resource
                 Tables\Columns\ImageColumn::make('main_image')
                     ->circular(),
                 Tables\Columns\TextColumn::make('amenity_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('description')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
