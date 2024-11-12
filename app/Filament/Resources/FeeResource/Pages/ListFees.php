@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Filament\Resources\OrderResource\Pages;
+namespace App\Filament\Resources\FeeResource\Pages;
 
-use App\Filament\Resources\OrderResource;
+use App\Filament\Resources\FeeResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\Order;
+use App\Models\Fee;
 
-class ListOrders extends ListRecords
+class ListFees extends ListRecords
 {
-    protected static string $resource = OrderResource::class;
+    protected static string $resource = FeeResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -24,10 +24,10 @@ class ListOrders extends ListRecords
     {
         return [
             'all' => Tab::make('All')
-                ->badge(Order::whereNull('deleted_at')->count())
+                ->badge(Fee::whereNull('deleted_at')->count())
                 ->modifyQueryUsing(fn(Builder $query) => $query->whereNull('deleted_at')),
             'archived' => Tab::make('Archived')
-                ->badge(Order::onlyTrashed()->count())
+                ->badge(Fee::onlyTrashed()->count())
                 ->modifyQueryUsing(fn(Builder $query) => $query->onlyTrashed()),
         ];
     }

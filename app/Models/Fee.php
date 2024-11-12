@@ -6,19 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Order extends Model
+class Fee extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'reservation_id',
-        'item',
-        'quantity',
-        'price',
-        'order_date',
+        'fee_name',
+        'charge',
     ];
 
-    public function reservation() {
+    public function reservations() {
         return $this->belongsTo(Reservation::class);
     }
 }

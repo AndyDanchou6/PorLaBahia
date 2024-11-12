@@ -7,12 +7,14 @@ use App\Filament\Resources\DiscountResource\RelationManagers;
 use App\Models\Discount;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Markdown;
 use Filament\Tables;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -27,39 +29,37 @@ class DiscountResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-gift';
 
+    protected static ?string $navigationGroup = 'Settings';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                TextInput::make('discount_code')
-                    ->label('Discount Code')
-                    ->required()
-                    ->maxLength(10)
-                    ->minLength(10),
+                Section::make('')
+                    ->schema([
+                        TextInput::make('discount_code')
+                            ->label('Discount Code')
+                            ->required()
+                            ->maxLength(10)
+                            ->minLength(10)
+                            ->unique(ignoreRecord:true),
 
-                TextInput::make('description_code')
-                    ->label('Description Code')
-                    ->required()
-                    ->maxLength(10)
-                    ->minLength(10),
+                        Select::make('discount_type')
+                            ->label('Discount Type')
+                            ->options([
+                                'fixed' => 'Fixed',
+                                'percentage' => 'Percentage'
+                            ])
+                            ->required(),
 
-                TextInput::make('description')->nullable(),
+                        TextInput::make('value')
+                            ->integer()
+                            ->required(),
 
-                Select::make('discount_type')
-                    ->label('Discount Type')
-                    ->options([
-                        'fixed' => 'Fixed',
-                        'percentage' => 'Percentage'
-                    ])
-                    ->required(),
-
-                TextInput::make('value')
-                    ->integer()
-                    ->required(),
-
-                DateTimePicker::make('expiration_date')
-                    ->label('Expiration Date')
-                    ->required(),
+                        DateTimePicker::make('expiration_date')
+                            ->label('Expiration Date')
+                            ->required(),
+                    ])->columns(2),
 
                 Section::make('Restrictions')
                     ->schema([
@@ -81,8 +81,11 @@ class DiscountResource extends Resource
 
                         TextInput::make('applicability')
                             ->nullable(),
-                    ])
-            ]);
+                    ])->columns(2),
+
+                MarkdownEditor::make('description')
+                    ->nullable(),
+            ])->columns(1);
     }
 
     public static function table(Table $table): Table

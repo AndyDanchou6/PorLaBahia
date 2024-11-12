@@ -23,6 +23,8 @@ return new class extends Migration
             $table->integer('total_price')->nullable();
             $table->string('payment_method');
             $table->string('payment_status');
+            $table->boolean('booking_status')->default(true);
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('accommodation_id')

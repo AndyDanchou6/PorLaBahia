@@ -2,16 +2,14 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\OrderResource\Pages;
-use App\Filament\Resources\OrderResource\RelationManagers;
-use App\Models\Order;
+use App\Filament\Resources\FeeResource\Pages;
+use App\Filament\Resources\FeeResource\RelationManagers;
+use App\Models\Fee;
 use App\Models\Reservation;
-use DeepCopy\Filter\Filter;
 use Filament\Forms;
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -19,11 +17,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class OrderResource extends Resource
+class FeeResource extends Resource
 {
-    protected static ?string $model = Order::class;
+    protected static ?string $model = Fee::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static ?string $navigationIcon = 'heroicon-o-wrench';
 
     protected static ?string $navigationGroup = 'Order and Fee Records';
 
@@ -37,15 +35,10 @@ class OrderResource extends Resource
                         return Reservation::all()->pluck('booking_reference_no', 'id');
                     })
                     ->required(),
-                TextInput::make('item')
+                TextInput::make('fee_name')
                     ->required(),
-                TextInput::make('quantity')
+                TextInput::make('charge')
                     ->integer()
-                    ->required(),
-                TextInput::make('price')
-                    ->integer()
-                    ->required(),
-                DateTimePicker::make('order_date')
                     ->required(),
             ]);
     }
@@ -54,31 +47,25 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('reservation.booking_reference_no'),
-                TextColumn::make('item')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('quantity')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('price')
-                    ->sortable()
-                    ->searchable(),
-                TextColumn::make('order_date')
-                    ->dateTime()
-                    ->sortable()
-                    ->searchable(),
+                TextColumn::make('reservations.booking_reference_no')
+                ->searchable(),
+                TextColumn::make('fee_name')
+                ->searchable(),
+                TextColumn::make('charge')
+                ->prefix('₱ ')
+                ->searchable()
+                ->sortable(),
             ])
             ->filters([
-                // 
+                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn(Order $record) => !$record->trashed())
+                    ->visible(fn(Fee $record) => !$record->trashed())
                     ->color('warning'),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make()
-                    ->visible(function (Order $record) {
+                    ->visible(function (Fee $record) {
                         return $record->trashed() && auth()->user()->role == 1;
                     })
                     ->color('success'),
@@ -100,14 +87,9 @@ class OrderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOrders::route('/'),
-            'create' => Pages\CreateOrder::route('/create'),
-            'edit' => Pages\EditOrder::route('/{record}/edit'),
+            'index' => Pages\ListFees::route('/'),
+            'create' => Pages\CreateFee::route('/create'),
+            'edit' => Pages\EditFee::route('/{record}/edit'),
         ];
-    }
-
-    public static function canAccess(): bool
-    {
-        return auth()->user()->role == 1;
     }
 }

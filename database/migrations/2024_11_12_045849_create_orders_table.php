@@ -11,15 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accommodations', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('room_name');
-            $table->text('description')->nullable();
-            $table->integer('capacity');
+            $table->unsignedBigInteger('reservation_id');
+            $table->string('item');
+            $table->integer('quantity');
             $table->integer('price');
-            $table->string('main_image');
+            $table->date('order_date');
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('reservation_id')
+            ->references('id')
+            ->on('reservations')
+            ->onDelete('cascade');
         });
     }
 
@@ -28,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accommodations');
+        Schema::dropIfExists('orders');
     }
 };
