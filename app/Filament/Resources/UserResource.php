@@ -24,13 +24,15 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-plus';
 
+    protected static ?string $navigationGroup = 'Settings';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('name')->required(),
                 TextInput::make('email')->required()->email()->unique(ignoreRecord: true),
-                TextInput::make('password')->required()->password(),
+                TextInput::make('password')->password(),
                 Select::make('role')
                     ->label('Role')
                     ->options([
@@ -65,7 +67,7 @@ class UserResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

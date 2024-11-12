@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
+use App\Filament\Resources\ReservationResource\RelationManagers\OrdersRelationManager;
+use App\Filament\Resources\ReservationResource\RelationManagers\ReservationsRelationManager;
 use App\Models\Reservation;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,12 +13,14 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\Toggle;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Accommodation;
 use App\Models\GuestInfo;
 use App\Models\Discount;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 
@@ -24,57 +28,78 @@ class ReservationResource extends Resource
 {
     protected static ?string $model = Reservation::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Select::make('accommodation_id')
-                    ->label('Room Name')
-                    ->options(function () {
-                        return Accommodation::all()->pluck('room_name', 'id');
-                    })
-                    ->required(),
-                Select::make('guest_id')
-                    ->label('Guest Name')
-                    ->options(function () {
-                        return GuestInfo::all()->mapWithKeys(function ($guest) {
-                            return [$guest->id => "{$guest->first_name} {$guest->last_name}"];
-                        });
-                    })
-                    ->required(),
-                Select::make('discount_id')
-                    ->label('Discount')
-                    ->options(function () {
-                        return Discount::all()->pluck('discount_code', 'id');
-                    })
-                    ->nullable(),
-                TextInput::make('booking_reference_no')
-                    ->label('Boooking Reference Number')
-                    ->default(fn() => (new Reservation())->generateBookingReference())
-                    ->readOnly()
-                    ->required(),
-                TextInput::make('booking_fee')
-                    ->integer()
-                    ->required(),
-                DateTimePicker::make('check_in_date')
-                    ->required()
-                    ->date(),
-                DateTimePicker::make('check_out_date')
-                    ->required()
-                    ->date(),
-                Select::make('payment_method')
-                    ->options([
-                        'gcash' => 'G-Cash',
-                        'cash' => 'Cash',
+                Section::make('')
+                    ->schema([
+                        Select::make('accommodation_id')
+                            ->label('Room Name')
+                            ->options(function () {
+                                return Accommodation::all()->pluck('room_name', 'id');
+                            })
+                            ->required(),
+                        Select::make('guest_id')
+                            ->label('Guest Name')
+                            ->options(function () {
+                                return GuestInfo::all()->mapWithKeys(function ($guest) {
+                                    return [$guest->id => "{$guest->first_name} {$guest->last_name}"];
+                                });
+                            })
+                            ->required(),
+                        Select::make('discount_id')
+                            ->label('Discount')
+                            ->options(function () {
+                                return Discount::all()->pluck('discount_code', 'id');
+                            })
+                            ->nullable(),
+                        TextInput::make('booking_reference_no')
+                            ->label('Boooking Reference Number')
+                            ->default(fn() => (new Reservation())->generateBookingReference())
+                            ->readOnly()
+                            ->required(),
+                        TextInput::make('booking_fee')
+                            ->integer()
+                            ->required(),
+                    ])->columns(2),
+
+                Section::make('Reservation Date')
+                    ->schema([
+                        DateTimePicker::make('check_in_date')
+                            ->required()
+                            ->date(),
+                        DateTimePicker::make('check_out_date')
+                            ->required()
+                            ->date(),
                     ]),
-                Select::make('payment_status')
-                    ->options([
-                        'unpaid' => 'Unpaid',
-                        'partial' => 'Partially Paid',
-                        'paid' => 'Fully Paid',
-                    ])
+
+
+                Section::make('Payment Details')
+                    ->schema([
+                        Select::make('payment_method')
+                            ->options([
+                                'gcash' => 'G-Cash',
+                                'cash' => 'Cash',
+                            ])
+                            ->required(),
+                        Select::make('payment_status')
+                            ->options([
+                                'unpaid' => 'Unpaid',
+                                'partial' => 'Partially Paid',
+                                'paid' => 'Fully Paid',
+                            ])
+                            ->required(),
+                    ]),
+
+                Section::make('')
+                    ->schema([
+                        Toggle::make('booking_status')
+                            ->default(true)
+                            ->hiddenOn('create'),
+                    ]),
             ]);
     }
 
@@ -103,12 +128,13 @@ class ReservationResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -116,7 +142,8 @@ class ReservationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            OrdersRelationManager::class,
+            ReservationsRelationManager::class
         ];
     }
 

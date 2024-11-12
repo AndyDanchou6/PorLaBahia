@@ -14,12 +14,17 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('reservation_id');
-            $table->string('notes');
+            $table->string('item');
+            $table->integer('quantity');
+            $table->integer('price');
+            $table->date('order_date');
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('reservation_id')
             ->references('id')
-            ->on('reservations');
+            ->on('reservations')
+            ->onDelete('cascade');
         });
     }
 

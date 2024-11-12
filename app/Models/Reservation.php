@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Reservation extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'accommodation_id',
@@ -20,8 +21,38 @@ class Reservation extends Model
         'total_price',
         'payment_method',
         'payment_status',
+        'booking_status',
     ];
 
+    public function accommodation() {
+        return $this->belongsTo(Accommodation::class);
+    }
+
+    public function guest() {
+        return $this->belongsTo(GuestInfo::class);
+    }
+
+    public function discount() {
+        return $this->belongsTo(Discount::class);
+    }
+
+    public function orders() {
+        return $this->hasMany(Order::class);
+    }
+
+    public function fees() {
+        return $this->hasMany(Fee::class);
+    }
+
+    
+    protected static function booted()
+    {
+        static::deleting(function ($reservation) {
+            $reservation->orders()->update(['deleted_at' => now()]);
+            $reservation->fees()->update(['deleted_at' => now()]);
+        });
+    }
+    
     public function generateBookingReference(int $length = 10): string
     {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -43,21 +74,5 @@ class Reservation extends Model
         }
 
         return $bookingReference;
-    }
-
-    public function accommodation() {
-        return $this->belongsTo(Accommodation::class);
-    }
-
-    public function guest() {
-        return $this->belongsTo(GuestInfo::class);
-    }
-
-    public function discount() {
-        return $this->belongsTo(Discount::class);
-    }
-
-    public function orders() {
-        return $this->hasOne(Order::class);
     }
 }

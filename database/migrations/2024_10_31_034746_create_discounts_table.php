@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
             $table->string('discount_code');
-            $table->string('description_code');
-            $table->string('description');
+            $table->text('description')->nullable();
             $table->string('discount_type');
             $table->integer('value');
             $table->date('expiration_date');
@@ -24,6 +23,7 @@ return new class extends Migration
             $table->bigInteger('maximum_order')->nullable();
             $table->boolean('stacking_restriction')->nullable();
             $table->string('applicability')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

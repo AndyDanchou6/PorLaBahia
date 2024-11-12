@@ -7,15 +7,19 @@ use App\Filament\Resources\AccommodationResource\RelationManagers;
 use App\Models\Accommodation;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Markdown;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Section;
 
 class AccommodationResource extends Resource
 {
@@ -29,18 +33,23 @@ class AccommodationResource extends Resource
             ->schema([
                 TextInput::make('room_name')
                     ->required(),
-                TextInput::make('description')
+
+                MarkdownEditor::make('description')
                     ->nullable(),
-                TextInput::make('capacity')
-                    ->integer()
-                    ->required(),
-                TextInput::make('price')
-                    ->prefix('₱')
-                    ->integer()
-                    ->required(),
-                FileUpload::make('main_image')
-                    ->required(),
-            ]);
+
+                Section::make('')
+                    ->schema([
+                        TextInput::make('capacity')
+                            ->integer()
+                            ->required(),
+                        TextInput::make('price')
+                            ->prefix('₱')
+                            ->integer()
+                            ->required(),
+                        FileUpload::make('main_image')
+                            ->required(),
+                    ])->columns(2),
+            ])->columns(1);
     }
 
     public static function table(Table $table): Table
@@ -53,15 +62,16 @@ class AccommodationResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
-                TextColumn::make('description')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(),
+                // TextColumn::make('description')
+                //     ->sortable()
+                //     ->searchable()
+                //     ->toggleable(),
                 TextColumn::make('capacity')
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
                 TextColumn::make('price')
+                    ->prefix('₱ ')
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
@@ -72,10 +82,11 @@ class AccommodationResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

@@ -15,6 +15,10 @@ class ViewDiscount extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+            Actions\Action::make('back')
+                ->url(DiscountResource::getUrl())
+                ->button()
+                ->color('danger'),
         ];
     }
 }
