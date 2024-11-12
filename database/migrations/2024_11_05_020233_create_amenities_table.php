@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('main_image');
             $table->string('amenity_name');
             $table->text('description')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

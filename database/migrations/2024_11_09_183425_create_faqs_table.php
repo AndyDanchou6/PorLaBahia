@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('questions');
             $table->text('answer')->nullable();
             $table->string('category');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

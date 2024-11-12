@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('address');
             $table->string('fb_name')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

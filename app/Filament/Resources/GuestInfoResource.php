@@ -92,8 +92,17 @@ class GuestInfoResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->visible(fn(GuestInfo $record) => !$record->trashed()),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn(GuestInfo $record) => !$record->trashed())
+                    ->color('warning'),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make()
+                    ->visible(function (GuestInfo $record) {
+                        return $record->trashed() && auth()->user()->role == 1;
+                    })
+                    ->color('success'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
