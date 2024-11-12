@@ -26,6 +26,7 @@ class PolicyResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Policy Name')
                     ->required()
                     ->maxLength(255),
 
@@ -69,8 +70,17 @@ class PolicyResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->visible(fn(Policy $record) => !$record->trashed()),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn(Policy $record) => !$record->trashed())
+                    ->color('warning'),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make()
+                    ->visible(function (Policy $record) {
+                        return $record->trashed() && auth()->user()->role == 1;
+                    })
+                    ->color('success'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

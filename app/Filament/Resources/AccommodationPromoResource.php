@@ -83,14 +83,16 @@ class AccommodationPromoResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->icon('heroicon-o-eye')
-                    ->label(''),
+                    ->visible(fn(AccommodationPromo $record) => !$record->trashed()),
                 Tables\Actions\EditAction::make()
-                    ->icon('heroicon-o-pencil')
-                    ->label(''),
-                Tables\Actions\DeleteAction::make()
-                    ->icon('heroicon-o-trash')
-                    ->label(''),
+                    ->visible(fn(AccommodationPromo $record) => !$record->trashed())
+                    ->color('warning'),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make()
+                    ->visible(function (AccommodationPromo $record) {
+                        return $record->trashed() && auth()->user()->role == 1;
+                    })
+                    ->color('success'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

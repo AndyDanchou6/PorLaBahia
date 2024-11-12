@@ -55,8 +55,17 @@ class AmenitiesResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->visible(fn(Amenities $record) => !$record->trashed()),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn(Amenities $record) => !$record->trashed())
+                    ->color('warning'),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make()
+                    ->visible(function (Amenities $record) {
+                        return $record->trashed() && auth()->user()->role == 1;
+                    })
+                    ->color('success'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -85,5 +94,13 @@ class AmenitiesResource extends Resource
     public static function canAccess(): bool
     {
         return auth()->user()->role == 1;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }
