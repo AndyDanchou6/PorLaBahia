@@ -17,7 +17,7 @@ class AmenitiesResource extends Resource
 {
     protected static ?string $model = Amenities::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-gift';
+    protected static ?string $navigationIcon = 'heroicon-o-lifebuoy';
 
     public static function form(Form $form): Form
     {
