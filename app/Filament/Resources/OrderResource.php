@@ -32,7 +32,7 @@ class OrderResource extends Resource
         return $form
             ->schema([
                 Select::make('reservation_id')
-                    ->label('Room Name')
+                    ->label('Booking Reference No')
                     ->options(function () {
                         return Reservation::all()->pluck('booking_reference_no', 'id');
                     })
@@ -54,7 +54,10 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('reservation.booking_reference_no'),
+                TextColumn::make('reservation_id')
+                ->label('Booking Reference No')
+                ->formatStateUsing(fn($record) => $record->reservation->booking_reference_no)
+                ->searchable(),
                 TextColumn::make('item')
                     ->sortable()
                     ->searchable(),

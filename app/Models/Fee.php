@@ -16,7 +16,7 @@ class Fee extends Model
         'charge',
     ];
 
-    public function reservations() {
+    public function reservation() {
         return $this->belongsTo(Reservation::class);
     }
 }

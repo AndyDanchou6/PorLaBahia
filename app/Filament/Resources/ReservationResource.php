@@ -28,7 +28,7 @@ class ReservationResource extends Resource
 {
     protected static ?string $model = Reservation::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
     public static function form(Form $form): Form
     {
@@ -45,19 +45,27 @@ class ReservationResource extends Resource
                         Select::make('guest_id')
                             ->label('Guest Name')
                             ->options(function () {
-                                return GuestInfo::all()->mapWithKeys(function ($guest) {
-                                    return [$guest->id => "{$guest->first_name} {$guest->last_name}"];
-                                });
+                                return GuestInfo::inRandomOrder()
+                                    ->limit(5)
+                                    ->get()
+                                    ->mapWithKeys(function ($guest) {
+                                        return [$guest->id => "{$guest->first_name} {$guest->last_name}"];
+                                    });
                             })
+                            ->searchable()
                             ->required(),
                         Select::make('discount_id')
                             ->label('Discount')
                             ->options(function () {
-                                return Discount::all()->pluck('discount_code', 'id');
+                                return Discount::inRandomOrder()
+                                ->limit(5)
+                                ->get()
+                                ->pluck('discount_code', 'id');
                             })
+                            ->searchable()
                             ->nullable(),
                         TextInput::make('booking_reference_no')
-                            ->label('Boooking Reference Number')
+                            ->label('Booking Reference Number')
                             ->default(fn() => (new Reservation())->generateBookingReference())
                             ->readOnly()
                             ->required(),

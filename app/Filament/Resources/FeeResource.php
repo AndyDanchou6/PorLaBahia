@@ -21,7 +21,7 @@ class FeeResource extends Resource
 {
     protected static ?string $model = Fee::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-wrench';
+    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
     protected static ?string $navigationGroup = 'Order and Fee Records';
 
@@ -30,7 +30,7 @@ class FeeResource extends Resource
         return $form
             ->schema([
                 Select::make('reservation_id')
-                    ->label('Room Name')
+                    ->label('Booking Reference Number')
                     ->options(function () {
                         return Reservation::all()->pluck('booking_reference_no', 'id');
                     })
@@ -47,7 +47,9 @@ class FeeResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('reservations.booking_reference_no')
+                TextColumn::make('reservation_id')
+                ->label('Booking Reference No')
+                ->formatStateUsing(fn($record) => $record->reservation->booking_reference_no)
                 ->searchable(),
                 TextColumn::make('fee_name')
                 ->searchable(),
