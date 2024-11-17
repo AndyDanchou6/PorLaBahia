@@ -60,17 +60,10 @@ class OrdersRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
-                // Tables\Actions\DeleteAction::make(),
-                Tables\Actions\EditAction::make()
-                    ->visible(fn(Order $record) => !$record->trashed())
-                    ->color('warning'),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
-                Tables\Actions\RestoreAction::make()
-                    ->visible(function (Order $record) {
-                        return $record->trashed() && auth()->user()->role == 1;
-                    })
-                    ->color('success'),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -4,8 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
+use App\Filament\Resources\ReservationResource\RelationManagers\FeesRelationManager;
 use App\Filament\Resources\ReservationResource\RelationManagers\OrdersRelationManager;
-use App\Filament\Resources\ReservationResource\RelationManagers\ReservationsRelationManager;
 use App\Models\Reservation;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -151,7 +151,7 @@ class ReservationResource extends Resource
     {
         return [
             OrdersRelationManager::class,
-            ReservationsRelationManager::class
+            FeesRelationManager::class
         ];
     }
 

@@ -12,7 +12,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ReservationsRelationManager extends RelationManager
+class FeesRelationManager extends RelationManager
 {
     protected static string $relationship = 'fees';
 
