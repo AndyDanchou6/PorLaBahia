@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('galleries', function (Blueprint $table) {
             $table->id();
+            $table->json('image');
+            $table->string('gallery_type');
+            $table->unsignedBigInteger('gallery_id');
             $table->softDeletes();
             $table->timestamps();
         });

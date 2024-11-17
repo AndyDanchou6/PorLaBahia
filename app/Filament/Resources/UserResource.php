@@ -26,6 +26,11 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'Settings';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -58,16 +63,26 @@ class UserResource extends Resource
                     ->formatStateUsing(fn($record) => $record->roleLabel()),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
-                    ->visible(fn($record) => $record->role !== 1),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->color('warning'),
+                    Tables\Actions\DeleteAction::make()
+                        ->visible(fn($record) => $record->role !== 1),
+                    Tables\Actions\ForceDeleteAction::make()
+                        ->visible(fn($record) => $record->role !== 1),
+                    Tables\Actions\RestoreAction::make()
+                        ->color('success'),
+                ])->color('FFA500'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

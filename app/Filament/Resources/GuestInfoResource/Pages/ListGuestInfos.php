@@ -16,20 +16,8 @@ class ListGuestInfos extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
-        ];
-    }
-
-    public function getTabs(): array
-    {
-        return [
-            'all' => Tab::make('All')
-                ->badge(GuestInfo::whereNull('deleted_at')->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->whereNull('deleted_at')),
-
-            'archived' => Tab::make('Archived')
-                ->badge(GuestInfo::onlyTrashed()->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->onlyTrashed()),
+            Actions\CreateAction::make()
+                ->label('New Guest'),
         ];
     }
 }

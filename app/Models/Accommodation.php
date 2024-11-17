@@ -21,7 +21,30 @@ class Accommodation extends Model
         'promo_id',
     ];
 
-    public function reservation() {
+    public function reservation()
+    {
         return $this->hasMany(Reservation::class);
+    }
+
+    public function galleries()
+    {
+        return $this->morphMany(Galleries::class, 'gallery');
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        // static::deleting(function ($accommodation) {
+        //     $accommodation->galleries()->each(function ($gallery) {
+        //         $gallery->delete();
+        //     });
+        // });
+
+        static::deleting(function ($accommodation) {
+            $accommodation->galleries()->each(function ($gallery) {
+                $gallery->forceDelete();
+            });
+        });
     }
 }

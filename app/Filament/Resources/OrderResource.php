@@ -55,9 +55,9 @@ class OrderResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('reservation_id')
-                ->label('Booking Reference No')
-                ->formatStateUsing(fn($record) => $record->reservation->booking_reference_no)
-                ->searchable(),
+                    ->label('Booking Reference No')
+                    ->formatStateUsing(fn($record) => $record->reservation->booking_reference_no)
+                    ->searchable(),
                 TextColumn::make('item')
                     ->sortable()
                     ->searchable(),
@@ -73,22 +73,24 @@ class OrderResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                // 
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->visible(fn(Order $record) => !$record->trashed())
-                    ->color('warning'),
-                Tables\Actions\ForceDeleteAction::make(),
-                Tables\Actions\RestoreAction::make()
-                    ->visible(function (Order $record) {
-                        return $record->trashed() && auth()->user()->role == 1;
-                    })
-                    ->color('success'),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->color('warning'),
+                    Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\ForceDeleteAction::make(),
+                    Tables\Actions\RestoreAction::make()
+                        ->color('success'),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

@@ -18,4 +18,10 @@ class GuestInfo extends Model
         'address',
         'fb_name',
     ];
+
+    public function getFullNameAttribute()
+    {
+        $full_name = $this->first_name . ' ' . $this->last_name;
+        return $full_name;
+    }
 }
