@@ -34,9 +34,13 @@ class OrderResource extends Resource
                 Select::make('reservation_id')
                     ->label('Booking Reference No')
                     ->options(function () {
-                        return Reservation::all()->pluck('booking_reference_no', 'id');
+                        return Reservation::inRandomOrder()
+                        ->limit(5)
+                        ->get()
+                        ->pluck('booking_reference_no', 'id');
                     })
-                    ->required(),
+                    ->required()
+                    ->searchable(),
                 TextInput::make('item')
                     ->required(),
                 TextInput::make('quantity')

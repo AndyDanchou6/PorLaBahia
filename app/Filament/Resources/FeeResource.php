@@ -32,9 +32,13 @@ class FeeResource extends Resource
                 Select::make('reservation_id')
                     ->label('Booking Reference Number')
                     ->options(function () {
-                        return Reservation::all()->pluck('booking_reference_no', 'id');
+                        return Reservation::inRandomOrder()
+                        ->limit(5)
+                        ->get()
+                        ->pluck('booking_reference_no', 'id');
                     })
-                    ->required(),
+                    ->required()
+                    ->searchable(),
                 TextInput::make('fee_name')
                     ->required(),
                 TextInput::make('charge')
