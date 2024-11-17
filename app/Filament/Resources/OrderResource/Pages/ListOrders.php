@@ -20,15 +20,15 @@ class ListOrders extends ListRecords
         ];
     }
 
-    public function getTabs(): array
-    {
-        return [
-            'all' => Tab::make('All')
-                ->badge(Order::whereNull('deleted_at')->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->whereNull('deleted_at')),
-            'archived' => Tab::make('Archived')
-                ->badge(Order::onlyTrashed()->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->onlyTrashed()),
-        ];
-    }
+    // public function getTabs(): array
+    // {
+    //     return [
+    //         'all' => Tab::make('All')
+    //             ->badge(Order::whereNull('deleted_at')->count())
+    //             ->modifyQueryUsing(fn(Builder $query) => $query->whereNull('deleted_at')),
+    //         'archived' => Tab::make('Archived')
+    //             ->badge(Order::onlyTrashed()->count())
+    //             ->modifyQueryUsing(fn(Builder $query) => $query->onlyTrashed()),
+    //     ];
+    // }
 }

@@ -20,6 +20,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Section;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\TrashedFilter;
 
 class AccommodationResource extends Resource
 {
@@ -62,10 +64,6 @@ class AccommodationResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
-                // TextColumn::make('description')
-                //     ->sortable()
-                //     ->searchable()
-                //     ->toggleable(),
                 TextColumn::make('capacity')
                     ->sortable()
                     ->searchable()
@@ -77,12 +75,24 @@ class AccommodationResource extends Resource
                     ->toggleable(),
             ])
             ->filters([
-                //
+                TrashedFilter::make('archived')
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->visible(function (Accommodation $record) {
+                        return !$record->trashed();
+                    }),
+                Tables\Actions\EditAction::make()
+                    ->visible(function (Accommodation $record) {
+                        return !$record->trashed();
+                    }),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make()
+                    ->visible(function (Accommodation $record) {
+                        return $record->trashed() && auth()->user()->role == 1;
+                    })
+                    ->color('success'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

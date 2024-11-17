@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -63,7 +64,7 @@ class FeeResource extends Resource
                 ->sortable(),
             ])
             ->filters([
-                //
+                TrashedFilter::make('archived'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

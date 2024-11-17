@@ -20,15 +20,15 @@ class ListFees extends ListRecords
         ];
     }
 
-    public function getTabs(): array
-    {
-        return [
-            'all' => Tab::make('All')
-                ->badge(Fee::whereNull('deleted_at')->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->whereNull('deleted_at')),
-            'archived' => Tab::make('Archived')
-                ->badge(Fee::onlyTrashed()->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->onlyTrashed()),
-        ];
-    }
+    // public function getTabs(): array
+    // {
+    //     return [
+    //         'all' => Tab::make('All')
+    //             ->badge(Fee::whereNull('deleted_at')->count())
+    //             ->modifyQueryUsing(fn(Builder $query) => $query->whereNull('deleted_at')),
+    //         'archived' => Tab::make('Archived')
+    //             ->badge(Fee::onlyTrashed()->count())
+    //             ->modifyQueryUsing(fn(Builder $query) => $query->onlyTrashed()),
+    //     ];
+    // }
 }

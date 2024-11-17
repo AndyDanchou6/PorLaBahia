@@ -23,6 +23,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 
 class ReservationResource extends Resource
 {
@@ -58,9 +59,9 @@ class ReservationResource extends Resource
                             ->label('Discount')
                             ->options(function () {
                                 return Discount::inRandomOrder()
-                                ->limit(5)
-                                ->get()
-                                ->pluck('discount_code', 'id');
+                                    ->limit(5)
+                                    ->get()
+                                    ->pluck('discount_code', 'id');
                             })
                             ->searchable()
                             ->nullable(),
@@ -133,12 +134,24 @@ class ReservationResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                TrashedFilter::make('archived'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->visible(function (Reservation $record) {
+                        return !$record->trashed();
+                    }),
+                Tables\Actions\EditAction::make()
+                    ->visible(function (Reservation $record) {
+                        return !$record->trashed();
+                    }),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make()
+                    ->visible(function (Reservation $record) {
+                        return $record->trashed() && auth()->user()->role == 1;
+                    })
+                    ->color('success'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
