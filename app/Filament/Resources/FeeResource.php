@@ -48,33 +48,35 @@ class FeeResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('reservation_id')
-                ->label('Booking Reference No')
-                ->formatStateUsing(fn($record) => $record->reservation->booking_reference_no)
-                ->searchable(),
+                    ->label('Booking Reference No')
+                    ->formatStateUsing(fn($record) => $record->reservation->booking_reference_no)
+                    ->searchable(),
                 TextColumn::make('fee_name')
-                ->searchable(),
+                    ->searchable(),
                 TextColumn::make('charge')
-                ->prefix('₱ ')
-                ->searchable()
-                ->sortable(),
+                    ->prefix('₱ ')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->visible(fn(Fee $record) => !$record->trashed())
-                    ->color('warning'),
-                Tables\Actions\ForceDeleteAction::make(),
-                Tables\Actions\RestoreAction::make()
-                    ->visible(function (Fee $record) {
-                        return $record->trashed() && auth()->user()->role == 1;
-                    })
-                    ->color('success'),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->color('warning'),
+                    Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\ForceDeleteAction::make(),
+                    Tables\Actions\RestoreAction::make()
+                        ->color('success'),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

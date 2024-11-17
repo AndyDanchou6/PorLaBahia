@@ -23,14 +23,14 @@ class AmenitiesResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\FileUpload::make('main_image')
-                    ->image()
-                    ->required(),
                 Forms\Components\TextInput::make('amenity_name')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\MarkdownEditor::make('description')
                     ->columnSpan('full'),
+                Forms\Components\FileUpload::make('main_image')
+                    ->image()
+                    ->required(),
             ])->columns(1);
     }
 
@@ -52,24 +52,24 @@ class AmenitiesResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->visible(fn(Amenities $record) => !$record->trashed()),
-                Tables\Actions\EditAction::make()
-                    ->visible(fn(Amenities $record) => !$record->trashed())
-                    ->color('warning'),
-                Tables\Actions\ForceDeleteAction::make(),
-                Tables\Actions\RestoreAction::make()
-                    ->visible(function (Amenities $record) {
-                        return $record->trashed() && auth()->user()->role == 1;
-                    })
-                    ->color('success'),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->color('warning'),
+                    Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\ForceDeleteAction::make(),
+                    Tables\Actions\RestoreAction::make()
+                        ->color('success'),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -77,7 +77,7 @@ class AmenitiesResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\GalleriesRelationManager::class,
         ];
     }
 

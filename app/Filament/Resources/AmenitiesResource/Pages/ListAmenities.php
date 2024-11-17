@@ -20,17 +20,4 @@ class ListAmenities extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
-
-    public function getTabs(): array
-    {
-        return [
-            'all' => Tab::make('All')
-                ->badge(Amenities::whereNull('deleted_at')->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->whereNull('deleted_at')),
-
-            'archived' => Tab::make('Archived')
-                ->badge(Amenities::onlyTrashed()->count())
-                ->modifyQueryUsing(fn(Builder $query) => $query->onlyTrashed()),
-        ];
-    }
 }

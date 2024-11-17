@@ -67,24 +67,24 @@ class PolicyResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->visible(fn(Policy $record) => !$record->trashed()),
-                Tables\Actions\EditAction::make()
-                    ->visible(fn(Policy $record) => !$record->trashed())
-                    ->color('warning'),
-                Tables\Actions\ForceDeleteAction::make(),
-                Tables\Actions\RestoreAction::make()
-                    ->visible(function (Policy $record) {
-                        return $record->trashed() && auth()->user()->role == 1;
-                    })
-                    ->color('success'),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->color('warning'),
+                    Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\ForceDeleteAction::make(),
+                    Tables\Actions\RestoreAction::make()
+                        ->color('success'),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

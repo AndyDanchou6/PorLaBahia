@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\AccommodationResource\Pages;
+namespace App\Filament\Resources\GalleriesResource\Pages;
 
-use App\Filament\Resources\AccommodationResource;
-use App\Models\Accommodation;
+use App\Filament\Resources\GalleriesResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
-class ViewAccommodation extends ViewRecord
+class ViewGalleries extends ViewRecord
 {
-    protected static string $resource = AccommodationResource::class;
+    protected static string $resource = GalleriesResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -17,7 +16,7 @@ class ViewAccommodation extends ViewRecord
             Actions\EditAction::make()
                 ->color('warning'),
             Actions\Action::make('back')
-                ->url(AccommodationResource::getUrl())
+                ->url(GalleriesResource::getUrl())
                 ->button()
                 ->color('danger'),
         ];

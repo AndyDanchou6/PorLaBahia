@@ -15,4 +15,26 @@ class Amenities extends Model
         'amenity_name',
         'description',
     ];
+
+    public function galleries()
+    {
+        return $this->morphMany(Galleries::class, 'gallery');
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        // static::deleting(function ($amenties) {
+        //     $amenties->galleries()->each(function ($gallery) {
+        //         $gallery->delete();
+        //     });
+        // });
+
+        static::deleting(function ($amenity) {
+            $amenity->galleries()->each(function ($gallery) {
+                $gallery->forceDelete();
+            });
+        });
+    }
 }
