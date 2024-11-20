@@ -54,6 +54,7 @@ class PolicyResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Policy #')
+                    ->rowIndex()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
