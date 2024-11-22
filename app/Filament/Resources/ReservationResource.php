@@ -44,8 +44,12 @@ class ReservationResource extends Resource
                         Select::make('accommodation_id')
                             ->label('Room Name')
                             ->options(function () {
-                                return Accommodation::all()->pluck('room_name', 'id');
+                                return Accommodation::inRandomOrder()
+                                    ->limit(5)
+                                    ->get()
+                                    ->pluck('room_name', 'id');
                             })
+                            ->searchable()
                             ->required(),
                         Select::make('guest_id')
                             ->label('Guest Name')
@@ -110,9 +114,8 @@ class ReservationResource extends Resource
                 Section::make('')
                     ->schema([
                         Toggle::make('booking_status')
-                            ->default(true)
-                            ->hiddenOn('create'),
-                    ]),
+                            ->default(true),
+                    ])->hiddenOn('create'),
             ]);
     }
 
@@ -146,7 +149,8 @@ class ReservationResource extends Resource
                     Tables\Actions\EditAction::make()
                         ->color('warning'),
                     Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make(),
+                    Tables\Actions\ForceDeleteAction::make()
+                        ->visible(fn($record) => $record->trashed()),
                     Tables\Actions\RestoreAction::make()
                         ->color('success'),
                 ]),
