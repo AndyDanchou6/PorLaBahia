@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Accommodation;
 use App\Models\GuestInfo;
 use App\Models\Discount;
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
@@ -81,10 +81,10 @@ class ReservationResource extends Resource
 
                 Section::make('Reservation Date')
                     ->schema([
-                        DateTimePicker::make('check_in_date')
+                        DatePicker::make('check_in_date')
                             ->required()
                             ->date(),
-                        DateTimePicker::make('check_out_date')
+                        DatePicker::make('check_out_date')
                             ->required()
                             ->date(),
                     ]),
