@@ -63,7 +63,7 @@ class UserResource extends Resource
                     ->formatStateUsing(fn($record) => $record->roleLabel()),
             ])
             ->filters([
-                // Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -73,7 +73,7 @@ class UserResource extends Resource
                     Tables\Actions\DeleteAction::make()
                         ->visible(fn($record) => $record->role !== 1),
                     Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->role !== 1),
+                        ->visible(fn($record) => $record->role !== 1 && $record->trashed()),
                     Tables\Actions\RestoreAction::make()
                         ->color('success'),
                 ])->color('FFA500'),
