@@ -18,7 +18,7 @@ class ViewPolicy extends ViewRecord
             Actions\Action::make('back')
                 ->url(PolicyResource::getUrl())
                 ->button()
-                ->color('danger'),
+                ->color('gray'),
         ];
     }
 }
