@@ -73,7 +73,7 @@ class UserResource extends Resource
                     Tables\Actions\DeleteAction::make()
                         ->visible(fn($record) => $record->role !== 1),
                     Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->role !== 1),
+                        ->visible(fn($record) => $record->role !== 1 && $record->trashed()),
                     Tables\Actions\RestoreAction::make()
                         ->color('success'),
                 ])->color('FFA500'),

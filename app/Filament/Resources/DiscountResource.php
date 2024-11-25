@@ -6,7 +6,7 @@ use App\Filament\Resources\DiscountResource\Pages;
 use App\Filament\Resources\DiscountResource\RelationManagers;
 use App\Models\Discount;
 use Filament\Forms;
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -56,7 +56,7 @@ class DiscountResource extends Resource
                             ->integer()
                             ->required(),
 
-                        DateTimePicker::make('expiration_date')
+                        DatePicker::make('expiration_date')
                             ->label('Expiration Date')
                             ->required(),
                     ])->columns(2),
@@ -127,7 +127,8 @@ class DiscountResource extends Resource
                     Tables\Actions\EditAction::make()
                         ->color('warning'),
                     Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make(),
+                    Tables\Actions\ForceDeleteAction::make()
+                        ->visible(fn($record) => $record->trashed()),
                     Tables\Actions\RestoreAction::make()
                         ->color('success'),
                 ]),
