@@ -63,7 +63,7 @@ class UserResource extends Resource
                     ->formatStateUsing(fn($record) => $record->roleLabel()),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                // Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

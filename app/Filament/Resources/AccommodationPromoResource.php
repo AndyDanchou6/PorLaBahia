@@ -28,13 +28,21 @@ class AccommodationPromoResource extends Resource
                 Forms\Components\Select::make('accommodation_id')
                     ->relationship(name: 'accommodation', titleAttribute: 'room_name')
                     ->required(),
-                Forms\Components\TextInput::make('discount_type')
+                Forms\Components\Select::make('discount_type')
                     ->label('Discount Type')
-                    ->required()
-                    ->maxLength(255),
+                    ->options([
+                        'fixed' => 'Fixed',
+                        'percentage' => 'Percentage'
+                    ])
+                    ->reactive()
+                    ->required(),
                 Forms\Components\TextInput::make('value')
                     ->required()
-                    ->maxLength(255),
+                    ->reactive()
+                    ->suffix(fn($get) => $get('discount_type') == 'fixed' ? '₱' : null)
+                    ->prefix(fn($get) => $get('discount_type') == 'percentage' ? '%' : null)
+                    // ->afterStateUpdated(function ($set) {})
+                    ->numeric(),
                 Forms\Components\TextInput::make('discounted_price')
                     ->label('Discounted Price')
                     ->required()

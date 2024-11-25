@@ -52,10 +52,6 @@ class PolicyResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
-                    ->label('Policy #')
-                    ->rowIndex()
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -71,22 +67,26 @@ class PolicyResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()
-                        ->color('warning'),
-                    Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->trashed()),
-                    Tables\Actions\RestoreAction::make()
-                        ->color('success'),
-                ]),
+                Tables\Actions\ViewAction::make()
+                    ->visible(fn($record) => !$record->trashed()),
+                Tables\Actions\EditAction::make()
+                    ->color('warning')
+                    ->visible(fn($record) => !$record->trashed()),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->visible(fn($record) => $record->trashed() && auth()->user()->role === 1),
+                Tables\Actions\RestoreAction::make()
+                    ->color('success')
+                    ->visible(fn($record) => $record->trashed() && auth()->user()->role === 1),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make()
+                        ->visible(fn() => auth()->user()->role === 1),
+                    Tables\Actions\RestoreBulkAction::make()
+                        ->color('success')
+                        ->visible(fn() => auth()->user()->role === 1),
                 ]),
             ]);
     }
