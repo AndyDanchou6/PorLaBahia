@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\ReservationResource\Pages;
+namespace App\Filament\Resources\FeeAndOrderResource\Pages;
 
-use App\Filament\Resources\ReservationResource;
+use App\Filament\Resources\FeeAndOrderResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
-class ViewReservation extends ViewRecord
+class ViewFeeAndOrders extends ViewRecord
 {
-    protected static string $resource = ReservationResource::class;
+    protected static string $resource = FeeAndOrderResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -16,7 +16,7 @@ class ViewReservation extends ViewRecord
             Actions\EditAction::make()
                 ->color('warning'),
             Actions\Action::make('back')
-                ->url(ReservationResource::getUrl())
+                ->url(FeeAndOrderResource::getUrl())
                 ->button()
                 ->color('gray'),
         ];

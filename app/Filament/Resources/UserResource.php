@@ -63,25 +63,23 @@ class UserResource extends Resource
                     ->formatStateUsing(fn($record) => $record->roleLabel()),
             ])
             ->filters([
-                // Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()
-                        ->color('warning'),
-                    Tables\Actions\DeleteAction::make()
-                        ->visible(fn($record) => $record->role !== 1),
-                    Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->role !== 1 && $record->trashed()),
-                    Tables\Actions\RestoreAction::make()
-                        ->color('success'),
-                ])->color('FFA500'),
+                Tables\Actions\ViewAction::make()
+                    ->visible(fn($record) => !$record->trashed()),
+                Tables\Actions\EditAction::make()
+                    ->color('warning')
+                    ->visible(fn($record) => !$record->trashed()),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn($record) => $record->role !== 1),
+                Tables\Actions\RestoreAction::make()
+                    ->color('success'),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
