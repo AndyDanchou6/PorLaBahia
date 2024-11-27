@@ -13,16 +13,21 @@ class Reservation extends Model
     protected $fillable = [
         'accommodation_id',
         'guest_id',
-        'discount_id',
         'booking_reference_no',
         'check_in_date',
         'check_out_date',
-        'booking_fee',
-        'total_price',
-        'payment_method',
-        'payment_status',
+        'total_paid',
+        'total_payable',
+        'balance',
         'booking_status',
     ];
+
+    protected $casts = [
+        'total_paid' => 'decimal:2',
+        'total_price' => 'decimal:2',
+        'balance' => 'decimal:2',
+    ];
+    
 
     public function accommodation() {
         return $this->belongsTo(Accommodation::class);
@@ -36,20 +41,17 @@ class Reservation extends Model
         return $this->belongsTo(Discount::class);
     }
 
-    public function orders() {
-        return $this->hasMany(Order::class);
-    }
-
-    public function fees() {
-        return $this->hasMany(Fee::class);
+    public function feesAndOrders() {
+        return $this->hasMany(FeeAndOrder::class);
     }
 
     
     protected static function booted()
     {
         static::deleting(function ($reservation) {
-            $reservation->orders()->update(['deleted_at' => now()]);
-            $reservation->fees()->update(['deleted_at' => now()]);
+            // $reservation->orders()->update(['deleted_at' => now()]);
+            // $reservation->fees()->update(['deleted_at' => now()]);
+            $reservation->feesAndOrders()->update(['deleted_at' => now()]);
         });
     }
     

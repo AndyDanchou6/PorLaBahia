@@ -63,10 +63,6 @@ class AccommodationResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
-                // TextColumn::make('description')
-                //     ->sortable()
-                //     ->searchable()
-                //     ->toggleable(),
                 TextColumn::make('capacity')
                     ->sortable()
                     ->searchable()

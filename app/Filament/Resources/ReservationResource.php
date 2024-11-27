@@ -4,8 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
-use App\Filament\Resources\ReservationResource\RelationManagers\FeesRelationManager;
-use App\Filament\Resources\ReservationResource\RelationManagers\OrdersRelationManager;
+use App\Filament\Resources\ReservationResource\RelationManagers\FeesAndOrdersRelationManager;
+use Illuminate\Support\Carbon;
 use App\Models\Reservation;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -18,11 +18,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Accommodation;
 use App\Models\GuestInfo;
-use App\Models\Discount;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 
 class ReservationResource extends Resource
 {
@@ -39,7 +40,7 @@ class ReservationResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('')
+                Group::make()
                     ->schema([
                         Select::make('accommodation_id')
                             ->label('Room Name')
@@ -63,59 +64,79 @@ class ReservationResource extends Resource
                             })
                             ->searchable()
                             ->required(),
-                        Select::make('discount_id')
-                            ->label('Discount')
-                            ->options(function () {
-                                return Discount::inRandomOrder()
-                                    ->limit(5)
-                                    ->get()
-                                    ->pluck('discount_code', 'id');
-                            })
-                            ->searchable()
-                            ->nullable(),
-                        TextInput::make('booking_reference_no')
-                            ->label('Booking Reference Number')
-                            ->default(fn() => (new Reservation())->generateBookingReference())
-                            ->readOnly()
-                            ->required(),
-                        TextInput::make('booking_fee')
-                            ->integer()
-                            ->required(),
-                    ])->columns(2),
-
-                Section::make('Reservation Date')
-                    ->schema([
                         DatePicker::make('check_in_date')
                             ->required()
-                            ->date(),
+                            ->date()
+                            ->minDate(today())
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, $set) {
+                                $set('check_out_date', null);
+                            }),
                         DatePicker::make('check_out_date')
                             ->required()
-                            ->date(),
-                    ]),
+                            ->date()
+                            ->reactive()
+                            ->disabled(fn($get) => !$get('check_in_date'))
+                            ->minDate(function ($get) {
+                                $checkInDate = $get('check_in_date');
+                                return $checkInDate ? Carbon::parse($checkInDate)->addDay() : today()->addDay();
+                            }),
+                    ])->columnSpan([
+                        'md' => 2,
+                        'lg' => 2,
+                    ])->columns(2),
 
-
-                Section::make('Payment Details')
+                Section::make()
                     ->schema([
-                        Select::make('payment_method')
-                            ->options([
-                                'gcash' => 'G-Cash',
-                                'cash' => 'Cash',
-                            ])
-                            ->required(),
-                        Select::make('payment_status')
-                            ->options([
-                                'unpaid' => 'Unpaid',
-                                'partial' => 'Partially Paid',
-                                'paid' => 'Fully Paid',
-                            ])
-                            ->required(),
+                        Group::make()
+                            ->schema([
+                                TextInput::make('booking_reference_no')
+                                    ->label('Booking Reference Number')
+                                    ->default(fn() => (new Reservation())->generateBookingReference())
+                                    ->readOnly(),
+                                Toggle::make('booking_status')
+                                    ->label('Booking Status')
+                                    ->default(true)
+                                    ->disabled(fn($context) => $context === 'create'),
+                            ]),
+                    ])->columnSpan([
+                        'md' => 1,
+                        'lg' => 1,
                     ]),
-
-                Section::make('')
+                Group::make()
                     ->schema([
-                        Toggle::make('booking_status')
-                            ->default(true),
-                    ])->hiddenOn('create'),
+                        TextInput::make('total_payable')
+                            ->numeric()
+                            ->step(0.01)
+                            ->default(fn($record) => $record->total_payable ?? 0.00)
+                            ->visible(fn($context) => $context === 'view' || $context === 'edit')
+                            ->afterStateHydrated(function ($state, $set, $record) {
+                                $set('total_payable', $state ?? $record->total_payable ?? 0.00);
+                            }),
+                        TextInput::make('total_paid')
+                            ->numeric()
+                            ->step(0.01)
+                            ->default(fn($record) => $record->total_paid ?? 0.00)
+                            ->visible(fn($context) => $context === 'view' || $context === 'edit')
+                            ->afterStateHydrated(function ($state, $set, $record) {
+                                $set('total_paid', $state ?? $record->total_paid ?? 0.00);
+                            }),
+                        TextInput::make('balance')
+                            ->numeric()
+                            ->step(0.01)
+                            ->default(fn($record) => $record->balance ?? 0.00)
+                            ->visible(fn($context) => $context === 'view' || $context === 'edit')
+                            ->afterStateHydrated(function ($state, $set, $record) {
+                                $set('balance', $state ?? $record->balance ?? 0.00);
+                            }),
+                    ])->hidden(fn() => auth()->user()->role !== 1)
+                    ->columnSpan(3)->columns([
+                        'md' => 3,
+                        'lg' => 3,
+                    ]),
+            ])->columns([
+                'md' => 3,
+                'lg' => 3,
             ]);
     }
 
@@ -125,6 +146,11 @@ class ReservationResource extends Resource
             ->columns([
                 TextColumn::make('booking_reference_no')
                     ->searchable(),
+                TextColumn::make('guest_id')
+                    ->label('Guest Name')
+                    ->formatStateUsing(function ($state, $record) {
+                        return $record->guest->first_name . ' ' . $record->guest->last_name;
+                    }),
                 TextColumn::make('check_in_date')
                     ->dateTime()
                     ->sortable()
@@ -133,15 +159,43 @@ class ReservationResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('booking_fee')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('payment_method')
-                    ->searchable()
-                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                Filter::make('Today')
+                    ->query(function ($query) {
+                        return $query->where('check_in_date', '=', Carbon::today());
+                    }),
+                Filter::make('Past Reservations')
+                    ->query(function ($query) {
+                        return $query->where('check_in_date', '<', Carbon::today())
+                            ->where('check_out_date', '<', Carbon::today());
+                    }),
+                Filter::make('Present Reservations')
+                    ->query(function ($query) {
+                        return $query->where('check_in_date', '>=', Carbon::today())
+                        ->orWhere('check_out_date', '>=', Carbon::today());
+                    }),
+                Filter::make('Last Month')
+                    ->query(function ($query) {
+                        return $query->where('check_in_date', '>=', Carbon::now()->subMonth()->startOfMonth())
+                            ->where('check_out_date', '<=', Carbon::now()->subWeek()->endOfMonth());
+                    }),
+                Filter::make('Last Week')
+                    ->query(function ($query) {
+                        return $query->where('check_in_date', '>=', Carbon::now()->subWeek()->startOfWeek())
+                            ->where('check_out_date', '<=', Carbon::now()->subWeek()->endOfWeek());
+                    }),
+                Filter::make('This Week')
+                    ->query(function ($query) {
+                        return $query->where('check_in_date', '>=', Carbon::today())
+                            ->where('check_out_date', '<=', Carbon::today()->addWeek());
+                    }),
+                Filter::make('This Month')
+                    ->query(function ($query) {
+                        return $query->where('check_in_date', '>=', Carbon::today())
+                            ->where('check_out_date', '<=', Carbon::today()->addMonth());
+                    }),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -167,8 +221,7 @@ class ReservationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            OrdersRelationManager::class,
-            FeesRelationManager::class
+            FeesAndOrdersRelationManager::class,
         ];
     }
 
