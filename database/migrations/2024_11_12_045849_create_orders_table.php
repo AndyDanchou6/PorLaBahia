@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('item');
             $table->integer('quantity');
             $table->integer('price');
-            $table->date('order_date');
+            $table->dateTime('order_date');
             $table->softDeletes();
             $table->timestamps();
 
