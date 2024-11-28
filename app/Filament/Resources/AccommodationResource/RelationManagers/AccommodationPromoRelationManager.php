@@ -1,37 +1,25 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\AccommodationResource\RelationManagers;
 
-use App\Filament\Resources\AccommodationPromoResource\Pages;
-use App\Filament\Resources\AccommodationPromoResource\RelationManagers;
-use App\Models\AccommodationPromo;
+use App\Models\Accommodation;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\AccommodationPromo;
 
-class AccommodationPromoResource extends Resource
+class AccommodationPromoRelationManager extends RelationManager
 {
-    protected static ?string $model = AccommodationPromo::class;
+    protected static string $relationship = 'accommodation_promo';
 
-    protected static ?string $navigationIcon = 'heroicon-o-gift';
-
-    protected static ?string $navigationGroup = 'Settings';
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('accommodation_id')
-                    ->relationship(name: 'accommodation', titleAttribute: 'room_name')
-                    ->required()
-                    ->reactive()
-                    ->afterStateUpdated(function ($set, $get) {
-                        static::updateDiscountedPrice($set, $get);
-                    }),
                 Forms\Components\Select::make('discount_type')
                     ->label('Discount Type')
                     ->options([
@@ -41,7 +29,7 @@ class AccommodationPromoResource extends Resource
                     ->required()
                     ->reactive()
                     ->afterStateUpdated(function ($set, $get) {
-                        static::updateDiscountedPrice($set, $get);
+                        static::calculateDiscountedPrice($set, $get);
                     }),
                 Forms\Components\TextInput::make('value')
                     ->required()
@@ -65,7 +53,7 @@ class AccommodationPromoResource extends Resource
                             $set('value', max($state, 0));
                         }
 
-                        static::updateDiscountedPrice($set, $get);
+                        static::calculateDiscountedPrice($set, $get);
                     }),
                 Forms\Components\TextInput::make('discounted_price')
                     ->label('Discounted Price')
@@ -88,17 +76,13 @@ class AccommodationPromoResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
+            ->recordTitleAttribute('discount_type')
             ->columns([
-                Tables\Columns\TextColumn::make('accommodation.room_name')
-                    ->formatStateUsing(fn($state) => ucwords($state))
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('discount_type')
-                    ->label('Discount Type')
-                    ->formatStateUsing(fn($state) => ucwords($state))
-                    ->searchable(),
+                    ->formatStateUsing(fn($state) => ucwords($state)),
                 Tables\Columns\TextColumn::make('value')
                     ->label('Value')
                     ->searchable()
@@ -108,15 +92,12 @@ class AccommodationPromoResource extends Resource
 
                         return $prefix . number_format($state, 2) . $suffix;
                     }),
-
                 Tables\Columns\TextColumn::make('discounted_price')
                     ->label('Discounted Price')
+                    ->badge()
                     ->prefix('₱')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('promo_start_date')
-                    ->label('Promo Start Date')
-                    ->date()
+                    ->color('gray')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('promo_end_date')
                     ->label('Promo End Date')
@@ -129,70 +110,47 @@ class AccommodationPromoResource extends Resource
                         'active' => 'success',
                         'expired' => 'danger',
                     })
-                    ->formatStateUsing(fn($state) => ucwords($state))
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->formatStateUsing(fn($state) => ucwords($state)),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                //
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()
-                        ->color('warning'),
-                    Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make(),
-                    Tables\Actions\RestoreAction::make()
-                        ->color('success'),
-                ]),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
 
-    public static function getRelations(): array
+
+    private function calculateDiscountedPrice($set, $get)
     {
-        return [
-            //
-        ];
-    }
+        $accommodation = $this->getOwnerRecord(); // where to access the relationship's owner record
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListAccommodationPromos::route('/'),
-            'create' => Pages\CreateAccommodationPromo::route('/create'),
-            'view' => Pages\ViewAccommodationPromo::route('/{record}'),
-            'edit' => Pages\EditAccommodationPromo::route('/{record}/edit'),
-        ];
-    }
+        if ($accommodation) {
+            $value = (float) $get('value');
+            $discountType = $get('discount_type');
+            $price = $accommodation->price;
 
-    public static function canAccess(): bool
-    {
-        return auth()->user()->role == 1;
-    }
+            if ($discountType === 'fixed') {
+                $discountPrice = $price - $value;
+            } elseif ($discountType === 'percentage') {
+                $discountPrice = $price - ($price * $value / 100);
+            } else {
+                $discountPrice = $price;
+            }
 
-    private static function updateDiscountedPrice($set, $get)
-    {
-        $accommodationId = $get('accommodation_id');
-        $value = (float) $get('value');
-        $discountType = $get('discount_type');
-
-        $discountedPrice = AccommodationPromo::calculateDiscountedPrice($value, $discountType, $accommodationId);
-
-        $set('discounted_price', $discountedPrice);
+            $set('discounted_price', max($discountPrice, 0));
+        } else {
+            $set('discounted_price', null);
+        }
     }
 }

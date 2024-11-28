@@ -26,4 +26,23 @@ class AccommodationPromo extends Model
     {
         return $this->belongsTo(Accommodation::class, 'accommodation_id');
     }
+
+    public static function calculateDiscountedPrice($value, $discountType, $accommodationId)
+    {
+        $accommodation = \App\Models\Accommodation::find($accommodationId);
+
+        if ($accommodation) {
+            $price = $accommodation->price;
+
+            if ($discountType === 'fixed') {
+                return max($price - $value, 0);
+            } elseif ($discountType === 'percentage') {
+                return max($price - ($price * $value / 100), 0);
+            }
+
+            return $price;
+        }
+
+        return null;
+    }
 }

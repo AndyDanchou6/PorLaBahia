@@ -18,7 +18,7 @@ class ViewReservation extends ViewRecord
             Actions\Action::make('back')
                 ->url(ReservationResource::getUrl())
                 ->button()
-                ->color('danger'),
+                ->color('gray'),
         ];
     }
 }
