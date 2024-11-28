@@ -77,22 +77,37 @@ class AccommodationResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()
-                        ->color('warning'),
-                    Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->trashed()),
-                    Tables\Actions\RestoreAction::make()
-                        ->color('success'),
-                ]),
+                Tables\Actions\ViewAction::make()
+                    ->visible(function ($record) {
+                        return !$record->trashed();
+                    }),
+                Tables\Actions\EditAction::make()
+                    ->visible(function ($record) {
+                        return !$record->trashed();
+                    })
+                    ->color('warning'),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->visible(function ($record) {
+                        return auth()->check() && auth()->user()->role === 1 && $record->trashed();
+                    }),
+                Tables\Actions\RestoreAction::make()
+                    ->visible(function ($record) {
+                        return auth()->check() && auth()->user()->role === 1 && $record->trashed();
+                    })
+                    ->color('success'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make()
+                        ->visible(function () {
+                            return auth()->check() && auth()->user()->role === 1;
+                        }),
+                    Tables\Actions\RestoreBulkAction::make()
+                        ->visible(function () {
+                            return auth()->check() && auth()->user()->role === 1;
+                        }),
                 ]),
             ]);
     }

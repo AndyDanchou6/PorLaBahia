@@ -24,6 +24,8 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 
 class ReservationResource extends Resource
 {
@@ -162,58 +164,170 @@ class ReservationResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
-                Filter::make('Today')
-                    ->query(function ($query) {
-                        return $query->where('check_in_date', '=', Carbon::today());
+                TernaryFilter::make('booking_status')
+                    ->label('Active Booking')
+                    ->default(true),
+                Filter::make('dateFilter')
+                    ->form([
+                        Select::make('dateRange')
+                            ->label('Date Filter')
+                            ->options([
+                                'present' => 'Present Reservations',
+                                'past' => 'Past Reservations',
+                                'today' => 'Today',
+                                'thisWeek' => 'This Week',
+                                'lastWeek' => 'Last Week',
+                                'thisMonth' => 'This Month',
+                                'lastMonth' => 'Last Month',
+                            ])
+                            ->default('thisWeek')
+                            ->placeholder('No Date Filters'),
+                    ])
+                    ->query(function (Builder $query, $data): Builder {
+                        if (isset($data['dateRange'])) {
+                            switch ($data['dateRange']) {
+                                case 'today':
+                                    $query->whereDate('check_in_date', '=', Carbon::today())
+                                        ->orWhere(function ($query) {
+                                            $query->whereDate('check_in_date', '<', Carbon::today())
+                                                ->whereDate('check_out_date', '>', Carbon::today());
+                                        });
+                                    break;
+
+                                case 'present':
+                                    $query->whereDate('check_in_date', '>=', Carbon::today())
+                                        ->orWhere(function ($query) {
+                                            $query->whereDate('check_in_date', '<', Carbon::today())
+                                                ->where('check_out_date', '>', Carbon::today());
+                                        });
+                                    break;
+
+                                case 'past':
+                                    $query->whereDate('check_out_date', '<', Carbon::today());
+                                    break;
+
+                                case 'thisWeek':
+                                    $query->where(function ($query) {
+                                        $query->whereBetween('check_in_date', [
+                                            Carbon::now()->startOfWeek(),
+                                            Carbon::now()->endOfWeek(),
+                                        ])
+                                            ->orWhereBetween('check_out_date', [
+                                                Carbon::now()->startOfWeek()->addDay(),
+                                                Carbon::now()->endOfWeek(),
+                                            ]);
+                                    });
+                                    break;
+
+                                case 'lastWeek':
+                                    $query->where(function ($query) {
+                                        $query->whereBetween('check_in_date', [
+                                            Carbon::now()->subWeek()->startOfWeek(),
+                                            Carbon::now()->subWeek()->endOfWeek(),
+                                        ])
+                                            ->orWhereBetween('check_out_date', [
+                                                Carbon::now()->subWeek()->startOfWeek()->addDay(),
+                                                Carbon::now()->subWeek()->endOfWeek(),
+                                            ]);
+                                    });
+                                    break;
+
+                                case 'thisMonth':
+                                    $query->where(function ($query) {
+                                        $query->whereMonth('check_in_date', '=', Carbon::now()->month)
+                                            ->whereYear('check_in_date', '=', Carbon::now()->year)
+                                            ->orWhere(function ($query) {
+                                                $query->whereMonth('check_out_date', '=', Carbon::now()->month)
+                                                    ->whereYear('check_out_date', '=', Carbon::now()->year)
+                                                    ->whereDay('check_out_date', '>', 1);
+                                            });
+                                    });
+                                    break;
+
+                                case 'lastMonth':
+                                    $query->whereMonth('check_in_date', '=', Carbon::now()->subMonth()->month)
+                                        ->whereYear('check_in_date', '=', Carbon::now()->subMonth()->year)
+                                        ->orWhere(function ($query) {
+                                            $query->whereMonth('check_out_date', '=', Carbon::now()->subMonth()->month)
+                                                ->whereYear('check_out_date', '=', Carbon::now()->subMonth()->year)
+                                                ->whereDay('check_out_date', '>', 1);
+                                        });
+                                    break;
+                            }
+                        }
+
+                        return $query;
                     }),
-                Filter::make('Past Reservations')
-                    ->query(function ($query) {
-                        return $query->where('check_in_date', '<', Carbon::today())
-                            ->where('check_out_date', '<', Carbon::today());
-                    }),
-                Filter::make('Present Reservations')
-                    ->query(function ($query) {
-                        return $query->where('check_in_date', '>=', Carbon::today())
-                        ->orWhere('check_out_date', '>=', Carbon::today());
-                    }),
-                Filter::make('Last Month')
-                    ->query(function ($query) {
-                        return $query->where('check_in_date', '>=', Carbon::now()->subMonth()->startOfMonth())
-                            ->where('check_out_date', '<=', Carbon::now()->subWeek()->endOfMonth());
-                    }),
-                Filter::make('Last Week')
-                    ->query(function ($query) {
-                        return $query->where('check_in_date', '>=', Carbon::now()->subWeek()->startOfWeek())
-                            ->where('check_out_date', '<=', Carbon::now()->subWeek()->endOfWeek());
-                    }),
-                Filter::make('This Week')
-                    ->query(function ($query) {
-                        return $query->where('check_in_date', '>=', Carbon::today())
-                            ->where('check_out_date', '<=', Carbon::today()->addWeek());
-                    }),
-                Filter::make('This Month')
-                    ->query(function ($query) {
-                        return $query->where('check_in_date', '>=', Carbon::today())
-                            ->where('check_out_date', '<=', Carbon::today()->addMonth());
-                    }),
+
+                //     Filter::make('Today')
+                //         ->query(function ($query) {
+                //             return $query->where('check_in_date', '=', Carbon::today());
+                //         }),
+                //     Filter::make('Past Reservations')
+                //         ->query(function ($query) {
+                //             return $query->where('check_in_date', '<', Carbon::today())
+                //                 ->where('check_out_date', '<', Carbon::today());
+                //         }),
+                //     Filter::make('Present Reservations')
+                //         ->query(function ($query) {
+                //             return $query->where('check_in_date', '>=', Carbon::today())
+                //                 ->orWhere('check_out_date', '>=', Carbon::today());
+                //         }),
+                //     Filter::make('Last Month')
+                //         ->query(function ($query) {
+                //             return $query->where('check_in_date', '>=', Carbon::now()->subMonth()->startOfMonth())
+                //                 ->where('check_out_date', '<=', Carbon::now()->subWeek()->endOfMonth());
+                //         }),
+                //     Filter::make('Last Week')
+                //         ->query(function ($query) {
+                //             return $query->where('check_in_date', '>=', Carbon::now()->subWeek()->startOfWeek())
+                //                 ->where('check_out_date', '<=', Carbon::now()->subWeek()->endOfWeek());
+                //         }),
+                //     Filter::make('This Week')
+                //         ->query(function ($query) {
+                //             return $query->where('check_in_date', '>=', Carbon::today())
+                //                 ->where('check_out_date', '<=', Carbon::today()->addWeek());
+                //         }),
+                //     Filter::make('This Month')
+                //         ->query(function ($query) {
+                //             return $query->where('check_in_date', '>=', Carbon::today())
+                //                 ->where('check_out_date', '<=', Carbon::today()->addMonth());
+                //         }),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\ViewAction::make()
+                        ->visible(function ($record) {
+                            return !$record->trashed();
+                        }),
                     Tables\Actions\EditAction::make()
+                        ->visible(function ($record) {
+                            return !$record->trashed();
+                        })
                         ->color('warning'),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->trashed()),
+                        ->visible(function ($record) {
+                            return auth()->check() && auth()->user()->role === 1 && $record->trashed();
+                        }),
                     Tables\Actions\RestoreAction::make()
+                        ->visible(function ($record) {
+                            return auth()->check() && auth()->user()->role === 1 && $record->trashed();
+                        })
                         ->color('success'),
                 ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make()
+                        ->visible(function () {
+                            return auth()->check() && auth()->user()->role === 1;
+                        }),
+                    Tables\Actions\RestoreBulkAction::make()
+                        ->visible(function () {
+                            return auth()->check() && auth()->user()->role === 1;
+                        }),
                 ]),
             ]);
     }

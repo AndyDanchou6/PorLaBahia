@@ -22,6 +22,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -147,10 +148,11 @@ class FeeAndOrderResource extends Resource
             ])
             ->filters([
                 TrashedFilter::make(),
-                Filter::make('Fee')
-                    ->query(fn(Builder $query): Builder => $query->where('category', 'fee')),
-                Filter::make('Order')
-                    ->query(fn(Builder $query): Builder => $query->where('category', 'order')),
+                SelectFilter::make('category')
+                ->options([
+                    'fee' => 'Fee',
+                    'order' => 'Order',
+                ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()

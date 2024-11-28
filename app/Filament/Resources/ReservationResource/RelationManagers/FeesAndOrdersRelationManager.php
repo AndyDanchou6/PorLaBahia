@@ -16,6 +16,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -97,21 +99,42 @@ class FeesAndOrdersRelationManager extends RelationManager
                     ->searchable(),
             ])
             ->filters([
-                Filter::make('Fee')
-                    ->query(fn(Builder $query): Builder => $query->where('category', 'fee')),
-                Filter::make('Order')
-                    ->query(fn(Builder $query): Builder => $query->where('category', 'order')),
+                TrashedFilter::make(),
+                SelectFilter::make('category')
+                    ->options([
+                        'fee' => 'Fee',
+                        'order' => 'Order',
+                    ]),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(function ($record) {
+                        return !$record->trashed();
+                    }),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\RestoreAction::make()
+                    ->visible(function ($record) {
+                        return auth()->check() && auth()->user()->role === 1 && $record->trashed();
+                    }),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->visible(function ($record) {
+                        return auth()->check() && auth()->user()->role === 1 && $record->trashed();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make()
+                        ->visible(function () {
+                            return auth()->check() && auth()->user()->role === 1;
+                        }),
+                    Tables\Actions\RestoreBulkAction::make()
+                        ->visible(function () {
+                            return auth()->check() && auth()->user()->role === 1;
+                        }),
                 ]),
             ]);
     }
