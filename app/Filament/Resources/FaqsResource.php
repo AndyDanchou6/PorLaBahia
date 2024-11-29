@@ -81,7 +81,6 @@ class FaqsResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-<<<<<<< HEAD
                 Tables\Actions\ViewAction::make()
                     ->visible(fn($record) => !$record->trashed()),
                 Tables\Actions\EditAction::make()
@@ -93,18 +92,6 @@ class FaqsResource extends Resource
                 Tables\Actions\RestoreAction::make()
                     ->color('success')
                     ->visible(fn($record) => $record->trashed() && auth()->user()->role === 1),
-=======
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()
-                        ->color('warning'),
-                    Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->trashed()),
-                    Tables\Actions\RestoreAction::make()
-                        ->color('success'),
-                ]),
->>>>>>> b116b084dc663b00b27bdc02940bd2bf16986f01
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

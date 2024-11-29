@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\AmenitiesResource\RelationManagers;
 
 use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -18,10 +20,13 @@ class GalleriesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\FileUpload::make('image')
-                    ->multiple()
-                    ->image()
-                    ->columnSpan(2),
+                Fieldset::make('')
+                    ->schema([
+                        Forms\Components\FileUpload::make('image')
+                            ->multiple()
+                            ->image()
+                            ->columnSpan(2),
+                    ])
             ]);
     }
 
