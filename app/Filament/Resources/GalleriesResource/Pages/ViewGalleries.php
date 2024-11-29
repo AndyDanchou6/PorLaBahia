@@ -18,7 +18,7 @@ class ViewGalleries extends ViewRecord
             Actions\Action::make('back')
                 ->url(GalleriesResource::getUrl())
                 ->button()
-                ->color('danger'),
+                ->color('gray'),
         ];
     }
 }

@@ -6,6 +6,8 @@ use App\Filament\Resources\AmenitiesResource\Pages;
 use App\Filament\Resources\AmenitiesResource\RelationManagers;
 use App\Models\Amenities;
 use Filament\Forms;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,15 +25,51 @@ class AmenitiesResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('amenity_name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\MarkdownEditor::make('description')
-                    ->columnSpan('full'),
-                Forms\Components\FileUpload::make('main_image')
-                    ->image()
-                    ->required(),
-            ])->columns(1);
+                Group::make()
+                    ->schema([
+                        Section::make()
+                            ->schema([
+                                Forms\Components\TextInput::make('amenity_name')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->columnSpan('2'),
+                                Forms\Components\MarkdownEditor::make('description')
+                                    ->toolbarButtons([
+                                        'blockquote',
+                                        'bold',
+                                        'bulletList',
+                                        'codeBlock',
+                                        'heading',
+                                        'italic',
+                                        'link',
+                                        'orderedList',
+                                        'redo',
+                                        'strike',
+                                        'table',
+                                        'undo',
+                                    ])
+                                    ->columnSpan('2'),
+                            ])
+                    ])->columnSpan([
+                        'md' => 2,
+                        'lg' => 2,
+                    ])->columns(2),
+                Section::make()
+                    ->schema([
+                        Group::make()
+                            ->schema([
+                                Forms\Components\FileUpload::make('main_image')
+                                    ->image()
+                                    ->required(),
+                            ]),
+                    ])->columnSpan([
+                        'md' => 1,
+                        'lg' => 1,
+                    ]),
+            ])->columns([
+                'md' => 3,
+                'lg' => 3,
+            ]);
     }
 
     public static function table(Table $table): Table

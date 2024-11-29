@@ -19,7 +19,7 @@ class ViewDiscount extends ViewRecord
             Actions\Action::make('back')
                 ->url(DiscountResource::getUrl())
                 ->button()
-                ->color('danger'),
+                ->color('gray'),
         ];
     }
 }

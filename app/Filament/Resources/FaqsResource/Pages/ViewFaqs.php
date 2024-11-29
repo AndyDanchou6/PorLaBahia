@@ -18,7 +18,7 @@ class ViewFaqs extends ViewRecord
             Actions\Action::make('back')
                 ->url(FaqsResource::getUrl())
                 ->button()
-                ->color('danger'),
+                ->color('gray'),
         ];
     }
 }

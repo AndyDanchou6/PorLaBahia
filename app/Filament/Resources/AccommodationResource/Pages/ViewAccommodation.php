@@ -19,7 +19,7 @@ class ViewAccommodation extends ViewRecord
             Actions\Action::make('back')
                 ->url(AccommodationResource::getUrl())
                 ->button()
-                ->color('danger'),
+                ->color('gray'),
         ];
     }
 }

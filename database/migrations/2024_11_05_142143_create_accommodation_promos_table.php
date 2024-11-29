@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('accommodation_id');
             $table->string('discount_type');
-            $table->string('value');
+            $table->decimal('value', 10, 2);
             $table->integer('discounted_price');
             $table->date('promo_start_date');
             $table->date('promo_end_date');
+            $table->string('status')->default('active')->nullable();
             $table->softDeletes();
             $table->timestamps();
 

@@ -21,6 +21,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Section;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class AccommodationResource extends Resource
 {
@@ -100,6 +101,7 @@ class AccommodationResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\AccommodationPromoRelationManager::class,
             RelationManagers\GalleriesRelationManager::class,
         ];
     }

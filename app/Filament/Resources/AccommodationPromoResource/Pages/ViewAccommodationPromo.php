@@ -18,7 +18,7 @@ class ViewAccommodationPromo extends ViewRecord
             Actions\Action::make('back')
                 ->url(AccommodationPromoResource::getUrl())
                 ->button()
-                ->color('danger'),
+                ->color('gray'),
         ];
     }
 }
