@@ -18,7 +18,7 @@ class ViewAmenities extends ViewRecord
             Actions\Action::make('back')
                 ->url(AmenitiesResource::getUrl())
                 ->button()
-                ->color('danger'),
+                ->color('gray'),
         ];
     }
 }

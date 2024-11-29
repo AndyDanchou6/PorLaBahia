@@ -31,15 +31,14 @@ class Accommodation extends Model
         return $this->morphMany(Galleries::class, 'gallery');
     }
 
+    public function accommodation_promo()
+    {
+        return $this->hasMany(AccommodationPromo::class);
+    }
+
     public static function boot()
     {
         parent::boot();
-
-        // static::deleting(function ($accommodation) {
-        //     $accommodation->galleries()->each(function ($gallery) {
-        //         $gallery->delete();
-        //     });
-        // });
 
         static::deleting(function ($accommodation) {
             $accommodation->galleries()->each(function ($gallery) {

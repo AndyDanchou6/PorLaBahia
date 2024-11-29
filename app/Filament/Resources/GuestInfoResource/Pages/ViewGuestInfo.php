@@ -18,7 +18,7 @@ class ViewGuestInfo extends ViewRecord
             Actions\Action::make('back')
                 ->url(GuestInfoResource::getUrl())
                 ->button()
-                ->color('danger'),
+                ->color('gray'),
         ];
     }
 }
