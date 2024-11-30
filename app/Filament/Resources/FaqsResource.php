@@ -28,34 +28,39 @@ class FaqsResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('category')
-                    ->required()
-                    ->options([
-                        "booking" => "Booking",
-                        "services" => "Services",
-                        "policies" => "Policies",
-                        "payments" => "Payments",
-                    ]),
-                Forms\Components\TextInput::make('questions')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\MarkdownEditor::make('answer')
-                    ->toolbarButtons([
-                        'attachFiles',
-                        'blockquote',
-                        'bold',
-                        'bulletList',
-                        'codeBlock',
-                        'heading',
-                        'italic',
-                        'link',
-                        'orderedList',
-                        'redo',
-                        'strike',
-                        'table',
-                        'undo',
-                    ])
-                    ->columnSpan(2),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Select::make('category')
+                            ->required()
+                            ->options([
+                                "booking" => "Booking",
+                                "services" => "Services",
+                                "policies" => "Policies",
+                                "payments" => "Payments",
+                            ]),
+                        Forms\Components\TextInput::make('questions')
+                            ->label('Question')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\MarkdownEditor::make('answer')
+                            ->toolbarButtons([
+                                'attachFiles',
+                                'blockquote',
+                                'bold',
+                                'bulletList',
+                                'codeBlock',
+                                'heading',
+                                'italic',
+                                'link',
+                                'orderedList',
+                                'redo',
+                                'strike',
+                                'table',
+                                'undo',
+                            ])
+                            ->columnSpan(2),
+                    ])->columns(2)
+
             ]);
     }
 

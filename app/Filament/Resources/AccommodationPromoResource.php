@@ -6,6 +6,7 @@ use App\Filament\Resources\AccommodationPromoResource\Pages;
 use App\Filament\Resources\AccommodationPromoResource\RelationManagers;
 use App\Models\AccommodationPromo;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -25,66 +26,68 @@ class AccommodationPromoResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('accommodation_id')
-                    ->relationship(name: 'accommodation', titleAttribute: 'room_name')
-                    ->required()
-                    ->reactive()
-                    ->afterStateUpdated(function ($set, $get) {
-                        static::updateDiscountedPrice($set, $get);
-                    }),
-                Forms\Components\Select::make('discount_type')
-                    ->label('Discount Type')
-                    ->options([
-                        'fixed' => 'Fixed',
-                        'percentage' => 'Percentage',
+                Section::make()
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('accommodation_id')
+                                    ->relationship(name: 'accommodation', titleAttribute: 'room_name')
+                                    ->required()
+                                    ->searchable()
+                                    ->live()
+                                    ->afterStateUpdated(function ($set, $get) {
+                                        static::updateDiscountedPrice($set, $get);
+                                    }),
+                                Forms\Components\Select::make('discount_type')
+                                    ->label('Discount Type')
+                                    ->options([
+                                        'fixed' => 'Fixed',
+                                        'percentage' => 'Percentage',
+                                    ])
+                                    ->required()
+                                    ->live()
+                                    ->afterStateUpdated(function ($set, $get) {
+                                        static::updateDiscountedPrice($set, $get);
+                                    }),
+                                Forms\Components\TextInput::make('value')
+                                    ->required()
+                                    ->live(debounce: 500)
+                                    ->numeric()
+                                    ->prefixIcon(fn($get) => $get('discount_type') === 'fixed' ? '₱' : null)
+                                    ->suffixIcon(fn($get) => $get('discount_type') === 'percentage' ? '%' : null)
+                                    ->afterStateUpdated(function ($set, $get, $state) {
+                                        // $currentDiscountType = $get('discount_type');
+
+                                        // if ($currentDiscountType === 'percentage') {
+                                        //     $set('value', min($state, 100));
+                                        // } elseif ($currentDiscountType === 'fixed') {
+                                        //     $set('value', max($state, 0));
+                                        // } elseif ($currentDiscountType !== $state) {
+                                        //     $set('value', null);
+                                        // }
+
+                                        static::updateDiscountedPrice($set, $get);
+                                    }),
+                                Forms\Components\TextInput::make('discounted_price')
+                                    ->label('Discounted Price')
+                                    ->required()
+                                    ->readOnly()
+                                    ->live()
+                                    ->prefix('₱')
+                                    ->numeric()
+                                    ->afterStateUpdated(function ($set, $get) {
+                                        $set('discounted_price', $get('discounted_price'));
+                                    }),
+                                Forms\Components\DatePicker::make('promo_start_date')
+                                    ->label('Promo Start Date')
+                                    ->minDate(now()->toDateString())
+                                    ->required(),
+                                Forms\Components\DatePicker::make('promo_end_date')
+                                    ->label('Promo End Date')
+                                    ->minDate(now()->toDateString())
+                                    ->required(),
+                            ])
                     ])
-                    ->required()
-                    ->reactive()
-                    ->afterStateUpdated(function ($set, $get) {
-                        static::updateDiscountedPrice($set, $get);
-                    }),
-                Forms\Components\TextInput::make('value')
-                    ->required()
-                    ->reactive()
-                    ->numeric()
-                    ->prefix(fn($get) => $get('discount_type') === 'fixed' ? '₱' : null)
-                    ->suffix(fn($get) => $get('discount_type') === 'percentage' ? '%' : null)
-                    ->afterStateUpdated(function ($set, $get, $state) {
-
-                        static $previousDiscountType = null;
-
-                        if ($previousDiscountType !== $get('discount_type')) {
-                            $set('value', null);
-                        }
-
-                        $previousDiscountType = $get('discount_type');
-
-                        if ($get('discount_type') === 'percentage') {
-                            $set('value', min($state, 100));
-                        } elseif ($get('discount_type') === 'fixed') {
-                            $set('value', max($state, 0));
-                        }
-
-                        static::updateDiscountedPrice($set, $get);
-                    }),
-                Forms\Components\TextInput::make('discounted_price')
-                    ->label('Discounted Price')
-                    ->required()
-                    ->readOnly()
-                    ->reactive()
-                    ->prefix('₱')
-                    ->numeric()
-                    ->afterStateUpdated(function ($set, $get) {
-                        $set('discounted_price', $get('discounted_price'));
-                    }),
-                Forms\Components\DatePicker::make('promo_start_date')
-                    ->label('Promo Start Date')
-                    ->minDate(now()->toDateString())
-                    ->required(),
-                Forms\Components\DatePicker::make('promo_end_date')
-                    ->label('Promo End Date')
-                    ->minDate(now()->toDateString())
-                    ->required(),
             ]);
     }
 
@@ -114,16 +117,16 @@ class AccommodationPromoResource extends Resource
                     ->prefix('₱')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('promo_start_date')
-                    ->label('Promo Start Date')
-                    ->date()
+                Tables\Columns\TextColumn::make('promotion_date')
+                    ->label('Promotion Date')
+                    ->formatStateUsing(fn($state) => $state ? $state : 'N/A')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('promo_end_date')
-                    ->label('Promo End Date')
-                    ->date()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('promo_end_date')
+                //     ->label('Promo End Date')
+                //     ->date()
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
+                    ->label('Promo Status')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'active' => 'success',
@@ -145,9 +148,11 @@ class AccommodationPromoResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\ViewAction::make()
+                        ->visible(fn($record) => !$record->trashed()),
                     Tables\Actions\EditAction::make()
-                        ->color('warning'),
+                        ->color('warning')
+                        ->visible(fn($record) => !$record->trashed()),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make()
                         ->visible(fn($record) => $record->trashed()),

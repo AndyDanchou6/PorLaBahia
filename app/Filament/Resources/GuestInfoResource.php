@@ -6,6 +6,8 @@ use App\Filament\Resources\GuestInfoResource\Pages;
 use App\Filament\Resources\GuestInfoResource\RelationManagers;
 use App\Models\GuestInfo;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -27,30 +29,40 @@ class GuestInfoResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('first_name')
-                    ->required()
-                    ->maxLength(255)
-                    ->placeholder('Enter First Name'),
-                Forms\Components\TextInput::make('last_name')
-                    ->required()
-                    ->maxLength(255)
-                    ->placeholder('Enter Last Name'),
-                Forms\Components\TextInput::make('contact_no')
-                    ->required()
-                    ->numeric()
-                    ->placeholder('Enter Contact Number'),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255)
-                    ->placeholder('Enter Email'),
-                Forms\Components\TextInput::make('address')
-                    ->required()
-                    ->maxLength(255)
-                    ->placeholder('Enter Address'),
-                Forms\Components\TextInput::make('fb_name')
-                    ->maxLength(255)
-                    ->placeholder('Enter Facebook Name (Optional)'),
+                Section::make()
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('first_name')
+                                    ->label('First Name')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->placeholder('Enter First Name'),
+                                Forms\Components\TextInput::make('last_name')
+                                    ->label('Last Name')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->placeholder('Enter Last Name'),
+                                Forms\Components\TextInput::make('contact_no')
+                                    ->label('Contact Number')
+                                    ->required()
+                                    ->numeric()
+                                    ->placeholder('Enter Contact Number'),
+                                Forms\Components\TextInput::make('email')
+                                    ->email()
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->placeholder('Enter Email'),
+                                Forms\Components\TextInput::make('address')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->placeholder('Enter Address'),
+                                Forms\Components\TextInput::make('fb_name')
+                                    ->label('Facebook Name')
+                                    ->maxLength(255)
+                                    ->placeholder('Enter Facebook Name (Optional)'),
+                            ])
+                    ])
             ]);
     }
 
@@ -89,9 +101,11 @@ class GuestInfoResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\ViewAction::make()
+                        ->visible(fn($record) => !$record->trashed()),
                     Tables\Actions\EditAction::make()
-                        ->color('warning'),
+                        ->color('warning')
+                        ->visible(fn($record) => !$record->trashed()),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make()
                         ->visible(fn($record) => $record->trashed()),

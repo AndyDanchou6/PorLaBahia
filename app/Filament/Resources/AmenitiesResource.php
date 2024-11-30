@@ -77,8 +77,10 @@ class AmenitiesResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('main_image')
+                    ->label('Main Image')
                     ->circular(),
                 Tables\Columns\TextColumn::make('amenity_name')
+                    ->label('Amenity Name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -93,16 +95,16 @@ class AmenitiesResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()
-                        ->color('warning'),
-                    Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->trashed()),
-                    Tables\Actions\RestoreAction::make()
-                        ->color('success'),
-                ]),
+                Tables\Actions\ViewAction::make()
+                    ->visible(fn($record) => !$record->trashed()),
+                Tables\Actions\EditAction::make()
+                    ->color('warning')
+                    ->visible(fn($record) => !$record->trashed()),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->visible(fn($record) => $record->trashed()),
+                Tables\Actions\RestoreAction::make()
+                    ->color('success'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
