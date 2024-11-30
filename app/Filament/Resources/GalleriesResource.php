@@ -8,6 +8,7 @@ use App\Models\Accommodation;
 use App\Models\Amenities;
 use App\Models\Galleries;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -25,41 +26,41 @@ class GalleriesResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('gallery_type')
-                    ->options([
-                        Amenities::class => 'Amenities',
-                        Accommodation::class => 'Accommodation',
-                    ])
-                    ->required()
-                    ->reactive()
-                    ->label('Choose Category')
-                    ->afterStateUpdated(fn(callable $set) => $set('gallery_id', null)),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Select::make('gallery_type')
+                            ->options([
+                                Amenities::class => 'Amenities',
+                                Accommodation::class => 'Accommodation',
+                            ])
+                            ->required()
+                            ->reactive()
+                            ->label('Choose Category')
+                            ->afterStateUpdated(fn(callable $set) => $set('gallery_id', null)),
 
-                Forms\Components\Select::make('gallery_id')
-                    ->label('Select Item')
-                    ->required()
-                    ->reactive()
-                    ->searchable()
-                    ->options(function (callable $get) {
-                        $category = $get('gallery_type');
+                        Forms\Components\Select::make('gallery_id')
+                            ->label('Select Item')
+                            ->required()
+                            ->reactive()
+                            ->searchable()
+                            ->options(function (callable $get) {
+                                $category = $get('gallery_type');
 
-                        if ($category === Amenities::class) {
-                            return Amenities::pluck('amenity_name', 'id');
-                        } elseif ($category === Accommodation::class) {
-                            return Accommodation::pluck('room_name', 'id');
-                        }
+                                if ($category === Amenities::class) {
+                                    return Amenities::pluck('amenity_name', 'id');
+                                } elseif ($category === Accommodation::class) {
+                                    return Accommodation::pluck('room_name', 'id');
+                                }
 
-                        return [];
-                    }),
-
-                Forms\Components\FileUpload::make('image')
-                    ->image()
-                    ->multiple()
-                    ->reorderable()
-                    ->required()
-                    ->columnSpan(2),
-
-
+                                return [];
+                            }),
+                        Forms\Components\FileUpload::make('image')
+                            ->image()
+                            ->multiple()
+                            ->reorderable()
+                            ->required()
+                            ->columnSpan('full'),
+                    ])->columns(2),
             ]);
     }
 
@@ -68,6 +69,7 @@ class GalleriesResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
+                    ->label('Images')
                     ->circular()
                     ->searchable()
                     ->stacked(),
@@ -96,9 +98,11 @@ class GalleriesResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\ViewAction::make()
+                        ->visible(fn($record) => !$record->trashed()),
                     Tables\Actions\EditAction::make()
-                        ->color('warning'),
+                        ->color('warning')
+                        ->visible(fn($record) => !$record->trashed()),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\ForceDeleteAction::make()
                         ->visible(fn($record) => $record->trashed()),

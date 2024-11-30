@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\AccommodationPromo;
+use Carbon\Carbon;
 
 class AccommodationPromoRelationManager extends RelationManager
 {
@@ -39,19 +40,19 @@ class AccommodationPromoRelationManager extends RelationManager
                     ->suffix(fn($get) => $get('discount_type') === 'percentage' ? '%' : null)
                     ->afterStateUpdated(function ($set, $get, $state) {
 
-                        static $previousDiscountType = null;
+                        // static $previousDiscountType = null;
 
-                        if ($previousDiscountType !== $get('discount_type')) {
-                            $set('value', null);
-                        }
+                        // if ($previousDiscountType !== $get('discount_type')) {
+                        //     $set('value', null);
+                        // }
 
-                        $previousDiscountType = $get('discount_type');
+                        // $previousDiscountType = $get('discount_type');
 
-                        if ($get('discount_type') === 'percentage') {
-                            $set('value', min($state, 100));
-                        } elseif ($get('discount_type') === 'fixed') {
-                            $set('value', max($state, 0));
-                        }
+                        // if ($get('discount_type') === 'percentage') {
+                        //     $set('value', min($state, 100));
+                        // } elseif ($get('discount_type') === 'fixed') {
+                        //     $set('value', max($state, 0));
+                        // }
 
                         static::calculateDiscountedPrice($set, $get);
                     }),
@@ -85,6 +86,8 @@ class AccommodationPromoRelationManager extends RelationManager
                     ->formatStateUsing(fn($state) => ucwords($state)),
                 Tables\Columns\TextColumn::make('value')
                     ->label('Value')
+                    ->badge()
+                    ->color('info')
                     ->searchable()
                     ->formatStateUsing(function ($state, $record) {
                         $prefix = $record->discount_type === 'fixed' ? '₱' : '';
@@ -97,11 +100,10 @@ class AccommodationPromoRelationManager extends RelationManager
                     ->badge()
                     ->prefix('₱')
                     ->numeric()
-                    ->color('gray')
+                    ->color('info')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('promo_end_date')
-                    ->label('Promo End Date')
-                    ->date()
+                Tables\Columns\TextColumn::make('promotion_date')
+                    ->label('Promotion Date')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
@@ -120,8 +122,11 @@ class AccommodationPromoRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\ActionGroup::make([
+                Tables\Actions\EditAction::make()
+                    ->color('warning'),
                 Tables\Actions\DeleteAction::make(),
+                // ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
