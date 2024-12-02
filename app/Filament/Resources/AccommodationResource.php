@@ -6,6 +6,7 @@ use App\Filament\Resources\AccommodationResource\Pages;
 use App\Filament\Resources\AccommodationResource\RelationManagers;
 use App\Filament\Resources\AccommodationResource\RelationManagers\GalleriesRelationManager;
 use App\Models\Accommodation;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
@@ -33,25 +34,30 @@ class AccommodationResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('room_name')
-                    ->required(),
-
-                MarkdownEditor::make('description')
-                    ->nullable(),
-
-                Section::make('')
+                Group::make()
                     ->schema([
-                        TextInput::make('capacity')
+                        TextInput::make('room_name')
+                            ->required(),
+
+                        MarkdownEditor::make('description')
+                            ->nullable(),
+                    ])->columnSpan(2),
+
+                Group::make()
+                    ->schema([
+                        TextInput::make('weekday_price')
+                            ->prefix('₱')
                             ->integer()
                             ->required(),
-                        TextInput::make('price')
+                        TextInput::make('weekend_price')
                             ->prefix('₱')
                             ->integer()
                             ->required(),
                         FileUpload::make('main_image')
                             ->required(),
-                    ])->columns(2),
-            ])->columns(1);
+                        
+                    ])->columnSpan(1),
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -62,17 +68,15 @@ class AccommodationResource extends Resource
                     ->circular(),
                 TextColumn::make('room_name')
                     ->sortable()
-                    ->searchable()
-                    ->toggleable(),
-                TextColumn::make('capacity')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(),
-                TextColumn::make('price')
+                    ->searchable(),
+                TextColumn::make('weekday_price')
                     ->prefix('₱ ')
                     ->sortable()
-                    ->searchable()
-                    ->toggleable(),
+                    ->searchable(),
+                TextColumn::make('weekend_price')
+                    ->prefix('₱ ')
+                    ->sortable()
+                    ->searchable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -88,10 +92,6 @@ class AccommodationResource extends Resource
                     })
                     ->color('warning'),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\ForceDeleteAction::make()
-                    ->visible(function ($record) {
-                        return auth()->check() && auth()->user()->role === 1 && $record->trashed();
-                    }),
                 Tables\Actions\RestoreAction::make()
                     ->visible(function ($record) {
                         return auth()->check() && auth()->user()->role === 1 && $record->trashed();
@@ -101,10 +101,6 @@ class AccommodationResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make()
-                        ->visible(function () {
-                            return auth()->check() && auth()->user()->role === 1;
-                        }),
                     Tables\Actions\RestoreBulkAction::make()
                         ->visible(function () {
                             return auth()->check() && auth()->user()->role === 1;

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('room_name');
             $table->text('description')->nullable();
-            $table->integer('capacity');
-            $table->integer('price');
+            $table->integer('weekday_price');
+            $table->integer('weekend_price');
             $table->string('main_image');
             $table->softDeletes();
             $table->timestamps();

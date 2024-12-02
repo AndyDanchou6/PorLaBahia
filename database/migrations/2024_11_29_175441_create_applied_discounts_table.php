@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fees', function (Blueprint $table) {
+        Schema::create('applied_discounts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('reservation_id');
-            $table->string('fee_name');
-            $table->integer('charge');
+            $table->unsignedBigInteger('discount_id');
+            $table->text('notes')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fees');
+        Schema::dropIfExists('applied_discounts');
     }
 };

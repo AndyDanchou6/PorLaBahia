@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\DiscountResource\Pages;
 use App\Filament\Resources\DiscountResource\RelationManagers;
 use App\Models\Discount;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\MarkdownEditor;
@@ -35,13 +36,17 @@ class DiscountResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('')
+                Section::make('Discount Details')
                     ->schema([
                         TextInput::make('discount_code')
                             ->label('Discount Code')
                             ->required()
                             ->maxLength(10)
                             ->minLength(10)
+                            ->default(function () {
+                                $newCode = new Discount();
+                                return $newCode->generateDiscountCode();
+                            })
                             ->unique(ignoreRecord: true),
 
                         Select::make('discount_type')
@@ -52,40 +57,45 @@ class DiscountResource extends Resource
                             ])
                             ->required(),
 
-                        TextInput::make('value')
-                            ->integer()
-                            ->required(),
-
                         DatePicker::make('expiration_date')
                             ->label('Expiration Date')
+                            ->required()
+                            ->reactive()
+                            ->minDate(today()),
+
+                        TextInput::make('value')
+                            ->numeric()
                             ->required(),
-                    ])->columns(2),
+
+                        MarkdownEditor::make('description')
+                            ->nullable()
+                            ->columnSpan(2),
+                    ])->columnSpan(2)->columns(2),
 
                 Section::make('Restrictions')
                     ->schema([
-                        Toggle::make('usage_limit')
+                        TextInput::make('usage_limit')
                             ->label('Usage Limit')
+                            ->numeric()
                             ->nullable(),
 
-                        Toggle::make('stacking_restriction')
-                            ->label('Stacking Restriction')
+                        TextInput::make('minimum_payable')
+                            ->label('Minimum Payable')
+                            ->placeholder(0)
                             ->nullable(),
 
-                        TextInput::make('minimum_order')
-                            ->label('Minimum Order')
+                        TextInput::make('maximum_payable')
+                            ->label('Maximum Payable')
+                            ->placeholder(0)
                             ->nullable(),
 
-                        TextInput::make('maximum_order')
-                            ->label('Maximum Order')
-                            ->nullable(),
-
-                        TextInput::make('applicability')
-                            ->nullable(),
-                    ])->columns(2),
-
-                MarkdownEditor::make('description')
-                    ->nullable(),
-            ])->columns(1);
+                        Toggle::make('status')
+                            ->default(true),
+                    ])->columnSpan(1),
+            ])->columns([
+                'md' => 3,
+                'lg' => 3,
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -94,29 +104,20 @@ class DiscountResource extends Resource
             ->columns([
                 TextColumn::make('discount_code')
                     ->sortable()
-                    ->searchable()
-                    ->toggleable(),
-
-                TextColumn::make('description_code')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable(),
+                    ->searchable(),
 
                 TextColumn::make('discount_type')
                     ->sortable()
-                    ->searchable()
-                    ->toggleable(),
+                    ->searchable(),
 
                 TextColumn::make('value')
                     ->sortable()
-                    ->searchable()
-                    ->toggleable(),
+                    ->searchable(),
 
                 TextColumn::make('expiration_date')
                     ->sortable()
                     ->searchable()
-                    ->dateTime()
-                    ->toggleable(),
+                    ->date(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -127,8 +128,6 @@ class DiscountResource extends Resource
                     Tables\Actions\EditAction::make()
                         ->color('warning'),
                     Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->trashed()),
                     Tables\Actions\RestoreAction::make()
                         ->color('success'),
                 ]),
@@ -136,7 +135,6 @@ class DiscountResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);

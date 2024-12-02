@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
+use App\Filament\Resources\ReservationResource\RelationManagers\AppliedDiscountRelationManager;
 use App\Filament\Resources\ReservationResource\RelationManagers\FeesAndOrdersRelationManager;
 use Illuminate\Support\Carbon;
 use App\Models\Reservation;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Accommodation;
 use App\Models\GuestInfo;
+use Closure;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
@@ -74,6 +76,22 @@ class ReservationResource extends Resource
                             ->afterStateUpdated(function ($state, $set) {
                                 $set('check_out_date', null);
                             }),
+                        // ->native(false)
+                        // ->disabledDates(function () {
+                        //     $reservedDates = Reservation::where('deleted_at', null)->get();
+
+                        //     $reservedDatesFormatted = $reservedDates->flatMap(function ($reservation) {
+                        //         $checkInDate = Carbon::parse($reservation->check_in_date);
+                        //         $checkOutDate = Carbon::parse($reservation->check_out_date);
+
+                        //         return collect(range(0, $checkOutDate->diffInDays($checkInDate) - 1))
+                        //             ->map(fn($days) => $checkInDate->copy()->addDays($days)->toDateString());
+                        //     });
+
+                        //     $reservedDateArray = $reservedDatesFormatted->toArray();
+
+                        //     return $reservedDateArray;
+                        // }),
                         DatePicker::make('check_out_date')
                             ->required()
                             ->date()
@@ -83,6 +101,7 @@ class ReservationResource extends Resource
                                 $checkInDate = $get('check_in_date');
                                 return $checkInDate ? Carbon::parse($checkInDate)->addDay() : today()->addDay();
                             }),
+
                     ])->columnSpan([
                         'md' => 2,
                         'lg' => 2,
@@ -96,45 +115,17 @@ class ReservationResource extends Resource
                                     ->label('Booking Reference Number')
                                     ->default(fn() => (new Reservation())->generateBookingReference())
                                     ->readOnly(),
-                                Toggle::make('booking_status')
-                                    ->label('Booking Status')
-                                    ->default(true)
-                                    ->disabled(fn($context) => $context === 'create'),
+                                Select::make('booking_status')
+                                    ->options([
+                                        'active' => 'Active',
+                                        'inactive' => 'Inactive',
+                                        'on_hold' => 'On Hold',
+                                    ])
+                                    ->required(),
                             ]),
                     ])->columnSpan([
                         'md' => 1,
                         'lg' => 1,
-                    ]),
-                Group::make()
-                    ->schema([
-                        TextInput::make('total_payable')
-                            ->numeric()
-                            ->step(0.01)
-                            ->default(fn($record) => $record->total_payable ?? 0.00)
-                            ->visible(fn($context) => $context === 'view' || $context === 'edit')
-                            ->afterStateHydrated(function ($state, $set, $record) {
-                                $set('total_payable', $state ?? $record->total_payable ?? 0.00);
-                            }),
-                        TextInput::make('total_paid')
-                            ->numeric()
-                            ->step(0.01)
-                            ->default(fn($record) => $record->total_paid ?? 0.00)
-                            ->visible(fn($context) => $context === 'view' || $context === 'edit')
-                            ->afterStateHydrated(function ($state, $set, $record) {
-                                $set('total_paid', $state ?? $record->total_paid ?? 0.00);
-                            }),
-                        TextInput::make('balance')
-                            ->numeric()
-                            ->step(0.01)
-                            ->default(fn($record) => $record->balance ?? 0.00)
-                            ->visible(fn($context) => $context === 'view' || $context === 'edit')
-                            ->afterStateHydrated(function ($state, $set, $record) {
-                                $set('balance', $state ?? $record->balance ?? 0.00);
-                            }),
-                    ])->hidden(fn() => auth()->user()->role !== 1)
-                    ->columnSpan(3)->columns([
-                        'md' => 3,
-                        'lg' => 3,
                     ]),
             ])->columns([
                 'md' => 3,
@@ -148,9 +139,14 @@ class ReservationResource extends Resource
             ->columns([
                 TextColumn::make('booking_reference_no')
                     ->searchable(),
+                TextColumn::make('accommodation_id')
+                    ->searchable()
+                    ->formatStateUsing(function ($record) {
+                        return $record->accommodation->room_name;
+                    }),
                 TextColumn::make('guest_id')
                     ->label('Guest Name')
-                    ->formatStateUsing(function ($state, $record) {
+                    ->formatStateUsing(function ($record) {
                         return $record->guest->first_name . ' ' . $record->guest->last_name;
                     }),
                 TextColumn::make('check_in_date')
@@ -164,9 +160,13 @@ class ReservationResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
-                TernaryFilter::make('booking_status')
-                    ->label('Active Booking')
-                    ->default(true),
+                SelectFilter::make('booking_status')
+                    ->options([
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                        'on_hold' => 'On Hold',
+                    ])
+                    ->default('active'),
                 Filter::make('dateFilter')
                     ->form([
                         Select::make('dateRange')
@@ -258,41 +258,6 @@ class ReservationResource extends Resource
 
                         return $query;
                     }),
-
-                //     Filter::make('Today')
-                //         ->query(function ($query) {
-                //             return $query->where('check_in_date', '=', Carbon::today());
-                //         }),
-                //     Filter::make('Past Reservations')
-                //         ->query(function ($query) {
-                //             return $query->where('check_in_date', '<', Carbon::today())
-                //                 ->where('check_out_date', '<', Carbon::today());
-                //         }),
-                //     Filter::make('Present Reservations')
-                //         ->query(function ($query) {
-                //             return $query->where('check_in_date', '>=', Carbon::today())
-                //                 ->orWhere('check_out_date', '>=', Carbon::today());
-                //         }),
-                //     Filter::make('Last Month')
-                //         ->query(function ($query) {
-                //             return $query->where('check_in_date', '>=', Carbon::now()->subMonth()->startOfMonth())
-                //                 ->where('check_out_date', '<=', Carbon::now()->subWeek()->endOfMonth());
-                //         }),
-                //     Filter::make('Last Week')
-                //         ->query(function ($query) {
-                //             return $query->where('check_in_date', '>=', Carbon::now()->subWeek()->startOfWeek())
-                //                 ->where('check_out_date', '<=', Carbon::now()->subWeek()->endOfWeek());
-                //         }),
-                //     Filter::make('This Week')
-                //         ->query(function ($query) {
-                //             return $query->where('check_in_date', '>=', Carbon::today())
-                //                 ->where('check_out_date', '<=', Carbon::today()->addWeek());
-                //         }),
-                //     Filter::make('This Month')
-                //         ->query(function ($query) {
-                //             return $query->where('check_in_date', '>=', Carbon::today())
-                //                 ->where('check_out_date', '<=', Carbon::today()->addMonth());
-                //         }),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -306,10 +271,6 @@ class ReservationResource extends Resource
                         })
                         ->color('warning'),
                     Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make()
-                        ->visible(function ($record) {
-                            return auth()->check() && auth()->user()->role === 1 && $record->trashed();
-                        }),
                     Tables\Actions\RestoreAction::make()
                         ->visible(function ($record) {
                             return auth()->check() && auth()->user()->role === 1 && $record->trashed();
@@ -320,10 +281,6 @@ class ReservationResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make()
-                        ->visible(function () {
-                            return auth()->check() && auth()->user()->role === 1;
-                        }),
                     Tables\Actions\RestoreBulkAction::make()
                         ->visible(function () {
                             return auth()->check() && auth()->user()->role === 1;
@@ -335,7 +292,7 @@ class ReservationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            FeesAndOrdersRelationManager::class,
+            AppliedDiscountRelationManager::class,
         ];
     }
 

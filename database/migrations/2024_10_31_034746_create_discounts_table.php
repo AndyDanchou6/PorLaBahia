@@ -13,16 +13,15 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->string('discount_code');
+            $table->string('discount_code')->unique();
             $table->text('description')->nullable();
             $table->string('discount_type');
             $table->integer('value');
             $table->date('expiration_date');
-            $table->boolean('usage_limit')->nullable();
-            $table->bigInteger('minimum_order')->nullable();
-            $table->bigInteger('maximum_order')->nullable();
-            $table->boolean('stacking_restriction')->nullable();
-            $table->string('applicability')->nullable();
+            $table->integer('usage_limit')->nullable();
+            $table->bigInteger('minimum_payable')->nullable();
+            $table->bigInteger('maximum_payable')->nullable();
+            $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
         });
