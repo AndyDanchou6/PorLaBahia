@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -16,46 +17,43 @@ class Reservation extends Model
         'booking_reference_no',
         'check_in_date',
         'check_out_date',
-        'total_paid',
-        'total_payable',
-        'balance',
         'booking_status',
     ];
 
     protected $casts = [
-        'total_paid' => 'decimal:2',
-        'total_price' => 'decimal:2',
-        'balance' => 'decimal:2',
+        'check_in_date' => 'date',
+        'check_out_date' => 'date',
     ];
-    
 
-    public function accommodation() {
+
+    public function accommodation()
+    {
         return $this->belongsTo(Accommodation::class);
     }
 
-    public function guest() {
+    public function guest()
+    {
         return $this->belongsTo(GuestInfo::class);
     }
 
-    public function discount() {
+    public function discount()
+    {
         return $this->belongsTo(Discount::class);
     }
 
-    public function feesAndOrders() {
-        return $this->hasMany(FeeAndOrder::class);
+    public function appliedDiscount()
+    {
+        return $this->hasMany(AppliedDiscount::class);
     }
 
-    
     protected static function booted()
     {
         static::deleting(function ($reservation) {
-            // $reservation->orders()->update(['deleted_at' => now()]);
-            // $reservation->fees()->update(['deleted_at' => now()]);
-            $reservation->feesAndOrders()->update(['deleted_at' => now()]);
+            $reservation->appliedDiscount()->update(['deleted_at' => now()]);
         });
     }
-    
-    public function generateBookingReference(int $length = 10): string
+
+    public function generateBookingReference(int $length = 4): string
     {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $reference = '';
@@ -64,7 +62,19 @@ class Reservation extends Model
             $reference .= $characters[random_int(0, strlen($characters) - 1)];
         }
 
-        $bookingReference = 'PORLABAHIA-' . $reference;
+        $year = Carbon::today()->year;
+        $month = Carbon::today()->month;
+        $day = Carbon::today()->day;
+
+        if ($month < 10) {
+            $month = '0' . $month;
+        }
+
+        if ($day < 10) {
+            $day = '0' . $day;
+        }
+
+        $bookingReference = 'PLB-' . $year . $month . $day . '-' . $reference;
 
         while (self::where('booking_reference_no', $bookingReference)->exists()) {
             $reference = '';
@@ -72,7 +82,7 @@ class Reservation extends Model
                 $reference .= $characters[random_int(0, strlen($characters) - 1)];
             }
 
-            $bookingReference = 'PORLABAHIA-' . $reference;
+            $bookingReference = 'PLB-' . $year . $month . $day . '-' . $reference;
         }
 
         return $bookingReference;

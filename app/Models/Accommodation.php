@@ -15,8 +15,8 @@ class Accommodation extends Model
     protected $fillable = [
         'room_name',
         'description',
-        'capacity',
-        'price',
+        'weekday_price',
+        'weekend_price',
         'main_image',
         'promo_id',
     ];

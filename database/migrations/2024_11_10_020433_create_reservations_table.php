@@ -18,10 +18,7 @@ return new class extends Migration
             $table->string('booking_reference_no');
             $table->date('check_in_date');
             $table->date('check_out_date');
-            $table->decimal('total_payable', 12, 2)->nullable();
-            $table->decimal('total_paid', 12, 2)->nullable();
-            $table->decimal('balance', 12, 2)->nullable();
-            $table->boolean('booking_status')->default(true);
+            $table->string('booking_status')->default('on_hold');
             $table->softDeletes();
             $table->timestamps();
 
