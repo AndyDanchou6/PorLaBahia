@@ -76,14 +76,14 @@ class DiscountResource extends Resource
                             ->label('Minimum Payable')
                             ->numeric()
                             ->step(0.01)
-                            ->default(0.0)
+                            ->default(0)
                             ->nullable(),
 
                         TextInput::make('maximum_payable')
                             ->label('Maximum Payable')
                             ->numeric()
                             ->step(0.01)
-                            ->default(0.0)
+                            ->default(0)
                             ->nullable(),
 
                         // Toggle::make('status'),
