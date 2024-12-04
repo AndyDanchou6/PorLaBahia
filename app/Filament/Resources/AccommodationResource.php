@@ -55,7 +55,7 @@ class AccommodationResource extends Resource
                             ->required(),
                         FileUpload::make('main_image')
                             ->required(),
-                        
+
                     ])->columnSpan(1),
             ])->columns(3);
     }
@@ -70,11 +70,11 @@ class AccommodationResource extends Resource
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('weekday_price')
-                    ->prefix('₱ ')
+                    ->prefix('₱')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('weekend_price')
-                    ->prefix('₱ ')
+                    ->prefix('₱')
                     ->sortable()
                     ->searchable(),
             ])
