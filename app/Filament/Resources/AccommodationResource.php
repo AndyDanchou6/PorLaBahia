@@ -109,11 +109,11 @@ class AccommodationResource extends Resource
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('weekday_price')
-                    ->prefix('₱ ')
+                    ->prefix('₱')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('weekend_price')
-                    ->prefix('₱ ')
+                    ->prefix('₱')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('booking_fee')
