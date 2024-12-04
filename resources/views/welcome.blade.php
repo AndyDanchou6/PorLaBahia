@@ -60,18 +60,18 @@
 
     <section class="resort-facilities">
         <div class="resort">
-            <div class="circle"></div>
-            <div class="line3"></div>
+            <div class="circles circle"></div>
+            <div class="thinline line3"></div>
             <h1>Resort Facilities</h1>
-            <div class="circle1"></div>
-            <div class="line4"></div>
+            <div class="circles circle1"></div>
+            <div class="thinline line4"></div>
             
             <h5>OUR AMENITIES</h5>
             <div class="amenities-boxes">
                 <div class="amenities-box"> 
                     <img src="/images/image1.jpg" alt="">
                     <h3>Parking Space</h3>
-                    <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.</p>
+                    <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus. </p>
                     <button><i class="fa fa-book"></i> Read More</button>
                 </div>
                 <div class="amenities-box">
@@ -90,7 +90,30 @@
             </div>
         </div>
     </section>
-    
+    <section class="resort-houses">
+        <div class="resort-houses-text">
+            <div class="circles circle2"></div>
+                <div class="thinline line5"></div>
+                    <h1>Resort Houses</h1>
+                <div class="circles circle3"></div>
+            <div class="thinline line6"></div>
+            <h3>OUR ACCOMMODATIONS</h3>
+            <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.
+            Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.
+            Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.
+            </p>
+            <h2>OTHER HOUSES</h2>
+            <div class="other-houses">
+                <div class="house1"> </div>
+                <div class="house1"> </div>
+                <div class="house1"> </div>
+            </div>
+        </div>
+
+        <div class="resort-houses-images">
+
+        </div>
+    </section>
    
 </body>
 </html>
