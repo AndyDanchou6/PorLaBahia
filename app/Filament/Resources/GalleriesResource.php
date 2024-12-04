@@ -7,6 +7,7 @@ use App\Filament\Resources\GalleriesResource\RelationManagers;
 use App\Models\Accommodation;
 use App\Models\Amenities;
 use App\Models\Galleries;
+use App\Models\RestaurantMenu;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -32,6 +33,7 @@ class GalleriesResource extends Resource
                             ->options([
                                 Amenities::class => 'Amenities',
                                 Accommodation::class => 'Accommodation',
+                                RestaurantMenu::class => 'Restaurant Menu'
                             ])
                             ->required()
                             ->reactive()
@@ -50,6 +52,8 @@ class GalleriesResource extends Resource
                                     return Amenities::pluck('amenity_name', 'id');
                                 } elseif ($category === Accommodation::class) {
                                     return Accommodation::pluck('room_name', 'id');
+                                } elseif ($category === RestaurantMenu::class) {
+                                    return RestaurantMenu::pluck('name', 'id');
                                 }
 
                                 return [];
@@ -77,6 +81,7 @@ class GalleriesResource extends Resource
                     ->label('Category')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('selected_name')
+                    ->formatStateUsing(fn($state) => ucwords($state))
                     ->label('Selected Item')
                     ->sortable()
                     ->searchable(),
@@ -104,8 +109,6 @@ class GalleriesResource extends Resource
                         ->color('warning')
                         ->visible(fn($record) => !$record->trashed()),
                     Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->trashed()),
                     Tables\Actions\RestoreAction::make()
                         ->color('success'),
                 ]),
@@ -113,7 +116,6 @@ class GalleriesResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);

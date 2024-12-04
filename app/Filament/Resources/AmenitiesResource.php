@@ -80,6 +80,7 @@ class AmenitiesResource extends Resource
                     ->label('Main Image')
                     ->circular(),
                 Tables\Columns\TextColumn::make('amenity_name')
+                    ->formatStateUsing(fn($state) => ucwords($state))
                     ->label('Amenity Name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -101,15 +102,12 @@ class AmenitiesResource extends Resource
                     ->color('warning')
                     ->visible(fn($record) => !$record->trashed()),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\ForceDeleteAction::make()
-                    ->visible(fn($record) => $record->trashed()),
                 Tables\Actions\RestoreAction::make()
                     ->color('success'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
