@@ -13,6 +13,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Carbon\Carbon;
+use Filament\Notifications\Notification;
 
 class AccommodationPromoResource extends Resource
 {
@@ -33,62 +35,117 @@ class AccommodationPromoResource extends Resource
                                 Forms\Components\Select::make('accommodation_id')
                                     ->relationship(name: 'accommodation', titleAttribute: 'room_name')
                                     ->required()
-                                    ->searchable()
+                                    // ->searchable()
                                     ->live()
                                     ->afterStateUpdated(function ($set, $get) {
                                         static::updateDiscountedPrice($set, $get);
-                                    }),
-                                Forms\Components\Select::make('discount_type')
-                                    ->label('Discount Type')
-                                    ->options([
-                                        'fixed' => 'Fixed',
-                                        'percentage' => 'Percentage',
+                                    })
+                                    ->columnSpan('full'),
+
+                                Forms\Components\Group::make()
+                                    ->schema([
+                                        Forms\Components\TextInput::make('value')
+                                            ->required()
+                                            ->live(debounce: 500)
+                                            ->numeric()
+                                            ->label('Percentage Value')
+                                            ->suffixIcon('heroicon-o-percent-badge')
+                                            ->suffixIconColor('primary')
+                                            ->afterStateUpdated(function ($set, $get) {
+                                                static::updateDiscountedPrice($set, $get);
+                                            }),
+                                        Forms\Components\TextInput::make('discounted_price')
+                                            ->label('Discounted Price')
+                                            ->required()
+                                            ->readOnly()
+                                            ->live()
+                                            ->prefix('₱')
+                                            ->numeric()
+                                            ->afterStateUpdated(function ($set, $get) {
+                                                $set('discounted_price', $get('discounted_price'));
+                                            }),
+
+                                        Forms\Components\DatePicker::make('promo_start_date')
+                                            ->required()
+                                            ->date()
+                                            ->minDate(today())
+                                            ->suffixIcon('heroicon-o-calendar-days')
+                                            ->suffixIconColor('success')
+                                            ->reactive()
+                                            ->native(false)
+                                            ->disabledDates(function () {
+                                                $existingPromos = AccommodationPromo::where('deleted_at', null)->get();
+
+                                                $reservedDatesFormatted = $existingPromos->flatMap(function ($promo) {
+                                                    $promoStartDate = Carbon::parse($promo->promo_start_date);
+                                                    $promoEndDate = Carbon::parse($promo->promo_end_date);
+
+                                                    return collect(range(0, $promoEndDate->diffInDays($promoStartDate)))
+                                                        ->map(fn($days) => $promoStartDate->copy()->addDays($days)->toDateString());
+                                                });
+
+                                                return $reservedDatesFormatted->toArray();
+                                            })
+                                            ->afterStateUpdated(function ($set, $get) {
+                                                self::updateStatus($get, $set);
+                                                $set('promo_end_date', null);
+                                            }),
+
+                                        Forms\Components\DatePicker::make('promo_end_date')
+                                            ->required()
+                                            ->date()
+                                            ->reactive()
+                                            ->suffixIcon('heroicon-o-calendar-days')
+                                            ->suffixIconColor('danger')
+                                            ->disabled(fn($get) => !$get('promo_start_date'))
+                                            ->minDate(function ($get) {
+                                                $promo_start_date = $get('promo_start_date');
+                                                return $promo_start_date ? Carbon::parse($promo_start_date)->addDay() : today()->addDay();
+                                            })
+                                            ->native(false)
+                                            ->disabledDates(function ($get) {
+                                                $disabledDates = [];
+
+                                                $startDate = $get('promo_start_date');
+                                                if ($startDate) {
+                                                    $existingPromos = AccommodationPromo::where('deleted_at', null)->get();
+
+                                                    $reservedDatesFormatted = $existingPromos->flatMap(function ($promo) {
+                                                        $promoStartDate = Carbon::parse($promo->promo_start_date);
+                                                        $promoEndDate = Carbon::parse($promo->promo_end_date);
+
+                                                        return collect(range(0, $promoEndDate->diffInDays($promoStartDate)))
+                                                            ->map(fn($days) => $promoStartDate->copy()->addDays($days)->toDateString());
+                                                    });
+
+                                                    $disabledDates = $reservedDatesFormatted->toArray();
+                                                }
+
+                                                return $disabledDates;
+                                            })
+                                            ->afterStateUpdated(function ($set, $get) {
+                                                self::updateStatus($get, $set);
+                                            })->visible(fn($get) => $get('promo_start_date')),
+
+                                        Forms\Components\Hidden::make('status')
+                                            ->reactive()
+                                            ->afterStateHydrated(function ($set, $get) {
+                                                self::updateStatus($get, $set);
+                                            })
+                                            ->afterStateUpdated(function ($set, $get) {
+                                                self::updateStatus($get, $set);
+                                            }),
                                     ])
-                                    ->required()
-                                    ->live()
-                                    ->afterStateUpdated(function ($set, $get) {
-                                        static::updateDiscountedPrice($set, $get);
-                                    }),
-                                Forms\Components\TextInput::make('value')
-                                    ->required()
-                                    ->live(debounce: 500)
-                                    ->numeric()
-                                    ->prefixIcon(fn($get) => $get('discount_type') === 'fixed' ? '₱' : null)
-                                    ->suffixIcon(fn($get) => $get('discount_type') === 'percentage' ? '%' : null)
-                                    ->afterStateUpdated(function ($set, $get, $state) {
-                                        // $currentDiscountType = $get('discount_type');
+                                    ->visible(fn($get) => $get('accommodation_id'))
+                                    ->columnSpan([
+                                        'md' => 2,
+                                        'lg' => 2,
+                                    ])->columns(2),
 
-                                        // if ($currentDiscountType === 'percentage') {
-                                        //     $set('value', min($state, 100));
-                                        // } elseif ($currentDiscountType === 'fixed') {
-                                        //     $set('value', max($state, 0));
-                                        // } elseif ($currentDiscountType !== $state) {
-                                        //     $set('value', null);
-                                        // }
 
-                                        static::updateDiscountedPrice($set, $get);
-                                    }),
-                                Forms\Components\TextInput::make('discounted_price')
-                                    ->label('Discounted Price')
-                                    ->required()
-                                    ->readOnly()
-                                    ->live()
-                                    ->prefix('₱')
-                                    ->numeric()
-                                    ->afterStateUpdated(function ($set, $get) {
-                                        $set('discounted_price', $get('discounted_price'));
-                                    }),
-                                Forms\Components\DatePicker::make('promo_start_date')
-                                    ->label('Promo Start Date')
-                                    ->minDate(now()->toDateString())
-                                    ->required(),
-                                Forms\Components\DatePicker::make('promo_end_date')
-                                    ->label('Promo End Date')
-                                    ->minDate(now()->toDateString())
-                                    ->required(),
                             ])
                     ])
-            ]);
+            ])->columns(2);
     }
 
     public static function table(Table $table): Table
@@ -98,37 +155,28 @@ class AccommodationPromoResource extends Resource
                 Tables\Columns\TextColumn::make('accommodation.room_name')
                     ->formatStateUsing(fn($state) => ucwords($state))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('discount_type')
-                    ->label('Discount Type')
-                    ->formatStateUsing(fn($state) => ucwords($state))
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('value')
-                    ->label('Value')
+                    ->label('Percentage Value')
                     ->searchable()
-                    ->formatStateUsing(function ($state, $record) {
-                        $prefix = $record->discount_type === 'fixed' ? '₱' : '';
-                        $suffix = $record->discount_type === 'percentage' ? '%' : '';
-
-                        return $prefix . number_format($state, 2) . $suffix;
-                    }),
-
+                    ->badge()
+                    ->color('gray')
+                    ->suffix('%'),
                 Tables\Columns\TextColumn::make('discounted_price')
                     ->label('Discounted Price')
                     ->prefix('₱')
                     ->numeric()
+                    ->badge()
+                    ->color('primary')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('promotion_date')
                     ->label('Promotion Date')
                     ->formatStateUsing(fn($state) => $state ? $state : 'N/A')
                     ->sortable(),
-                // Tables\Columns\TextColumn::make('promo_end_date')
-                //     ->label('Promo End Date')
-                //     ->date()
-                //     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Promo Status')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
+                        'incoming' => 'warning',
                         'active' => 'success',
                         'expired' => 'danger',
                     })
@@ -195,10 +243,31 @@ class AccommodationPromoResource extends Resource
     {
         $accommodationId = $get('accommodation_id');
         $value = (float) $get('value');
-        $discountType = $get('discount_type');
 
-        $discountedPrice = AccommodationPromo::calculateDiscountedPrice($value, $discountType, $accommodationId);
+        $discountedPrice = AccommodationPromo::calculateDiscountedPrice($value, $accommodationId);
 
         $set('discounted_price', $discountedPrice);
+    }
+
+    protected static function updateStatus($get, $set)
+    {
+        $now = Carbon::now();
+        $promoStartDate = $get('promo_start_date');
+        $promoEndDate = $get('promo_end_date');
+
+        if ($promoStartDate && $promoEndDate) {
+            $startDate = Carbon::parse($promoStartDate);
+            $endDate = Carbon::parse($promoEndDate);
+
+            if ($now->isBefore($startDate)) {
+                $set('status', 'incoming');
+            } elseif ($now->between($startDate, $endDate)) {
+                $set('status', 'active');
+            } elseif ($now->isAfter($startDate, $endDate)) {
+                $set('status', 'expired');
+            }
+        } else {
+            $set('status', 'unknown');
+        }
     }
 }

@@ -21,39 +21,13 @@ class AccommodationPromoRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('discount_type')
-                    ->label('Discount Type')
-                    ->options([
-                        'fixed' => 'Fixed',
-                        'percentage' => 'Percentage',
-                    ])
-                    ->required()
-                    ->reactive()
-                    ->afterStateUpdated(function ($set, $get) {
-                        static::calculateDiscountedPrice($set, $get);
-                    }),
                 Forms\Components\TextInput::make('value')
                     ->required()
                     ->reactive()
                     ->numeric()
-                    ->prefix(fn($get) => $get('discount_type') === 'fixed' ? '₱' : null)
-                    ->suffix(fn($get) => $get('discount_type') === 'percentage' ? '%' : null)
-                    ->afterStateUpdated(function ($set, $get, $state) {
-
-                        // static $previousDiscountType = null;
-
-                        // if ($previousDiscountType !== $get('discount_type')) {
-                        //     $set('value', null);
-                        // }
-
-                        // $previousDiscountType = $get('discount_type');
-
-                        // if ($get('discount_type') === 'percentage') {
-                        //     $set('value', min($state, 100));
-                        // } elseif ($get('discount_type') === 'fixed') {
-                        //     $set('value', max($state, 0));
-                        // }
-
+                    ->suffixIcon('heroicon-o-percent-badge')
+                    ->suffixIconColor('primary')
+                    ->afterStateUpdated(function ($set, $get) {
                         static::calculateDiscountedPrice($set, $get);
                     }),
                 Forms\Components\TextInput::make('discounted_price')
@@ -67,13 +41,75 @@ class AccommodationPromoRelationManager extends RelationManager
                         $set('discounted_price', $get('discounted_price'));
                     }),
                 Forms\Components\DatePicker::make('promo_start_date')
-                    ->label('Promo Start Date')
-                    ->minDate(now()->toDateString())
-                    ->required(),
+                    ->required()
+                    ->date()
+                    ->minDate(today())
+                    ->suffixIcon('heroicon-o-calendar-days')
+                    ->suffixIconColor('success')
+                    ->reactive()
+                    ->native(false)
+                    ->disabledDates(function () {
+                        $existingPromos = AccommodationPromo::where('deleted_at', null)->get();
+
+                        $reservedDatesFormatted = $existingPromos->flatMap(function ($promo) {
+                            $promoStartDate = Carbon::parse($promo->promo_start_date);
+                            $promoEndDate = Carbon::parse($promo->promo_end_date);
+
+                            return collect(range(0, $promoEndDate->diffInDays($promoStartDate)))
+                                ->map(fn($days) => $promoStartDate->copy()->addDays($days)->toDateString());
+                        });
+
+                        return $reservedDatesFormatted->toArray();
+                    })
+                    ->afterStateUpdated(function ($set, $get) {
+                        self::updatePromoStatus($get, $set);
+                        $set('promo_end_date', null);
+                    }),
+
                 Forms\Components\DatePicker::make('promo_end_date')
-                    ->label('Promo End Date')
-                    ->minDate(now()->toDateString())
-                    ->required(),
+                    ->required()
+                    ->date()
+                    ->reactive()
+                    ->suffixIcon('heroicon-o-calendar-days')
+                    ->suffixIconColor('danger')
+                    ->disabled(fn($get) => !$get('promo_start_date'))
+                    ->minDate(function ($get) {
+                        $promo_start_date = $get('promo_start_date');
+                        return $promo_start_date ? Carbon::parse($promo_start_date)->addDay() : today()->addDay();
+                    })
+                    ->native(false)
+                    ->disabledDates(function ($get) {
+                        $disabledDates = [];
+
+                        $startDate = $get('promo_start_date');
+                        if ($startDate) {
+                            $existingPromos = AccommodationPromo::where('deleted_at', null)->get();
+
+                            $reservedDatesFormatted = $existingPromos->flatMap(function ($promo) {
+                                $promoStartDate = Carbon::parse($promo->promo_start_date);
+                                $promoEndDate = Carbon::parse($promo->promo_end_date);
+
+                                return collect(range(0, $promoEndDate->diffInDays($promoStartDate)))
+                                    ->map(fn($days) => $promoStartDate->copy()->addDays($days)->toDateString());
+                            });
+
+                            $disabledDates = $reservedDatesFormatted->toArray();
+                        }
+
+                        return $disabledDates;
+                    })
+                    ->afterStateUpdated(function ($set, $get) {
+                        self::updatePromoStatus($get, $set);
+                    })->visible(fn($get) => $get('promo_start_date')),
+
+                Forms\Components\Hidden::make('status')
+                    ->reactive()
+                    ->afterStateHydrated(function ($set, $get) {
+                        self::updatePromoStatus($get, $set);
+                    })
+                    ->afterStateUpdated(function ($set, $get) {
+                        self::updatePromoStatus($get, $set);
+                    }),
             ]);
     }
 
@@ -82,19 +118,12 @@ class AccommodationPromoRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('discount_type')
             ->columns([
-                Tables\Columns\TextColumn::make('discount_type')
-                    ->formatStateUsing(fn($state) => ucwords($state)),
                 Tables\Columns\TextColumn::make('value')
-                    ->label('Value')
+                    ->label('Percentage Value')
                     ->badge()
                     ->color('info')
                     ->searchable()
-                    ->formatStateUsing(function ($state, $record) {
-                        $prefix = $record->discount_type === 'fixed' ? '₱' : '';
-                        $suffix = $record->discount_type === 'percentage' ? '%' : '';
-
-                        return $prefix . number_format($state, 2) . $suffix;
-                    }),
+                    ->suffix('%'),
                 Tables\Columns\TextColumn::make('discounted_price')
                     ->label('Discounted Price')
                     ->badge()
@@ -109,6 +138,7 @@ class AccommodationPromoRelationManager extends RelationManager
                     ->label('Status')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
+                        'incoming' => 'warning',
                         'active' => 'success',
                         'expired' => 'danger',
                     })
@@ -138,24 +168,44 @@ class AccommodationPromoRelationManager extends RelationManager
 
     private function calculateDiscountedPrice($set, $get)
     {
-        $accommodation = $this->getOwnerRecord(); // where to access the relationship's owner record
+        $accommodation = $this->getOwnerRecord();
 
         if ($accommodation) {
             $value = (float) $get('value');
-            $discountType = $get('discount_type');
-            $price = $accommodation->price;
+            $weekday_price = $accommodation->weekday_price;
+            $weekend_price = $accommodation->weekend_price;
 
-            if ($discountType === 'fixed') {
-                $discountPrice = $price - $value;
-            } elseif ($discountType === 'percentage') {
-                $discountPrice = $price - ($price * $value / 100);
-            } else {
-                $discountPrice = $price;
+            if (Carbon::now()->isWeekday()) {
+                $discountPrice = $weekday_price - ($weekday_price * $value / 100);
+            } elseif (Carbon::now()->isWeekend()) {
+                $discountPrice = $weekend_price - ($weekend_price * $value / 100);
             }
 
             $set('discounted_price', max($discountPrice, 0));
         } else {
             $set('discounted_price', null);
+        }
+    }
+
+    protected static function updatePromoStatus($get, $set)
+    {
+        $now = Carbon::now();
+        $promoStartDate = $get('promo_start_date');
+        $promoEndDate = $get('promo_end_date');
+
+        if ($promoStartDate && $promoEndDate) {
+            $startDate = Carbon::parse($promoStartDate);
+            $endDate = Carbon::parse($promoEndDate);
+
+            if ($now->isBefore($startDate)) {
+                $set('status', 'incoming');
+            } elseif ($now->between($startDate, $endDate)) {
+                $set('status', 'active');
+            } elseif ($now->isAfter($startDate, $endDate)) {
+                $set('status', 'expired');
+            }
+        } else {
+            $set('status', 'unknown');
         }
     }
 }
