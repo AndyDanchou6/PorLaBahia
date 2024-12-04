@@ -4,8 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
-use App\Filament\Resources\ReservationResource\RelationManagers\AppliedDiscountRelationManager;
-use App\Filament\Resources\ReservationResource\RelationManagers\FeesAndOrdersRelationManager;
 use Illuminate\Support\Carbon;
 use App\Models\Reservation;
 use Filament\Forms;
@@ -14,20 +12,17 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Forms\Components\Toggle;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Accommodation;
+use App\Models\Discount;
 use App\Models\GuestInfo;
-use Closure;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
 
 class ReservationResource extends Resource
 {
@@ -55,6 +50,14 @@ class ReservationResource extends Resource
                                     ->pluck('room_name', 'id');
                             })
                             ->searchable()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, $set) {
+                                $bookingFee = Accommodation::find($state)?->booking_fee;
+
+                                if ($bookingFee !== null) {
+                                    $set('booking_fee', $bookingFee);
+                                }
+                            })
                             ->required(),
                         Select::make('guest_id')
                             ->label('Guest Name')
@@ -73,34 +76,31 @@ class ReservationResource extends Resource
                             ->date()
                             ->minDate(today())
                             ->reactive()
-                            ->afterStateUpdated(function ($state, $set) {
-                                $set('check_out_date', null);
+                            ->afterStateUpdated(function ($set, $state) {
+                                $set('check_out_date', Carbon::parse($state)->addDay());
+                            })
+                            ->native(false)
+                            ->disabledDates(function () {
+                                $reservedDates = Reservation::where('deleted_at', null)->pluck('check_in_date');
+
+                                // $reservedDatesFormatted = $reservedDates->flatMap(function ($reservation) {
+                                //     $checkInDate = Carbon::parse($reservation->check_in_date);
+                                //     $checkOutDate = Carbon::parse($reservation->check_out_date);
+
+                                //     return collect(range(0, $checkOutDate->diffInDays($checkInDate) - 1))
+                                //         ->map(fn($days) => $checkInDate->copy()->addDays($days)->toDateString());
+                                // });
+
+                                $reservedDateArray = $reservedDates->toArray();
+
+                                return $reservedDateArray;
                             }),
-                        // ->native(false)
-                        // ->disabledDates(function () {
-                        //     $reservedDates = Reservation::where('deleted_at', null)->get();
-
-                        //     $reservedDatesFormatted = $reservedDates->flatMap(function ($reservation) {
-                        //         $checkInDate = Carbon::parse($reservation->check_in_date);
-                        //         $checkOutDate = Carbon::parse($reservation->check_out_date);
-
-                        //         return collect(range(0, $checkOutDate->diffInDays($checkInDate) - 1))
-                        //             ->map(fn($days) => $checkInDate->copy()->addDays($days)->toDateString());
-                        //     });
-
-                        //     $reservedDateArray = $reservedDatesFormatted->toArray();
-
-                        //     return $reservedDateArray;
-                        // }),
                         DatePicker::make('check_out_date')
                             ->required()
                             ->date()
-                            ->reactive()
                             ->disabled(fn($get) => !$get('check_in_date'))
-                            ->minDate(function ($get) {
-                                $checkInDate = $get('check_in_date');
-                                return $checkInDate ? Carbon::parse($checkInDate)->addDay() : today()->addDay();
-                            }),
+                            ->native(false)
+                            ->readOnly(),
 
                     ])->columnSpan([
                         'md' => 2,
@@ -115,12 +115,22 @@ class ReservationResource extends Resource
                                     ->label('Booking Reference Number')
                                     ->default(fn() => (new Reservation())->generateBookingReference())
                                     ->readOnly(),
-                                Select::make('booking_status')
-                                    ->options([
-                                        'active' => 'Active',
-                                        'inactive' => 'Inactive',
-                                        'on_hold' => 'On Hold',
-                                    ])
+                                Select::make('discount_id')
+                                    ->label('Discount Coupon')
+                                    ->options(function () {
+                                        return Discount::where('status', true)
+                                            ->inRandomOrder()
+                                            ->limit(5)
+                                            ->pluck('discount_code', 'id');
+                                    })
+                                    ->searchable(function (Builder $query): Builder {
+                                        return $query
+                                            ->where('status', 'like', "%1%");
+                                    }),
+                                TextInput::make('booking_fee')
+                                    ->numeric()
+                                    ->prefix('₱')
+                                    ->step(0.01)
                                     ->required(),
                             ]),
                     ])->columnSpan([
@@ -140,6 +150,7 @@ class ReservationResource extends Resource
                 TextColumn::make('booking_reference_no')
                     ->searchable(),
                 TextColumn::make('accommodation_id')
+                    ->label('Accommodation')
                     ->searchable()
                     ->formatStateUsing(function ($record) {
                         return $record->accommodation->room_name;
@@ -150,23 +161,16 @@ class ReservationResource extends Resource
                         return $record->guest->first_name . ' ' . $record->guest->last_name;
                     }),
                 TextColumn::make('check_in_date')
-                    ->dateTime()
+                    ->date()
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('check_out_date')
-                    ->dateTime()
+                    ->date()
                     ->sortable()
                     ->searchable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
-                SelectFilter::make('booking_status')
-                    ->options([
-                        'active' => 'Active',
-                        'inactive' => 'Inactive',
-                        'on_hold' => 'On Hold',
-                    ])
-                    ->default('active'),
                 Filter::make('dateFilter')
                     ->form([
                         Select::make('dateRange')
@@ -291,9 +295,7 @@ class ReservationResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            AppliedDiscountRelationManager::class,
-        ];
+        return [];
     }
 
     public static function getPages(): array

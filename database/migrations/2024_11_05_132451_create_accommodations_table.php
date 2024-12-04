@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('room_name');
             $table->text('description')->nullable();
-            $table->integer('weekday_price');
-            $table->integer('weekend_price');
+            $table->integer('free_pax');
+            $table->decimal('excess_pax_price', 10, 2)->default(0.0);
+            $table->decimal('weekday_price', 10, 2)->default(0.0);
+            $table->decimal('weekend_price', 10, 2)->default(0.0);
+            $table->decimal('booking_fee', 10, 2)->default(0.0);
             $table->string('main_image');
             $table->softDeletes();
             $table->timestamps();

@@ -49,14 +49,6 @@ class DiscountResource extends Resource
                             })
                             ->unique(ignoreRecord: true),
 
-                        Select::make('discount_type')
-                            ->label('Discount Type')
-                            ->options([
-                                'fixed' => 'Fixed',
-                                'percentage' => 'Percentage'
-                            ])
-                            ->required(),
-
                         DatePicker::make('expiration_date')
                             ->label('Expiration Date')
                             ->required()
@@ -65,6 +57,7 @@ class DiscountResource extends Resource
 
                         TextInput::make('value')
                             ->numeric()
+                            ->suffix('%')
                             ->required(),
 
                         MarkdownEditor::make('description')
@@ -81,16 +74,19 @@ class DiscountResource extends Resource
 
                         TextInput::make('minimum_payable')
                             ->label('Minimum Payable')
-                            ->placeholder(0)
+                            ->numeric()
+                            ->step(0.01)
+                            ->default(0.0)
                             ->nullable(),
 
                         TextInput::make('maximum_payable')
                             ->label('Maximum Payable')
-                            ->placeholder(0)
+                            ->numeric()
+                            ->step(0.01)
+                            ->default(0.0)
                             ->nullable(),
 
-                        Toggle::make('status')
-                            ->default(true),
+                        // Toggle::make('status'),
                     ])->columnSpan(1),
             ])->columns([
                 'md' => 3,
@@ -106,10 +102,6 @@ class DiscountResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                TextColumn::make('discount_type')
-                    ->sortable()
-                    ->searchable(),
-
                 TextColumn::make('value')
                     ->sortable()
                     ->searchable(),
@@ -118,19 +110,34 @@ class DiscountResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->date(),
+
+                TextColumn::make('status')
+                    ->sortable()
+                    ->searchable()
+                    ->formatStateUsing(function($record) {
+                        switch ($record->status) 
+                        {
+                            case 1: {
+                                return 'Active';
+                                break;
+                            }
+                            case 0: {
+                                return 'Expired';
+                                break;
+                            }
+                        }
+                    }),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()
-                        ->color('warning'),
-                    Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\RestoreAction::make()
-                        ->color('success'),
-                ]),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->color('warning'),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\RestoreAction::make()
+                    ->color('success'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

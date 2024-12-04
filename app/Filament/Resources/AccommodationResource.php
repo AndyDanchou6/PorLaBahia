@@ -37,26 +37,65 @@ class AccommodationResource extends Resource
                 Group::make()
                     ->schema([
                         TextInput::make('room_name')
-                            ->required(),
-
+                            ->required()
+                            ->columnSpan([
+                                'sm' => 2,
+                                'md' => 6,
+                            ]),
+                        TextInput::make('weekday_price')
+                            ->prefix('₱')
+                            ->numeric()
+                            ->step(0.01)
+                            ->required()
+                            ->columnSpan([
+                                'sm' => 2,
+                                'md' => 2,
+                            ]),
+                        TextInput::make('weekend_price')
+                            ->prefix('₱')
+                            ->numeric()
+                            ->step(0.01)
+                            ->required()
+                            ->columnSpan([
+                                'sm' => 2,
+                                'md' => 2,
+                            ]),
+                        TextInput::make('booking_fee')
+                            ->numeric()
+                            ->step(0.01)
+                            ->prefix('₱')
+                            ->required()
+                            ->columnSpan([
+                                'sm' => 2,
+                                'md' => 2,
+                            ]),
                         MarkdownEditor::make('description')
-                            ->nullable(),
-                    ])->columnSpan(2),
+                            ->nullable()
+                            ->columnSpan([
+                                'sm' => 2,
+                                'md' => 6,
+                            ]),
+                    ])->columnSpan(2)->columns([
+                        'sm' => 2,
+                        'md' => 6,
+                    ]),
 
                 Group::make()
                     ->schema([
-                        TextInput::make('weekday_price')
-                            ->prefix('₱')
-                            ->integer()
-                            ->required(),
-                        TextInput::make('weekend_price')
-                            ->prefix('₱')
-                            ->integer()
-                            ->required(),
                         FileUpload::make('main_image')
-                            ->required(),
-                        
-                    ])->columnSpan(1),
+                            ->required()
+                            ->columnSpan(2),
+                        TextInput::make('free_pax')
+                            ->numeric()
+                            ->required()
+                            ->columnSpan(1),
+                        TextInput::make('excess_pax_price')
+                            ->numeric()
+                            ->step(0.01)
+                            ->prefix('₱')
+                            ->required()
+                            ->columnSpan(1),
+                    ])->columnSpan(1)->columns(2),
             ])->columns(3);
     }
 
@@ -74,6 +113,10 @@ class AccommodationResource extends Resource
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('weekend_price')
+                    ->prefix('₱ ')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('booking_fee')
                     ->prefix('₱ ')
                     ->sortable()
                     ->searchable(),

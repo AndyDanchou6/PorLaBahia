@@ -14,15 +14,17 @@ class Reservation extends Model
     protected $fillable = [
         'accommodation_id',
         'guest_id',
+        'discount_id',
         'booking_reference_no',
         'check_in_date',
         'check_out_date',
-        'booking_status',
+        'booking_fee',
     ];
 
     protected $casts = [
         'check_in_date' => 'date',
         'check_out_date' => 'date',
+        'booking_fee' => 'decimal:2',
     ];
 
 
@@ -41,17 +43,12 @@ class Reservation extends Model
         return $this->belongsTo(Discount::class);
     }
 
-    public function appliedDiscount()
-    {
-        return $this->hasMany(AppliedDiscount::class);
-    }
-
-    protected static function booted()
-    {
-        static::deleting(function ($reservation) {
-            $reservation->appliedDiscount()->update(['deleted_at' => now()]);
-        });
-    }
+    // protected static function booted()
+    // {
+    //     static::deleting(function ($reservation) {
+    //         $reservation->appliedDiscount()->update(['deleted_at' => now()]);
+    //     });
+    // }
 
     public function generateBookingReference(int $length = 4): string
     {
