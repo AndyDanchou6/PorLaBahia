@@ -108,12 +108,12 @@ button:hover {
 }
 
 .line1 {
-    width: 148px;
+    width: 10.6%;
 }
 
 .line2 {
     right: 0;
-    width: 85.6%;
+    width: 84.6%;
 }
 
 main .title {
@@ -190,52 +190,53 @@ span {
     background-color: var(--primary-color);
     transition: 0.6s ease;
 }
-.section2 {
+
+.about-layout {
     position: absolute;
-    top: 750px;
+    top: 800px;
     right: 0;
     height: 100vh;
     z-index: 3;
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
-}
-
-.layout {
+    justify-content: center;
     display: grid;
     grid-template-columns: 1fr 1fr; 
-    gap: 30px; 
-    height: 100%;
-    max-width: 1200px;
+    grid-template-rows: repeat(1, 1fr)
+    
 }
 
 .about-text {
     position: relative;
-    top: 50px;
+    top: 0;
     left: 50px;
+    padding: 70px;
+    max-height: 100%;
 }
 
 .about-text h1 {
     margin-top: 10px;
-    font-size: 2.5rem;
+    font-size: 2.7rem;
     color: var(--text-color);
     font-family: "Sofia", cursive;
 }
 
 .about-text h4 {
     position: absolute;
-    top: 60px;
+    top: 13%;
     font-size: 1.5rem;
     color: #5e5d5d;
     letter-spacing: 3px;
+    line-height: 3;
 }
 
 .about-text p {
     max-width: 100%; 
     text-align: justify; 
     color: #5e5d5d;
-    margin: 50px 0;
+    line-height: 1.5;
+    padding: 50px 0;
 }
 .small-nav {
     display: grid;
@@ -262,7 +263,9 @@ span {
 }
 .readmore{
     background-color: var(--secondary-color);
-    margin: 0 auto;
+    margin: 10px 0;
+    width: 30%;
+    padding: 15px;
 }
 .readmore:hover{
     background-color: var(--primary-color);
@@ -275,7 +278,7 @@ span {
     gap:10px;
     align-items: stretch;
     justify-items: stretch;
-    padding: 50px;
+    padding: 70px;
 }
 
 .item {
@@ -296,7 +299,7 @@ span {
 }
 .resort-facilities{
     position: absolute;
-    top: 1500px;
+    top: 1550px;
     right: 0;
     height: 110vh;
     z-index: 3;
@@ -397,31 +400,31 @@ span {
 
 .circle2 {
     left: 20%;
-    top: 12%;
+    top: 13%;
     transform: translate(-50%, -50%);
 }
 
 .line5 {
     left: 24%;
-    top: 12%;
+    top: 13%;
     transform: translate(-50%, -50%);
 }
 
 .circle3 {
-    left: 78%;
-    top: 12%;
+    left: 79%;
+    top: 13%;
     transform: translate(-50%, -50%);
 }
 
 .line6 {
     left: 75%;
-    top: 12%;
+    top: 13%;
     transform: translate(-50%, -50%);
 }
 
 .resort-houses{
     position: absolute;
-    top: 2300px;
+    top: 2350px;
     right: 0;
     height: 110vh;
     z-index: 3;
@@ -430,8 +433,6 @@ span {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-.resort-houses{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(1, 1fr)
@@ -440,12 +441,18 @@ span {
     position: relative;
     padding: 30px;
     height: 100vh;
+    margin: 30px;
+}
+.resort-houses-box{
+    background-color: #f3f3f3;
+    padding: 20px;
+    border-radius: 20px;
 }
 .resort-houses-text h1{
     text-align: center;
     font-size: 2.5rem;
     font-family: "Sofia", cursive;
-    margin-bottom: 0;
+    margin: 0;
     color: #3b3b3b;
 }
 .resort-houses-text h3{
@@ -465,17 +472,126 @@ span {
 .resort-houses-text h2{
     font-weight: 900;
     font-size: 1.4rem;
-    margin-top: 50px;
+    margin: 50px 0;
 }
-.resort-houses-images{
-    width: 100%;
-    height: 100vh;
+.other-houses-container{
+    background-color: #f3f3f3;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 20px 0;
+}
+.other-houses-container h2{
+    margin: 0;
 }
 .other-houses{
     display: flex;
     flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-between;
+
 }
 .other-houses div{
-    width: 200px;
-    height: 300px;
+    max-width: 29%;
+    height: 50%;
+    padding: 10px;
+    margin: 0;
+    border-radius: 15px;
+}
+.house1 h4{
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 750;
+    color: #161616;
+}
+.house1 i{
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+.house1 p{
+    font-size: .9rem;
+}
+.house1:hover{
+    color: var(--secondary-color);
+}
+.house1 button i{
+    color: var(--secondary-color);
+}
+.other-houses div:hover{
+    background-color: var(--primary-color);
+}
+.other-houses div img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+}
+.other-houses button{
+    width: 100%;
+    margin: 0;
+}
+.other-houses button:hover{
+    background-color: var(--secondary-color);
+    color: var(--background-color);
+}
+.resort-houses-image{
+    width: 100%;
+    height: 100vh;
+    
+}
+.resort-houses-image div{
+    width: 89%;
+    overflow: hidden;
+    border-radius: 10px;
+    padding: 20px;
+}
+.resort-houses-image div img{
+    width: 89%;
+    height: 70%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+.resort-houses-image h1{
+    font-size: 2rem;
+    color: #262626;
+    margin: 0;
+    font-weight: 900;
+}
+.resort-houses-image i{
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    padding-right: 20px;
+}
+.resort-houses-image p{
+    font-size: 1rem;
+    text-align: justify;
+    width: 89%;
+}
+.price{
+    margin-left: 0;
+    width: 40%;
+    padding: 8px;
+}
+.buttons{
+    display: flex;
+    justify-content:flex-start;
+    padding: 0;
+    margin: 0;
+}
+.book-this{
+    width: 50%;
+    padding: 8px;
+    background-color: var(--secondary-color);
+}
+hr{
+    width: 89%;
+    margin: 0;
+}
+.video{
+    position: absolute;
+    top: 3250px;
+    right: 0;
+    height: 110vh;
+    z-index: 3;
+    width: 100%;
+    background-color:#3b3b3b;
 }

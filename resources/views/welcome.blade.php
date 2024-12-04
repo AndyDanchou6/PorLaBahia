@@ -31,11 +31,10 @@
             <i class="fa fa-calendar"> Check-Out</i>
             <i class="fa fa-user"> Guests</i>
         </div>
-        <div class="check-availability"> <i class="fa fa-check"> Check Availability</i></div>
+        <div class="check-availability"> <i class="fa fa-check-circle-o"> Check Availability</i></div>
     </section>
 
-    <section class="section2">
-        <div class="layout">
+    <section class="about-layout">
             <div class="about-text">
                 <h1>Por La Bahia</h1>
                 <h4>ABOUT US</h4>
@@ -55,7 +54,6 @@
             <div class="item item2"><img src="{{asset("/images/image2.jpg")}}" alt=""></div>
             <div class="item item3"><img src="{{asset("/images/image3.jpg")}}" alt=""></div>
             </div>
-        </div>
     </section>
 
     <section class="resort-facilities">
@@ -92,28 +90,66 @@
     </section>
     <section class="resort-houses">
         <div class="resort-houses-text">
-            <div class="circles circle2"></div>
-                <div class="thinline line5"></div>
-                    <h1>Resort Houses</h1>
-                <div class="circles circle3"></div>
-            <div class="thinline line6"></div>
-            <h3>OUR ACCOMMODATIONS</h3>
-            <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.
-            Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.
-            Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.
-            </p>
-            <h2>OTHER HOUSES</h2>
-            <div class="other-houses">
-                <div class="house1"> </div>
-                <div class="house1"> </div>
-                <div class="house1"> </div>
+            <div class="resort-houses-box">
+                <div class="circles circle2"></div>
+                    <div class="thinline line5"></div>
+                        <h1>Resort Houses</h1>
+                    <div class="circles circle3"></div>
+                <div class="thinline line6"></div>
+                <h3>OUR ACCOMMODATIONS</h3>
+                <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.
+                Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.
+                Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.
+                </p>
             </div>
+
+            <div class="other-houses-container">
+                <h2>OTHER HOUSES</h2>
+                <div class="other-houses">
+                    <div class="house1">
+                        <img src="/images/image1.jpg" alt="House Image 1">
+                        <h4>Dominic House</h4>
+                        <i class="fa fa-bed"> 2</i>
+                        <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.</p>
+                    <button><i class="fa fa-check-circle-o"></i> Check It</button>
+                    </div>
+                    <div class="house1"> 
+                        <img src="/images/image2.jpg" alt="House Image 1">
+                        <h4>Paula Ella House</h4>
+                        <i class="fa fa-bed"> 2</i>
+                        <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.</p>
+                    <button><i class="fa fa-check-circle-o"></i> Check It</button>
+                    </div>
+                    <div class="house1">
+                        <img src="/images/image3.jpg" alt="House Image 1">
+                        <h4>Paulo House</h4>
+                        <i class="fa fa-bed"> 2</i>
+                        <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.</p>
+                    <button><i class="fa fa-check-circle-o"></i> Check It</button>
+                    </div>
+                </div>
+            </div>
+            
         </div>
 
-        <div class="resort-houses-images">
-
+        <div class="resort-houses-image">
+            <div>
+                <img src="/images/image1.jpg" alt="">
+                <h1>Paulo House</h1>
+                <i class="fa fa-bed"> </i>
+                <i class="fa fa-users"> </i>
+                <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus and more recently with desktop publishing software like Aldus.</p>
+                <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus and more recently with desktop publishing software like Aldusand more recently with desktop publishing software like Aldusand more recently with desktop publishing software like Aldus  .</p>
+                <hr>
+                <div class="buttons">
+                <button class="price"><i class="fa fa-money-bill-wave"> </i> 5,500.00</button>
+                <button class="book-this"><i class="fa fa-book"> </i> Book This</button>
+                </div>
+             </div>
         </div>
     </section>
-   
+   <section class="video">
+
+   </section>
 </body>
 </html>
