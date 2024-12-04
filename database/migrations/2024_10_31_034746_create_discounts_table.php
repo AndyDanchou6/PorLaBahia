@@ -15,12 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('discount_code')->unique();
             $table->text('description')->nullable();
-            $table->string('discount_type');
             $table->integer('value');
-            $table->date('expiration_date');
+            $table->string('expiration_date');
             $table->integer('usage_limit')->nullable();
-            $table->bigInteger('minimum_payable')->nullable();
-            $table->bigInteger('maximum_payable')->nullable();
+            $table->decimal('minimum_payable', 10, 2)->nullable();
+            $table->decimal('maximum_payable', 10, 2)->nullable();
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();

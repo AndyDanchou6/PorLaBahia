@@ -13,7 +13,6 @@ class Discount extends Model
     protected $fillable = [
         'discount_code',
         'description',
-        'discount_type',
         'value',
         'expiration_date',
         'usage_limit',
@@ -28,15 +27,16 @@ class Discount extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'minimum_payable' => 'integer',
-        'maximum_payable' => 'integer',
+        'minimum_payable' => 'decimal:2',
+        'maximum_payable' => 'decimal:2',
         'usage_limit' => 'integer',
-        'value' => 'integer',
+        'value' => 'decimal:2',
         'expiration_date' => 'date',
     ];
 
-    public function appliedDiscount() {
-        return $this->hasMany(AppliedDiscount::class);
+    public function booking()
+    {
+        return $this->hasMany(Reservation::class);
     }
 
     public function generateDiscountCode(int $length = 10): string

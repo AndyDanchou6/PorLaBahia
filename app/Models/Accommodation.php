@@ -15,13 +15,23 @@ class Accommodation extends Model
     protected $fillable = [
         'room_name',
         'description',
+        'free_pax',
+        'excess_pax_price',
         'weekday_price',
         'weekend_price',
+        'booking_fee',
         'main_image',
-        'promo_id',
     ];
 
-    public function reservation()
+    protected $casts = [
+        'free_pax' => 'integer',
+        'excess_pax_price' => 'decimal:2',
+        'weekday_price' => 'decimal:2',
+        'weekend_price' => 'decimal:2',
+        'booking_fee' => 'decimal:2',
+    ];
+
+    public function booking()
     {
         return $this->hasMany(Reservation::class);
     }
