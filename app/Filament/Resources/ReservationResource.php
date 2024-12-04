@@ -116,17 +116,38 @@ class ReservationResource extends Resource
                                     ->default(fn() => (new Reservation())->generateBookingReference())
                                     ->readOnly(),
                                 Select::make('discount_id')
-                                    ->label('Discount Coupon')
-                                    ->options(function () {
+                                    ->label('Discount')
+                                    ->options(function ($get) {
+                                        $accommodation = Accommodation::find($get('accommodation_id'));
+                                        $checkInDate = $get('check_in_date');
+                                        $isWeekDay = Carbon::parse($checkInDate)->isWeekday();                                        // return Discount::where('status', true)
+                                        $accommodationPrice = 0;
+                                        if ($accommodation) {
+                                            if ($isWeekDay) {
+                                                $accommodationPrice = $accommodation->weekday_price;
+                                            } else {
+                                                $accommodationPrice = $accommodation->weekend_price;
+                                            }
+                                        }
+
                                         return Discount::where('status', true)
+                                            ->where(function ($query) {
+                                                return $query->where('usage_limit', '>', 0)
+                                                    ->orWhereNull('usage_limit');
+                                            })
+                                            ->where(function ($query) use ($accommodationPrice) {
+                                                return $query->where('minimum_payable', '<=', $accommodationPrice)
+                                                    ->orWhere('minimum_payable', '==', 0.00);
+                                            })
+                                            ->where(function ($query) use ($accommodationPrice) {
+                                                return $query->where('maximum_payable', '>=', $accommodationPrice)
+                                                    ->orWhere('maximum_payable', '==', 0.00);
+                                            })
                                             ->inRandomOrder()
                                             ->limit(5)
                                             ->pluck('discount_code', 'id');
                                     })
-                                    ->searchable(function (Builder $query): Builder {
-                                        return $query
-                                            ->where('status', 'like', "%1%");
-                                    }),
+                                    ->searchable(),
                                 TextInput::make('booking_fee')
                                     ->numeric()
                                     ->prefix('₱')
