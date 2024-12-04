@@ -31,6 +31,8 @@ class Galleries extends Model
             return 'Amenities';
         } elseif ($this->gallery_type === 'App\Models\Accommodation') {
             return 'Accommodation';
+        } elseif ($this->gallery_type === 'App\Models\RestaurantMenu') {
+            return 'Restaurant Menu';
         }
 
         return null;
@@ -47,6 +49,11 @@ class Galleries extends Model
             $accommodation = Accommodation::find($this->gallery_id);
             if ($accommodation) {
                 return $accommodation->room_name;
+            }
+        } elseif ($this->gallery_type === 'App\Models\RestaurantMenu') {
+            $restaurantMenu = RestaurantMenu::find($this->gallery_id);
+            if ($restaurantMenu) {
+                return $restaurantMenu->name;
             }
         }
 

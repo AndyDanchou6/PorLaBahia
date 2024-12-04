@@ -202,8 +202,6 @@ class AccommodationPromoResource extends Resource
                         ->color('warning')
                         ->visible(fn($record) => !$record->trashed()),
                     Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->trashed()),
                     Tables\Actions\RestoreAction::make()
                         ->color('success'),
                 ]),
@@ -211,7 +209,6 @@ class AccommodationPromoResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
