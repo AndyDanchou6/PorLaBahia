@@ -6,6 +6,7 @@ use App\Filament\Resources\AccommodationResource\Pages;
 use App\Filament\Resources\AccommodationResource\RelationManagers;
 use App\Filament\Resources\AccommodationResource\RelationManagers\GalleriesRelationManager;
 use App\Models\Accommodation;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
@@ -33,25 +34,69 @@ class AccommodationResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('room_name')
-                    ->required(),
-
-                MarkdownEditor::make('description')
-                    ->nullable(),
-
-                Section::make('')
+                Group::make()
                     ->schema([
-                        TextInput::make('capacity')
-                            ->integer()
-                            ->required(),
-                        TextInput::make('price')
+                        TextInput::make('room_name')
+                            ->required()
+                            ->columnSpan([
+                                'sm' => 2,
+                                'md' => 6,
+                            ]),
+                        TextInput::make('weekday_price')
                             ->prefix('₱')
-                            ->integer()
-                            ->required(),
+                            ->numeric()
+                            ->step(0.01)
+                            ->required()
+                            ->columnSpan([
+                                'sm' => 2,
+                                'md' => 2,
+                            ]),
+                        TextInput::make('weekend_price')
+                            ->prefix('₱')
+                            ->numeric()
+                            ->step(0.01)
+                            ->required()
+                            ->columnSpan([
+                                'sm' => 2,
+                                'md' => 2,
+                            ]),
+                        TextInput::make('booking_fee')
+                            ->numeric()
+                            ->step(0.01)
+                            ->prefix('₱')
+                            ->required()
+                            ->columnSpan([
+                                'sm' => 2,
+                                'md' => 2,
+                            ]),
+                        MarkdownEditor::make('description')
+                            ->nullable()
+                            ->columnSpan([
+                                'sm' => 2,
+                                'md' => 6,
+                            ]),
+                    ])->columnSpan(2)->columns([
+                        'sm' => 2,
+                        'md' => 6,
+                    ]),
+
+                Group::make()
+                    ->schema([
                         FileUpload::make('main_image')
-                            ->required(),
-                    ])->columns(2),
-            ])->columns(1);
+                            ->required()
+                            ->columnSpan(2),
+                        TextInput::make('free_pax')
+                            ->numeric()
+                            ->required()
+                            ->columnSpan(1),
+                        TextInput::make('excess_pax_price')
+                            ->numeric()
+                            ->step(0.01)
+                            ->prefix('₱')
+                            ->required()
+                            ->columnSpan(1),
+                    ])->columnSpan(1)->columns(2),
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -62,38 +107,47 @@ class AccommodationResource extends Resource
                     ->circular(),
                 TextColumn::make('room_name')
                     ->sortable()
-                    ->searchable()
-                    ->toggleable(),
-                TextColumn::make('capacity')
+                    ->searchable(),
+                TextColumn::make('weekday_price')
+                    ->prefix('₱')
                     ->sortable()
-                    ->searchable()
-                    ->toggleable(),
-                TextColumn::make('price')
+                    ->searchable(),
+                TextColumn::make('weekend_price')
+                    ->prefix('₱')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('booking_fee')
                     ->prefix('₱ ')
                     ->sortable()
-                    ->searchable()
-                    ->toggleable(),
+                    ->searchable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()
-                        ->color('warning'),
-                    Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->trashed()),
-                    Tables\Actions\RestoreAction::make()
-                        ->color('success'),
-                ]),
+                Tables\Actions\ViewAction::make()
+                    ->visible(function ($record) {
+                        return !$record->trashed();
+                    }),
+                Tables\Actions\EditAction::make()
+                    ->visible(function ($record) {
+                        return !$record->trashed();
+                    })
+                    ->color('warning'),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\RestoreAction::make()
+                    ->visible(function ($record) {
+                        return auth()->check() && auth()->user()->role === 1 && $record->trashed();
+                    })
+                    ->color('success'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make()
+                        ->visible(function () {
+                            return auth()->check() && auth()->user()->role === 1;
+                        }),
                 ]),
             ]);
     }

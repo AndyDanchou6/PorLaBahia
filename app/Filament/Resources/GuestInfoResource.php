@@ -73,6 +73,7 @@ class GuestInfoResource extends Resource
                 Tables\Columns\TextColumn::make('full_name')
                     ->label('Full Name')
                     ->searchable()
+                    ->formatStateUsing(fn($state) => ucwords($state))
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('contact_no')
                     ->searchable()
@@ -82,9 +83,11 @@ class GuestInfoResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('address')
+                    ->formatStateUsing(fn($state) => ucwords($state))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('fb_name')
                     ->default('No Information')
+                    ->formatStateUsing(fn($state) => ucwords($state))
                     ->searchable()
                     ->label('Facebook Name'),
                 Tables\Columns\TextColumn::make('created_at')
@@ -107,8 +110,6 @@ class GuestInfoResource extends Resource
                         ->color('warning')
                         ->visible(fn($record) => !$record->trashed()),
                     Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make()
-                        ->visible(fn($record) => $record->trashed()),
                     Tables\Actions\RestoreAction::make()
                         ->color('success'),
                 ]),
@@ -116,7 +117,6 @@ class GuestInfoResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);

@@ -15,13 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('accommodation_id');
             $table->unsignedBigInteger('guest_id');
+            $table->unsignedBigInteger('discount_id')->nullable();
             $table->string('booking_reference_no');
-            $table->date('check_in_date');
-            $table->date('check_out_date');
-            $table->decimal('total_payable', 12, 2)->nullable();
-            $table->decimal('total_paid', 12, 2)->nullable();
-            $table->decimal('balance', 12, 2)->nullable();
-            $table->boolean('booking_status')->default(true);
+            $table->string('check_in_date');
+            $table->string('check_out_date');
+            $table->decimal('booking_fee', 10, 2)->default(0.0);
             $table->softDeletes();
             $table->timestamps();
 
@@ -31,6 +29,9 @@ return new class extends Migration
             $table->foreign('guest_id')
             ->references('id')
             ->on('guest_infos');
+            $table->foreign('discount_id')
+            ->references('id')
+            ->on('discounts');
         });
     }
 
