@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
+use Filament\Tables\Filters\SelectFilter;
 
 class AccommodationPromoResource extends Resource
 {
@@ -36,7 +37,7 @@ class AccommodationPromoResource extends Resource
                                     ->relationship(name: 'accommodation', titleAttribute: 'room_name')
                                     ->required()
                                     // ->searchable()
-                                    ->disabled(fn($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord) // Disable in Edit mode
+                                    ->disabled(fn($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord)
                                     ->live()
                                     ->afterStateUpdated(function ($set, $get) {
                                         static::updateDiscountedPrice($set, $get);
@@ -138,6 +139,7 @@ class AccommodationPromoResource extends Resource
 
                                         Forms\Components\DatePicker::make('promo_start_date')
                                             ->required()
+                                            ->label('Promotion Start')
                                             ->date()
                                             ->minDate(today())
                                             ->suffixIcon('heroicon-o-calendar-days')
@@ -146,10 +148,11 @@ class AccommodationPromoResource extends Resource
                                             ->native(false)
                                             ->disabledDates(function ($get, $set, $state) {
                                                 $accommodationId = $get('accommodation_id');
-                                                $promoId = $get('id'); // If you have promo ID
+                                                $promoId = $get('id');
 
                                                 $existingPromos = AccommodationPromo::whereNull('deleted_at')
                                                     ->where('accommodation_id', $accommodationId)
+                                                    ->where('status', '!=', 'expired')
                                                     ->when($promoId, fn($query) => $query->where('id', '!=', $promoId))
                                                     ->get();
 
@@ -165,12 +168,13 @@ class AccommodationPromoResource extends Resource
                                             })
                                             ->afterStateUpdated(function ($set, $get) {
                                                 self::updateStatus($get, $set);
-                                                $set('promo_end_date', null); // Resetting end date after changing start date.
+                                                $set('promo_end_date', null);
                                             }),
 
 
                                         Forms\Components\DatePicker::make('promo_end_date')
                                             ->required()
+                                            ->label('Promotion End')
                                             ->date()
                                             ->reactive()
                                             ->suffixIcon('heroicon-o-calendar-days')
@@ -180,7 +184,6 @@ class AccommodationPromoResource extends Resource
                                                 $promo_start_date = $get('promo_start_date');
                                                 $currentEndDate = $get('promo_end_date');
 
-                                                // Allow the existing promo_end_date when editing
                                                 return ($currentEndDate && Carbon::now()->toDateString() == Carbon::parse($currentEndDate)->toDateString())
                                                     ? Carbon::parse($promo_start_date)->addDay()->startOfDay()
                                                     : Carbon::parse($promo_start_date)->addDay()->startOfDay();
@@ -197,6 +200,7 @@ class AccommodationPromoResource extends Resource
 
                                                 $existingPromos = AccommodationPromo::whereNull('deleted_at')
                                                     ->where('accommodation_id', $accommodationId)
+                                                    ->where('status', '!=', 'expired')
                                                     ->when($promoId, fn($query) => $query->where('id', '!=', $promoId))
                                                     ->get();
 
@@ -260,16 +264,17 @@ class AccommodationPromoResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->label('Promo Status')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'incoming' => 'warning',
-                        'active' => 'success',
-                        'expired' => 'danger',
-                    })
                     ->icons([
                         'incoming' => 'heroicon-o-calendar',
                         'active' => 'heroicon-o-check-circle',
                         'expired' => 'heroicon-o-x-circle',
                     ])
+                    ->color(fn(string $state): string => match ($state) {
+                        'incoming' => 'warning',
+                        'active' => 'success',
+                        'expired' => 'danger',
+                    })
+
                     ->formatStateUsing(fn($state) => ucwords($state))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -283,6 +288,17 @@ class AccommodationPromoResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+
+                SelectFilter::make('status')
+                    ->multiple()
+                    ->label('Promo Status')
+                    ->options([
+                        'active' => 'Active',
+                        'incoming' => 'Incoming',
+                        'expired' => 'Expired',
+                    ])
+                    ->placeholder('All Status')
+                    ->searchable()
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -301,7 +317,10 @@ class AccommodationPromoResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort(function ($query) {
+                $query->orderByRaw("FIELD(status, 'active', 'incoming', 'expired')");
+            });
     }
 
     public static function getRelations(): array

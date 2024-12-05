@@ -40,16 +40,25 @@ class AccommodationPromoRelationManager extends RelationManager
                     ->afterStateUpdated(function ($set, $get) {
                         $set('discounted_price', $get('discounted_price'));
                     }),
+
                 Forms\Components\DatePicker::make('promo_start_date')
                     ->required()
+                    ->label('Promotion Start')
                     ->date()
                     ->minDate(today())
                     ->suffixIcon('heroicon-o-calendar-days')
                     ->suffixIconColor('success')
                     ->reactive()
                     ->native(false)
-                    ->disabledDates(function ($get) {
-                        $existingPromos = AccommodationPromo::where('deleted_at', null)->get();
+                    ->disabledDates(function ($get, $set, $state) {
+                        $accommodationId = $this->getOwnerRecord()->id;
+                        $promoId = $get('id');
+
+                        $existingPromos = AccommodationPromo::whereNull('deleted_at')
+                            ->where('accommodation_id', $accommodationId)
+                            ->where('status', '!=', 'expired')
+                            ->when($promoId, fn($query) => $query->where('id', '!=', $promoId))
+                            ->get();
 
                         $reservedDatesFormatted = $existingPromos->flatMap(function ($promo) {
                             $promoStartDate = Carbon::parse($promo->promo_start_date);
@@ -68,6 +77,7 @@ class AccommodationPromoRelationManager extends RelationManager
 
                 Forms\Components\DatePicker::make('promo_end_date')
                     ->required()
+                    ->label('Promotion End')
                     ->date()
                     ->reactive()
                     ->suffixIcon('heroicon-o-calendar-days')
@@ -75,32 +85,39 @@ class AccommodationPromoRelationManager extends RelationManager
                     ->disabled(fn($get) => !$get('promo_start_date'))
                     ->minDate(function ($get) {
                         $promo_start_date = $get('promo_start_date');
-                        return $promo_start_date ? Carbon::parse($promo_start_date)->addDay() : today()->addDay();
+                        $currentEndDate = $get('promo_end_date');
+
+                        return ($currentEndDate && Carbon::now()->toDateString() == Carbon::parse($currentEndDate)->toDateString())
+                            ? Carbon::parse($promo_start_date)->addDay()->startOfDay()
+                            : Carbon::parse($promo_start_date)->addDay()->startOfDay();
                     })
                     ->native(false)
                     ->disabledDates(function ($get) {
-                        $disabledDates = [];
-
                         $startDate = $get('promo_start_date');
-                        if ($startDate) {
-                            $existingPromos = AccommodationPromo::where('deleted_at', null)->get();
+                        $accommodationId = $this->getOwnerRecord()->id;
 
-                            $reservedDatesFormatted = $existingPromos->flatMap(function ($promo) {
-                                $promoStartDate = Carbon::parse($promo->promo_start_date);
-                                $promoEndDate = Carbon::parse($promo->promo_end_date);
-
-                                return collect(range(0, $promoEndDate->diffInDays($promoStartDate)))
-                                    ->map(fn($days) => $promoStartDate->copy()->addDays($days)->toDateString());
-                            });
-
-                            $disabledDates = $reservedDatesFormatted->toArray();
+                        $promoId = $get('id');
+                        if (!$startDate || !$accommodationId) {
+                            return [];
                         }
 
-                        return $disabledDates;
+                        $existingPromos = AccommodationPromo::whereNull('deleted_at')
+                            ->where('accommodation_id', $accommodationId)
+                            ->where('status', '!=', 'expired')
+                            ->when($promoId, fn($query) => $query->where('id', '!=', $promoId))
+                            ->get();
+
+                        return $existingPromos->flatMap(function ($promo) {
+                            $promoStartDate = Carbon::parse($promo->promo_start_date);
+                            $promoEndDate = Carbon::parse($promo->promo_end_date);
+                            return collect(range(0, $promoEndDate->diffInDays($promoStartDate)))
+                                ->map(fn($days) => $promoStartDate->copy()->addDays($days)->toDateString());
+                        })->toArray();
                     })
                     ->afterStateUpdated(function ($set, $get) {
                         self::updatePromoStatus($get, $set);
-                    })->visible(fn($get) => $get('promo_start_date')),
+                    })
+                    ->visible(fn($get) => $get('promo_start_date')),
 
                 Forms\Components\Hidden::make('status')
                     ->reactive()
@@ -121,7 +138,7 @@ class AccommodationPromoRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('value')
                     ->label('Percentage Value')
                     ->badge()
-                    ->color('info')
+                    ->color('gray')
                     ->searchable()
                     ->suffix('%'),
                 Tables\Columns\TextColumn::make('discounted_price')
@@ -129,7 +146,7 @@ class AccommodationPromoRelationManager extends RelationManager
                     ->badge()
                     ->prefix('₱')
                     ->numeric()
-                    ->color('info')
+                    ->color('primary')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('promotion_date')
                     ->label('Promotion Date')
@@ -162,7 +179,10 @@ class AccommodationPromoRelationManager extends RelationManager
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort(function ($query) {
+                $query->orderByRaw("FIELD(status, 'active', 'incoming', 'expired')");
+            });;
     }
 
 
@@ -197,11 +217,11 @@ class AccommodationPromoRelationManager extends RelationManager
             $startDate = Carbon::parse($promoStartDate);
             $endDate = Carbon::parse($promoEndDate);
 
-            if ($now->isBefore($startDate)) {
-                $set('status', 'incoming');
-            } elseif ($now->between($startDate, $endDate)) {
+            if ($now->between($startDate, $endDate)) {
                 $set('status', 'active');
-            } elseif ($now->isAfter($startDate, $endDate)) {
+            } elseif ($startDate > $now) {
+                $set('status', 'incoming');
+            } elseif ($now->isAfter($endDate)) {
                 $set('status', 'expired');
             }
         } else {
