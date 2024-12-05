@@ -48,7 +48,7 @@ class AccommodationPromoRelationManager extends RelationManager
                     ->suffixIconColor('success')
                     ->reactive()
                     ->native(false)
-                    ->disabledDates(function () {
+                    ->disabledDates(function ($get) {
                         $existingPromos = AccommodationPromo::where('deleted_at', null)->get();
 
                         $reservedDatesFormatted = $existingPromos->flatMap(function ($promo) {

@@ -43,6 +43,10 @@ class Reservation extends Model
         return $this->belongsTo(Discount::class);
     }
 
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
     // protected static function booted()
     // {
     //     static::deleting(function ($reservation) {
