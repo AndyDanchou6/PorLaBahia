@@ -51,7 +51,6 @@ class GuestInfoResource extends Resource
                                     ->placeholder('Enter Contact Number'),
                                 Forms\Components\TextInput::make('email')
                                     ->email()
-                                    ->required()
                                     ->maxLength(255)
                                     ->placeholder('Enter Email'),
                                 Forms\Components\TextInput::make('address')

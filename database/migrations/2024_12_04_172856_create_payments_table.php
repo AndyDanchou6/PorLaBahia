@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('guest_infos', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->bigInteger('contact_no');
-            $table->string('email')->unique()->nullable();
-            $table->string('address');
-            $table->string('fb_name')->nullable();
+            $table->unsignedBigInteger('reservation_id');
+            $table->integer('amount')->nullable();
+            $table->string('payment_method')->nullable();
+            $table->string('payment_status')->nullable();
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('reservation_id')->references('id')->on('reservations');
         });
     }
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('guest_infos');
+        Schema::dropIfExists('payments');
     }
 };

@@ -17,8 +17,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Accommodation;
 use App\Models\Discount;
 use App\Models\GuestInfo;
+use DateTime;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
@@ -50,7 +55,7 @@ class ReservationResource extends Resource
                                     ->pluck('room_name', 'id');
                             })
                             ->searchable()
-                            ->reactive()
+                            ->live()
                             ->afterStateUpdated(function ($state, $set) {
                                 $bookingFee = Accommodation::find($state)?->booking_fee;
 
@@ -75,9 +80,9 @@ class ReservationResource extends Resource
                             ->required()
                             ->date()
                             ->minDate(today())
-                            ->reactive()
+                            ->live()
                             ->afterStateUpdated(function ($set, $state) {
-                                $set('check_out_date', Carbon::parse($state)->addDay());
+                                $set('check_out_date', Carbon::parse($state)->addDay()->format('M d, Y'));
                             })
                             ->native(false)
                             ->disabledDates(function () {
@@ -95,11 +100,70 @@ class ReservationResource extends Resource
 
                                 return $reservedDateArray;
                             }),
-                        DatePicker::make('check_out_date')
+                        TextInput::make('check_out_date')
                             ->required()
-                            ->date()
-                            ->disabled()
-                            ->native(false),
+                            ->formatStateUsing(function ($record) {
+                                if ($record != null) {
+                                    return Carbon::parse($record->check_out_date)->format('M d, Y');
+                                }
+                            }),
+
+                        Select::make('discount_id')
+                            ->label('Discount')
+                            ->options(function ($get) {
+                                $accommodation = Accommodation::find($get('accommodation_id'));
+                                $checkInDate = $get('check_in_date');
+                                $isWeekDay = Carbon::parse($checkInDate)->isWeekday();                                        // return Discount::where('status', true)
+                                $accommodationPrice = 0;
+                                if ($accommodation) {
+                                    if ($isWeekDay) {
+                                        $accommodationPrice = $accommodation->weekday_price;
+                                    } else {
+                                        $accommodationPrice = $accommodation->weekend_price;
+                                    }
+                                }
+
+                                return Discount::where('status', true)
+                                    ->where(function ($query) {
+                                        return $query->where('usage_limit', '>', 0)
+                                            ->orWhereNull('usage_limit');
+                                    })
+                                    ->where(function ($query) use ($accommodationPrice) {
+                                        return $query->where('minimum_payable', '<=', $accommodationPrice)
+                                            ->orWhere('minimum_payable', '==', 0.00);
+                                    })
+                                    ->where(function ($query) use ($accommodationPrice) {
+                                        return $query->where('maximum_payable', '>=', $accommodationPrice)
+                                            ->orWhere('maximum_payable', '==', 0.00);
+                                    })
+                                    ->inRandomOrder()
+                                    ->limit(5)
+                                    ->pluck('discount_code', 'id');
+                            })
+                            ->searchable()
+                            ->live(100)
+                            ->afterStateUpdated(function ($state, $old) {
+                                if ($state !== null) {
+                                    $discount = Discount::find($state);
+                                    if ($discount) {
+                                        $usageLimit = $discount->usage_limit;
+                                        if ($usageLimit != null) {
+                                            $newUsageLimit = $usageLimit - 1;
+                                            $discount->update(['usage_limit' => $newUsageLimit]);
+                                        }
+                                    }
+                                }
+
+                                if ($old !== null && $state !== $old) {
+                                    $discount = Discount::find($old);
+                                    if ($discount) {
+                                        if ($discount->usage_limit != null) {
+                                            $newUsageLimit = $usageLimit + 1;
+                                            $discount->update(['usage_limit' => $newUsageLimit]);
+                                        }
+                                    }
+                                }
+                            }),
 
                     ])->columnSpan([
                         'md' => 2,
@@ -114,67 +178,32 @@ class ReservationResource extends Resource
                                     ->label('Booking Reference Number')
                                     ->default(fn() => (new Reservation())->generateBookingReference())
                                     ->readOnly(),
-                                Select::make('discount_id')
-                                    ->label('Discount')
-                                    ->options(function ($get) {
-                                        $accommodation = Accommodation::find($get('accommodation_id'));
-                                        $checkInDate = $get('check_in_date');
-                                        $isWeekDay = Carbon::parse($checkInDate)->isWeekday();                                        // return Discount::where('status', true)
-                                        $accommodationPrice = 0;
-                                        if ($accommodation) {
-                                            if ($isWeekDay) {
-                                                $accommodationPrice = $accommodation->weekday_price;
-                                            } else {
-                                                $accommodationPrice = $accommodation->weekend_price;
-                                            }
-                                        }
-
-                                        return Discount::where('status', true)
-                                            ->where(function ($query) {
-                                                return $query->where('usage_limit', '>', 0)
-                                                    ->orWhereNull('usage_limit');
-                                            })
-                                            ->where(function ($query) use ($accommodationPrice) {
-                                                return $query->where('minimum_payable', '<=', $accommodationPrice)
-                                                    ->orWhere('minimum_payable', '==', 0.00);
-                                            })
-                                            ->where(function ($query) use ($accommodationPrice) {
-                                                return $query->where('maximum_payable', '>=', $accommodationPrice)
-                                                    ->orWhere('maximum_payable', '==', 0.00);
-                                            })
-                                            ->inRandomOrder()
-                                            ->limit(5)
-                                            ->pluck('discount_code', 'id');
-                                    })
-                                    ->searchable()
-                                    ->live(100)
-                                    ->afterStateUpdated(function ($state, $old) {
-                                        if ($state !== null) {
-                                            $discount = Discount::find($state);
-                                            if ($discount) {
-                                                $usageLimit = $discount->usage_limit;
-                                                if ($usageLimit != null) {
-                                                    $newUsageLimit = $usageLimit - 1;
-                                                    $discount->update(['usage_limit' => $newUsageLimit]);
-                                                }
-                                            }
-                                        }
-
-                                        if ($old !== null && $state !== $old) {
-                                            $discount = Discount::find($old);
-                                            if ($discount) {
-                                                if ($discount->usage_limit != null) {
-                                                    $newUsageLimit = $usageLimit + 1;
-                                                    $discount->update(['usage_limit' => $newUsageLimit]);
-                                                }
-                                            }
-                                        }
-                                    }),
                                 TextInput::make('booking_fee')
                                     ->numeric()
                                     ->prefix('₱')
                                     ->step(0.01)
                                     ->required(),
+                                Select::make('booking_status')
+                                    ->options([
+                                        'on_hold' => 'On Hold',
+                                        'expired' => 'Expired',
+                                        'booked' => 'Booked',
+                                        'cancelled' => 'Cancelled',
+                                    ])
+                                    ->required(),
+                                DateTimePicker::make('on_hold_expiration_date')
+                                    ->date()
+                                    ->visibleOn('view'),
+                                // Radio::make('booking_status')
+                                //     ->options([
+                                //         'on_hold' => 'On Hold',
+                                // 'expired' => 'Expired',
+                                //         'booked' => 'Booked',
+                                //         'cancelled' => 'Cancelled',
+                                //     ])
+                                //     ->inline()
+                                //     ->inlineLabel(false)
+                                //     ->required(),
                             ]),
                     ])->columnSpan([
                         'md' => 1,
@@ -338,7 +367,9 @@ class ReservationResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            RelationManagers\PaymentsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

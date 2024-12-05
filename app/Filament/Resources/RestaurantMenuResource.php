@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -60,7 +61,7 @@ class RestaurantMenuResource extends Resource
                             ->searchable(),
                         Forms\Components\TextInput::make('unit')
                             ->label('Unit')
-                            ->placeholder('e.g., 500 ml or 10 kg')
+                            ->placeholder('e.g., Per Serving, Per Kilo or 200 ML')
                             ->maxLength(255),
                     ])->columnSpan([
                         'md' => 2,
@@ -95,9 +96,9 @@ class RestaurantMenuResource extends Resource
                 Tables\Columns\TextColumn::make('price')
                     ->prefix('₱')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('category')
-                    ->formatStateUsing(fn($state) => ucwords($state))
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('category')
+                //     ->formatStateUsing(fn($state) => ucwords($state))
+                //     ->searchable(),
                 Tables\Columns\TextColumn::make('unit')
                     ->formatStateUsing(fn($state) => ucwords($state))
                     ->searchable(),
@@ -116,6 +117,34 @@ class RestaurantMenuResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+
+                SelectFilter::make('category')
+                    ->options([
+                        'breakfast' => 'Pamahaw | Breakfast',
+                        'special' => 'Espesyal | Special',
+                        'chicken' => 'Manok | Chicken',
+                        'pork' => 'Baboy | Pork',
+                        'beef' => 'Baka | Beef',
+                        'rice' => 'Kanin | Rice',
+                        'seafoods' => 'Pagkaong Dagat | Seafoods',
+                        'salad' => 'Insalada | Salad',
+                        'soup' => 'Sabaw | Soup',
+                        'veggies' => 'Otan | Veggies',
+                        'side dish' => 'Side Dish',
+                        'dessert' => 'Dessert',
+                        'burger' => 'Burger',
+                        'pasta' => 'Pasta',
+                        'coffee' => 'Kape | Coffee',
+                        'juice' => 'Juice',
+                        'milkshake' => 'Milkshake',
+                        'water' => 'Water',
+                        'tea' => 'Tea',
+                        'soda' => 'Soda',
+                        'beer' => 'Beer',
+                    ])
+                    ->label('Filter by Category')
+                    ->searchable()
+                    ->placeholder('All Categories')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
