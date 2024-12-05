@@ -18,7 +18,7 @@ class RestaurantMenuResource extends Resource
 {
     protected static ?string $model = RestaurantMenu::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard';
 
     public static function form(Form $form): Form
     {
@@ -119,6 +119,7 @@ class RestaurantMenuResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
 
                 SelectFilter::make('category')
+                    ->multiple()
                     ->options([
                         'breakfast' => 'Pamahaw | Breakfast',
                         'special' => 'Espesyal | Special',

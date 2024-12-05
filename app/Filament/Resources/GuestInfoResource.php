@@ -21,7 +21,7 @@ class GuestInfoResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationLabel = 'Guest';
+    protected static ?string $navigationLabel = 'Guests';
 
     protected static ?string $modelLabel = 'Guest Information';
 
@@ -70,6 +70,7 @@ class GuestInfoResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('full_name')
+                    ->searchable(['first_name', 'last_name'])
                     ->label('Full Name')
                     ->searchable()
                     ->formatStateUsing(fn($state) => ucwords($state))
