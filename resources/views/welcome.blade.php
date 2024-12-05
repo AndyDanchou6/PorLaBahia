@@ -13,10 +13,7 @@
             <div class="background">
     <div class="overlay"></div>
     @include('header')
-    <div class="lines">
-        <div class="line1"></div>
-        <div class="line2"></div>
-    </div>
+
     <main>
         <h2 class="title">Welcome to Por La Bahia</h2>
         <h1 class="tagline">Your <span>Home</span> by <br> the Bay.</h1>
@@ -65,6 +62,8 @@
             <div class="thinline line4"></div>
             
             <h5>OUR AMENITIES</h5>
+            <i class="fa fa-chevron-circle-left"></i>
+            <i class="fa fa-chevron-circle-right"></i>
             <div class="amenities-boxes">
                 <div class="amenities-box"> 
                     <img src="/images/image1.jpg" alt="">
@@ -105,6 +104,8 @@
 
             <div class="other-houses-container">
                 <h2>OTHER HOUSES</h2>
+                <i class="fa fa-arrow-circle-o-left"></i>
+                <i class="fa fa-arrow-circle-o-right"></i>
                 <div class="other-houses">
                     <div class="house1">
                         <img src="/images/image1.jpg" alt="House Image 1">
@@ -128,28 +129,43 @@
                     <button><i class="fa fa-check-circle-o"></i> Check It</button>
                     </div>
                 </div>
-            </div>
-            
+            </div>       
         </div>
-
         <div class="resort-houses-image">
-            <div>
-                <img src="/images/image1.jpg" alt="">
+            <img src="/images/image1.jpg" alt="">
                 <h1>Paulo House</h1>
                 <i class="fa fa-bed"> </i>
                 <i class="fa fa-users"> </i>
                 <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus and more recently with desktop publishing software like Aldus.</p>
-                <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus and more recently with desktop publishing software like Aldusand more recently with desktop publishing software like Aldusand more recently with desktop publishing software like Aldus  .</p>
+                <p>Lorem passages, and more recently publishing software like Aldus and more recently with desktop publishing software like Aldusand more recently with desktop publishing software like Aldusand more recently with desktop publishing software like Aldus  .</p>
                 <hr>
-                <div class="buttons">
+            <div class="buttons">
                 <button class="price"><i class="fa fa-money-bill-wave"> </i> 5,500.00</button>
                 <button class="book-this"><i class="fa fa-book"> </i> Book This</button>
-                </div>
-             </div>
+            </div>
         </div>
     </section>
    <section class="video">
+        <div class="circles circle4"></div>
+            <div class="thinline line8"></div>
+                <h1>Quick Video</h1>
+            <div class="circles circle5"></div>
+        <div class="thinline line7"></div>
+        <h2>LET US TAKE YOU TO A QUICK TOUR!</h2>
+   </section>
 
+   <section class="choose-us">
+            <div class="circles circle6"></div>
+                <div class="thinline line9"></div>
+                    <h1>Why Choose Us</h1>
+                <div class="circles circle7"></div>
+            <div class="thinline line10"></div>
+            <h3>ESCAPE, RELAX AND REDISCOVER COMFORT.</h3>
+            <div class="choose-slider">
+                <div> </div>
+                <div> </div>
+                <div> </div>
+            </div>
    </section>
 </body>
 </html>
