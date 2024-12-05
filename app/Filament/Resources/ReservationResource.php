@@ -98,9 +98,8 @@ class ReservationResource extends Resource
                         DatePicker::make('check_out_date')
                             ->required()
                             ->date()
-                            ->disabled(fn($get) => !$get('check_in_date'))
-                            ->native(false)
-                            ->readOnly(),
+                            ->disabled()
+                            ->native(false),
 
                     ])->columnSpan([
                         'md' => 2,
@@ -147,7 +146,30 @@ class ReservationResource extends Resource
                                             ->limit(5)
                                             ->pluck('discount_code', 'id');
                                     })
-                                    ->searchable(),
+                                    ->searchable()
+                                    ->live(100)
+                                    ->afterStateUpdated(function ($state, $old) {
+                                        if ($state !== null) {
+                                            $discount = Discount::find($state);
+                                            if ($discount) {
+                                                $usageLimit = $discount->usage_limit;
+                                                if ($usageLimit != null) {
+                                                    $newUsageLimit = $usageLimit - 1;
+                                                    $discount->update(['usage_limit' => $newUsageLimit]);
+                                                }
+                                            }
+                                        }
+
+                                        if ($old !== null && $state !== $old) {
+                                            $discount = Discount::find($old);
+                                            if ($discount) {
+                                                if ($discount->usage_limit != null) {
+                                                    $newUsageLimit = $usageLimit + 1;
+                                                    $discount->update(['usage_limit' => $newUsageLimit]);
+                                                }
+                                            }
+                                        }
+                                    }),
                                 TextInput::make('booking_fee')
                                     ->numeric()
                                     ->prefix('₱')

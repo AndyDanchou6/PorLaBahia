@@ -24,4 +24,9 @@ class GuestInfo extends Model
         $full_name = $this->first_name . ' ' . $this->last_name;
         return $full_name;
     }
+
+    public function guestCredit() 
+    {
+        return $this->hasMany(GuestCredit::class, 'guest_id');
+    }
 }

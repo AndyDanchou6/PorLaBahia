@@ -43,12 +43,25 @@ class Reservation extends Model
         return $this->belongsTo(Discount::class);
     }
 
-    // protected static function booted()
-    // {
-    //     static::deleting(function ($reservation) {
-    //         $reservation->appliedDiscount()->update(['deleted_at' => now()]);
-    //     });
-    // }
+    protected static function booted()
+    {
+        // static::deleting(function ($reservation) {
+        //     $reservation->appliedDiscount()->update(['deleted_at' => now()]);
+        // });
+        // static::updating(function ($reservation) {
+        //     $discounted = $reservation->discount;
+
+        //     if ($discounted) {
+        //         $usageLimit = $reservation->discount->usage_limit;
+        //         $usageLimit = intval($usageLimit);
+
+        //         if ($usageLimit > 0 || $usageLimit != null || $usageLimit == '') {
+        //             $usageLimit -= 1;
+        //             $reservation->discount->update(['usage_limit' => $usageLimit]);
+        //         }
+        //     }
+        // });
+    }
 
     public function generateBookingReference(int $length = 4): string
     {
