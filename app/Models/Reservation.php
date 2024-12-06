@@ -19,6 +19,8 @@ class Reservation extends Model
         'check_in_date',
         'check_out_date',
         'booking_fee',
+        'booking_status',
+        'on_hold_expiration_date',
     ];
 
     protected $casts = [
@@ -43,16 +45,24 @@ class Reservation extends Model
         return $this->belongsTo(Discount::class);
     }
 
+    protected static function booted()
+    {
+        // static::deleting(function ($reservation) {
+        //     $reservation->appliedDiscount()->update(['deleted_at' => now()]);
+        // });
+        // static::updating(function ($reservation) {
+        // 
+        // });
+        static::creating(function ($reservation) {
+            if ($reservation->booking_status == 'on_hold') {
+                $reservation->on_hold_expiration_date = Carbon::now()->addHours(12);
+            }
+        });
+    }
     public function payments()
     {
         return $this->hasMany(Payment::class);
     }
-    // protected static function booted()
-    // {
-    //     static::deleting(function ($reservation) {
-    //         $reservation->appliedDiscount()->update(['deleted_at' => now()]);
-    //     });
-    // }
 
     public function generateBookingReference(int $length = 4): string
     {

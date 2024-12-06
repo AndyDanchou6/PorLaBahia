@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('check_in_date');
             $table->string('check_out_date');
             $table->decimal('booking_fee', 10, 2)->default(0.0);
+            $table->string('booking_status');
+            $table->string('on_hold_expiration_date')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
