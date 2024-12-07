@@ -178,33 +178,33 @@ span {
     height: 100vh;
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr; 
-    grid-template-rows: repeat(1, 1fr)   
+    grid-template-columns: repeat(2, 1fr); 
+    grid-template-rows: repeat(1, 1fr);
 }
 .about-text {
-    padding: 70px;
-    max-height: 100%;
+    margin-left:80px;
+    margin-top: 30px;
+    max-height: 90%;
 }
 .about-text h1 {
-    margin-top: 10px;
     font-size: 2.7rem;
     color: var(--text-color);
     font-family: "Sofia", cursive;
+    text-shadow: #555 2px 3px 10px;
 }
 .about-text h4 {
-    position: absolute;
-    top: 13%;
+    margin: 0;
     font-size: 1.5rem;
-    color: #5e5d5d;
+    color: var(--text-color);
     letter-spacing: 3px;
-    line-height: 3;
+    text-shadow: #818181 2px 3px 10px;
 }
 .about-text p {
     max-width: 100%; 
     text-align: justify; 
     color: #5e5d5d;
     line-height: 1.5;
-    padding: 50px 0;
+    padding: 20px 0;
 }
 .small-nav {
     display: grid;
@@ -238,11 +238,11 @@ span {
 }
 .grid-images {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); 
+    grid-template-columns: repeat(2, 250px); 
+    grid-template-rows: repeat(auto, 300px);
     gap:10px;
-    align-items: stretch;
-    justify-items: stretch;
-    padding: 70px;
+    align-content: center;
+    justify-content: center;
 }
 .item {
     width: 100%;
@@ -257,30 +257,33 @@ span {
 .item img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit:contain;
     border-radius: 5px;
 }
 .resort-facilities{
     position: absolute;
-    top: 230%;
+    top: 200%;
     height: 100vh;
     width: 100%;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
 }
 .resort{
     width: 90%;
-    box-shadow: #9a9a9a 5px 5px 30px;
+    box-shadow: #bfbfbf 2px 5px 30px;
     border-radius: 20px;
     margin: 0;
     padding: 30px;
+    height: 87%;
 }
 .resort h1{
     font-size: 2.5rem;
     font-family: "Sofia", cursive;
     text-align: center;
     margin-bottom: 1px;
+    margin-top: 0;
 }
 .resort h5{
     font-size: 1rem;
@@ -305,27 +308,30 @@ span {
     right: 7%; 
 }
 .fa-arrow-circle-o-left,.fa-arrow-circle-o-right{
+    position: absolute;
     color: var(--primary-color);
     font-size: 2.1rem;
+    top: 42%;
+    transform: translateY(50%);
 }
 .fa-arrow-circle-o-left{
     left: 2%;
 }
 .fa-arrow-circle-o-right {
-    right: 4%; 
+    right: 2%; 
 }
 .amenities-boxes{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    max-height: 500px;  
+    max-height: 50%;  
 }
 .amenities-box{
     width:24%;
-    max-height: 500px;
+    max-height: 27%;
     box-shadow: #c3c3c3 5px 5px 20px;
-    padding: 30px;
+    padding: 20px;
     border-radius: 10px;
     margin: 20px;
     overflow: hidden;
@@ -365,64 +371,58 @@ span {
     transform: translate(-50%, -50%);
 }
 .circle{
-    left: 35%;
-    top: 20%;
+    left: 33%;
+    top: 12%;
 }
 .line3{
-    left: 37%;
-    top: 20%;
+    left: 35%;
+    top: 12%;
 }
 .circle1{
-    left: 64%;
-    top: 20%;
+    left: 66%;
+    top: 12%;
 }
 .line4{
-    left: 62%;
-    top: 20%;
+    left: 64%;
+    top: 12%;
 }
 .circle2 {
-    left: 20%;
-    top: 13%;
-    transform: translate(-50%, -50%);
+    left: 17%;
+    top: 7%;
 }
 .line5 {
-    left: 24%;
-    top: 13%;
-    transform: translate(-50%, -50%);
+    left: 21%;
+    top: 7%;
 }
 .circle3 {
-    left: 79%;
-    top: 13%;
-    transform: translate(-50%, -50%);
+    left: 82%;
+    top: 7%;
 }
 .line6 {
-    left: 75%;
-    top: 13%;
-    transform: translate(-50%, -50%);
+    left: 78%;
+    top: 7%;
 }
 .resort-houses{
     position: absolute;
-    top: 340%;
+    top: 300%;
     right: 0;
     height: 100vh;
     width: 100%;
-    background-color: var(--background-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(1, 1fr)
+    grid-template-rows: repeat(1, 1fr);
 }
 .resort-houses-text{
     position: relative;
-    padding: 30px;
-    margin: 30px;
+    margin-top: 30px;
+    margin-left: 40px;
 }
 .resort-houses-box{
     background-color: #f3f3f3;
-    padding: 20px;
+    padding: 10px;
     border-radius: 20px;
+    max-height: 300px;
+    margin: 10px;
 }
 .resort-houses-text h1{
     text-align: center;
@@ -435,12 +435,12 @@ span {
     text-align: center;
     color: #5e5d5d;
     font-weight: 300;
-    letter-spacing: 3px;
-    font-size: 1.2rem;
+    letter-spacing: 4px;
+    font-size: 1rem;
     margin-top: 0;
 }
 .resort-houses-text p{
-    text-align: justify;
+    text-align: center;
     color: #5e5d5d;
     font-weight: 300;
     line-height: 20px;
@@ -454,10 +454,13 @@ span {
     background-color: #f3f3f3;
     border-radius: 20px;
     padding: 10px;
-    margin: 20px 0;
+    margin: 10px;
+    max-height: 500px;
 }
 .other-houses-container h2{
-    margin: 15px;
+    margin: 10px;
+    font-size: 1rem;
+    font-weight: 800;
 }
 .other-houses{
     display: flex;
@@ -467,29 +470,32 @@ span {
 }
 .other-houses div{
     max-width: 29%;
-    height: 50%;
-    padding: 10px;
+    height: 40%;
+    padding: 8px;
     margin: 0;
     border-radius: 15px;
+    overflow: hidden;
 }
 .house1 h4{
     margin: 0;
     font-size: 1rem;
     font-weight: 750;
-    color: #161616;
+    color: #484848;
 }
 .house1 i{
     color: var(--primary-color);
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 .house1 p{
     font-size: .9rem;
+    text-align: justify;
 }
 .house1:hover{
     color: var(--secondary-color);
 }
 .house1 button i{
     color: var(--secondary-color);
+    padding: .7px;
 }
 .other-houses div:hover{
     background-color: var(--primary-color);
@@ -511,12 +517,12 @@ span {
 .resort-houses-image{
     max-width: 100%;
     max-height: 100%;
-    margin: 30px;
+    margin: 20px;
     padding: 20px;
 }
 .resort-houses-image img{
     width: 100%;
-    height: 50%;
+    height: 40%;
     object-fit: cover;
     border-radius: 20px;
 }
@@ -545,7 +551,6 @@ span {
     background-color: var(--primary-color);
     color: #ffffff;
     border-radius: 5px;
-
 }
 .buttons{
     display: flex;
@@ -562,7 +567,7 @@ hr{
 }
 .video{
     position: absolute;
-    top: 500%;
+    top: 410%;
     right: 0;
     height: 100vh;
     width: 100%;
@@ -604,7 +609,7 @@ hr{
 }
 .choose-us{
     position: absolute;
-    top: 600%;
+    top: 500%;
     right: 0;
     height: 110vh;
     width: 100%;
@@ -729,7 +734,7 @@ hr{
 }
 .location{
     position: absolute;
-    top: 730%;
+    top: 630%;
     width: 100%;
     height: 100vh;
 }
