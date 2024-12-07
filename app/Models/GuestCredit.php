@@ -13,11 +13,16 @@ class GuestCredit extends Model
 
     protected $fillable = [
         'guest_id',
+        'booking_ids',
         'amount',
         'is_redeemed',
         'date_redeemed',
         'expiration_date',
         'status',
+    ];
+
+    protected $casts = [
+        'booking_ids' => 'array',
     ];
 
     public function guest()

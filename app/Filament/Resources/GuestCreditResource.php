@@ -18,6 +18,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class GuestCreditResource extends Resource
 {
@@ -45,6 +46,9 @@ class GuestCreditResource extends Resource
                     ->formatStateUsing(function ($record) {
                         return $record->guest->first_name . $record->guest->last_name;
                     }),
+                // TextColumn::make('booking_reference_no')
+                //     ->sortable()
+                //     ->searchable(),
                 TextColumn::make('amount')
                     ->sortable()
                     ->searchable()
@@ -64,22 +68,23 @@ class GuestCreditResource extends Resource
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle'),
                 TextColumn::make('date_redeemed')
-                    ->sortable()
                     ->searchable()
+                    ->default('Not Redeemed Yet')
                     ->formatStateUsing(function ($record) {
-                        return $record->date_redeemed
-                            ? Carbon::parse($record->date_redeemed)->toDayDateTimeString()
-                            : 'Not Redeemed Yet';
+                        if ($record->date_redeemed) {
+                            return Carbon::parse($record->date_redeemed)->toDayDateTimeString();
+                        } else {
+                            return 'Not Redeemed Yet';
+                        }
                     }),
             ])
             ->filters([
                 TernaryFilter::make('is_redeemed'),
                 SelectFilter::make('status')
-                ->options([
-                    'active' => 'Active',
-                    'expired' => 'Expired',
-                    'redeemed' => 'Redeemed',
-                ]),
+                    ->options([
+                        'active' => 'Active',
+                        'expired' => 'Expired',
+                    ]),
             ])
             ->actions([
                 // Tables\Actions\EditAction::make(),

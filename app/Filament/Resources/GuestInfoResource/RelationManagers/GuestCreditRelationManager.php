@@ -51,12 +51,14 @@ class GuestCreditRelationManager extends RelationManager
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle'),
                 TextColumn::make('date_redeemed')
-                    ->sortable()
                     ->searchable()
+                    ->default('Not Redeemed Yet')
                     ->formatStateUsing(function ($record) {
-                        return $record->date_redeemed
-                            ? Carbon::parse($record->date_redeemed)->toDayDateTimeString()
-                            : 'Not Redeemed Yet';
+                        if ($record->date_redeemed) {
+                            return Carbon::parse($record->date_redeemed)->toDayDateTimeString();
+                        } else {
+                            return 'Not Redeemed Yet';
+                        }
                     }),
             ])
             ->filters([
