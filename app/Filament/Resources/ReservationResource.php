@@ -106,7 +106,8 @@ class ReservationResource extends Resource
                                 if ($record != null) {
                                     return Carbon::parse($record->check_out_date)->format('M d, Y');
                                 }
-                            }),
+                            })
+                            ->readOnly(),
 
                         Select::make('discount_id')
                             ->label('Discount')
@@ -184,26 +185,38 @@ class ReservationResource extends Resource
                                     ->step(0.01)
                                     ->required(),
                                 Select::make('booking_status')
-                                    ->options([
-                                        'on_hold' => 'On Hold',
-                                        'expired' => 'Expired',
-                                        'booked' => 'Booked',
-                                        'cancelled' => 'Cancelled',
-                                    ])
-                                    ->required(),
+                                    ->options(function ($operation) {
+                                        if ($operation === 'view') {
+                                            return [
+                                                'booked' => 'Booked',
+                                                'cancelled' => 'Cancelled',
+                                                'on_hold' => 'On Hold',
+                                            ];
+                                        } else {
+                                            return [
+                                                'booked' => 'Booked',
+                                                'cancelled' => 'Cancelled',
+                                            ];
+                                        }
+                                    })
+                                    ->default(function ($operation) {
+                                        if ($operation === 'create') {
+                                            return 'on_hold';
+                                        }
+                                    })
+                                    ->required()
+                                    ->hidden(function ($operation, $record) {
+                                        if ($operation === 'create') {
+                                            return true;
+                                        } elseif ($operation === 'edit' && $record->booking_status === 'on_hold') {
+                                            return true;
+                                        }
+                                        return false;
+                                    }),
                                 DateTimePicker::make('on_hold_expiration_date')
                                     ->date()
-                                    ->visibleOn('view'),
-                                // Radio::make('booking_status')
-                                //     ->options([
-                                //         'on_hold' => 'On Hold',
-                                // 'expired' => 'Expired',
-                                //         'booked' => 'Booked',
-                                //         'cancelled' => 'Cancelled',
-                                //     ])
-                                //     ->inline()
-                                //     ->inlineLabel(false)
-                                //     ->required(),
+                                    ->disabled()
+                                    ->visibleOn(['view', 'edit']),
                             ]),
                     ])->columnSpan([
                         'md' => 1,

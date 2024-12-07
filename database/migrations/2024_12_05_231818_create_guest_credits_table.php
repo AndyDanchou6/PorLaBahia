@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('guest_credits', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('guest_id');
+            $table->string('booking_ids');
             $table->decimal('amount', 10, 2)->nullable()->default(0);
             $table->boolean('is_redeemed')->nullable()->default(false);
             $table->string('date_redeemed')->nullable();

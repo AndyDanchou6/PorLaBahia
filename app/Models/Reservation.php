@@ -45,23 +45,55 @@ class Reservation extends Model
         return $this->belongsTo(Discount::class);
     }
 
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     protected static function booted()
     {
         // static::deleting(function ($reservation) {
         //     $reservation->appliedDiscount()->update(['deleted_at' => now()]);
         // });
-        // static::updating(function ($reservation) {
-        // 
-        // });
+        static::updating(function ($reservation) {
+            if ($reservation->isDirty('booking_status') && $reservation->booking_status === 'cancelled') {
+
+                $guestCredits = $reservation->guest->guestCredit->first();
+
+                if ($guestCredits) {
+                    $existingBookingIds = $guestCredits->booking_ids ?? [];
+
+                    if (!in_array($reservation->id, $existingBookingIds)) {
+
+                        $existingBookingIds[] = $reservation->id;
+                        $newAmount = $guestCredits->amount + $reservation->booking_fee;
+
+                        $guestCredits->update([
+                            'booking_ids' => $existingBookingIds,
+                            'amount' => $newAmount,
+                        ]);
+                    }
+                } else {
+                    GuestCredit::create([
+                        'guest_id' => $reservation->guest_id,
+                        'booking_ids' => [$reservation->id],
+                        'amount' => $reservation->booking_fee,
+                        'expiration_date' => Carbon::now()->addYear(),
+                        'status' => 'active',
+                    ]);
+                }
+            }
+        });
+
         static::creating(function ($reservation) {
+            if (!$reservation->booking_status) {
+                $reservation->booking_status = 'on_hold';
+            }
+
             if ($reservation->booking_status == 'on_hold') {
                 $reservation->on_hold_expiration_date = Carbon::now()->addHours(12);
             }
         });
-    }
-    public function payments()
-    {
-        return $this->hasMany(Payment::class);
     }
 
     public function generateBookingReference(int $length = 4): string
