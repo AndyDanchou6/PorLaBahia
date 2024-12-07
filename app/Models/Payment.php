@@ -14,7 +14,6 @@ class Payment extends Model
         'reservation_id',
         'amount',
         'payment_method',
-        'payment_status',
     ];
 
     public function reservation()
