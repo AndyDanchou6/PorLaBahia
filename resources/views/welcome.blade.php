@@ -140,7 +140,7 @@
                 <p>Lorem passages, and more recently publishing software like Aldus and more recently with desktop publishing software like Aldusand more recently with desktop publishing software like Aldusand more recently with desktop publishing software like Aldus  .</p>
                 <hr>
             <div class="buttons">
-                <button class="price"><i class="fa fa-money-bill-wave"> </i> 5,500.00</button>
+                <div class="price"><i class="fa fa-money-bill"> </i> 5,500.00</div>
                 <button class="book-this"><i class="fa fa-book"> </i> Book This</button>
             </div>
         </div>
@@ -162,10 +162,89 @@
             <div class="thinline line10"></div>
             <h3>ESCAPE, RELAX AND REDISCOVER COMFORT.</h3>
             <div class="choose-slider">
-                <div> </div>
-                <div> </div>
-                <div> </div>
+                <i class="fa fa-arrow-circle-left"></i>
+                <i class="fa fa-arrow-circle-right"></i>
+                <div> 
+                    <h4>Exceptional Homes</h4>
+                    <p>Lorem Ipsum passages, and more recently with desktop publishing software like Aldus</p>
+                </div>
+                <div> 
+                    <h4>Redefining Hospitality</h4>
+                    <p>Lorem Ipsum passages, and more recently with desktop publishing software like Aldus</p>
+                </div>
+                <div> 
+                    <h4>Exceptional Homes</h4>
+                    <p>Lorem Ipsum passages, and more recently with desktop publishing software like Aldus</p>
+                </div>
+            </div>
+            <h5>OUR CLIENTS TESTIMONIALS</h5>
+            <div class="testimonial">
+                <div>
+                    <img src="/images/image1.jpg" alt="">
+                    <h6 class="name">Tonet Magparoc</h6>
+                    <p>Tonet ngaubs ingon anin taa Lorem Ipsum passages, and more recently with desktop publishing software Lorem Ipsum passages, a publishing software</p>
+                </div>
+                <div>    
+                <img src="/images/image2.jpg" alt="">
+                    <h6 class="name">Anin Taa Ngaubs</h6>
+                    <p>Tonetpassages and more recently with desktop publishing softwareLorem Ipsum passages, and more recently with desktop publishing software</p>
+                </div>
+                <div>
+                <img src="/images/image3.jpg" alt="">
+                    <h6 class="name">Malie Batang Bronze</h6>
+                    <p> passages publishing  with desktop publishing with desktop publishing softwareLorem Ipsum passages, and more recently with desktop publishing software</p>
+                </div>
             </div>
    </section>
+   <section class="location">
+        <div class="location-image">
+            <img src="/images/location.jpg" alt="">
+            <div class="location-box">
+                <i class="fa fa-map-marker"></i>
+                <h6> Santo Nino, Malitbog, Southern Leyte, Philippines</h6>
+            </div>
+        </div>
+        <div class="get-in-touch">
+            <div class="circles circle8"></div>
+                <div class="thinline line11"></div>
+                    <h1>Get in Touch</h1>
+                <div class="circles circle9"></div>
+            <div class="thinline line12"></div>
+        <h4>CONNECT TO US IF YOU HAVE PROBLEM</h4>
+            <form action="">
+                <div class="input-container">
+                    <i class="fa fa-user"></i>
+                    <input type="text" id="contact_name" name="contact_name" placeholder="Contact Name">
+                </div>
+                <div class="input-container">
+                    <i class="fa fa-road"></i>
+                    <input type="text" id="street" name="street" placeholder="Street">
+                </div>
+                <div class="input-container city">
+                    <i class="fa fa-institution"></i>
+                    <input type="text" id="city" name="city" placeholder="City">
+                </div>
+                <div class="input-container zipcode">
+                    <i class="fa fa-building"></i>
+                    <input type="number" id="zipcode" name="zipcode" placeholder="Zipcode">
+                </div>
+                <div class="input-container">
+                    <i class="fa fa-phone"></i>
+                    <input type="number" id="contact_number" name="contact_number" placeholder="Contact Number">
+                </div>
+                <div class="input-container">
+                    <i class="fa fa-commenting"></i>
+                    <input type="text" id="idea" name="idea" placeholder="Let's talk about your idea"><br>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" id="nda">
+                    <label for="nda">I want to protect my data by signing an NDA</label>
+                </div>
+                <button class="submit"><i class="fa fa-paper-plane"></i> SUBMIT</button>
+           </form>
+           
+        </div>
+   </section>
+   
 </body>
 </html>
