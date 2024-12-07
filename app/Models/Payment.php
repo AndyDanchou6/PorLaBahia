@@ -20,4 +20,18 @@ class Payment extends Model
     {
         return $this->belongsTo(Reservation::class);
     }
+
+    protected static function booted()
+    {
+        static::creating(function ($payment) {
+            $payments = Payment::where('reservation_id', $payment->reservation_id)->get();
+
+            if ($payments->isEmpty() && $payment->reservation->booking_status == 'on_hold') {
+                $payment->reservation->update([
+                    'booking_status' => 'active',
+                    'on_hold_expiration_date' => null,
+                ]);
+            }
+        });
+    }
 }

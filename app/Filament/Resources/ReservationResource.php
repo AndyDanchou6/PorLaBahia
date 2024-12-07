@@ -188,13 +188,13 @@ class ReservationResource extends Resource
                                     ->options(function ($operation) {
                                         if ($operation === 'view') {
                                             return [
-                                                'booked' => 'Booked',
+                                                'active' => 'Active',
                                                 'cancelled' => 'Cancelled',
                                                 'on_hold' => 'On Hold',
                                             ];
                                         } else {
                                             return [
-                                                'booked' => 'Booked',
+                                                'active' => 'Active',
                                                 'cancelled' => 'Cancelled',
                                             ];
                                         }
@@ -216,7 +216,13 @@ class ReservationResource extends Resource
                                 DateTimePicker::make('on_hold_expiration_date')
                                     ->date()
                                     ->disabled()
-                                    ->visibleOn(['view', 'edit']),
+                                    ->hidden(function ($operation, $record) {
+                                        if ($operation === 'create' || $operation === 'edit') {
+                                            return true;
+                                        } elseif ($record->booking_status === 'active' || $record->booking_status === 'cancelled') {
+                                            return true;
+                                        }
+                                    }),
                             ]),
                     ])->columnSpan([
                         'md' => 1,
