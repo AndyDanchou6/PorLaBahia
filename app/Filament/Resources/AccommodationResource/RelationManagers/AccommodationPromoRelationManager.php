@@ -117,6 +117,36 @@ class AccommodationPromoRelationManager extends RelationManager
                     ->afterStateUpdated(function ($set, $get) {
                         self::updatePromoStatus($get, $set);
                     })
+                    ->rule(function (\Filament\Forms\Get $get, $state) {
+                        return [
+                            function (string $attribute, $value, \Closure $fail) use ($get, $state) {
+                                $promoStartDate = $get('promo_start_date');
+                                $accommodationId = $this->getOwnerRecord()->id;
+                                $state = Carbon::parse($state)->format('M d, Y');
+
+                                if (
+                                    !$promoStartDate || !$accommodationId
+                                ) {
+                                    return;
+                                }
+
+                                $overlappingPromos = AccommodationPromo::where('accommodation_id', $accommodationId)
+                                    ->where(function ($query) use ($promoStartDate, $value) {
+                                        $query->whereBetween('promo_start_date', [$promoStartDate, $value])
+                                            ->orWhereBetween('promo_end_date', [$promoStartDate, $value])
+                                            ->orWhere(function ($query) use ($promoStartDate, $value) {
+                                                $query->where('promo_start_date', '<=', $promoStartDate)
+                                                    ->where('promo_end_date', '>=', $value);
+                                            });
+                                    })
+                                    ->exists();
+
+                                if ($overlappingPromos) {
+                                    $fail("The selected promo end date {$state} overlaps with an existing promotion.");
+                                }
+                            },
+                        ];
+                    })
                     ->visible(fn($get) => $get('promo_start_date')),
 
                 Forms\Components\Hidden::make('status')
