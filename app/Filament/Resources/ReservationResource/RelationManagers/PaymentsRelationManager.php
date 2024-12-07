@@ -2,7 +2,10 @@
 
 namespace App\Filament\Resources\ReservationResource\RelationManagers;
 
+use App\Models\Payment;
 use Carbon\Carbon;
+use Closure;
+use Dotenv\Parser\Value;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -19,28 +22,35 @@ class PaymentsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                // Forms\Components\TextInput::make('reservation_id')
-                //     ->required()
-                //     ->maxLength(255),
                 Forms\Components\TextInput::make('amount')
                     ->numeric()
                     ->prefix('₱')
-                    ->required(),
+                    ->required()
+                    ->rules([
+                        fn(): Closure => function (string $attribute, $value, Closure $fail) {
+                            $record = $this->getOwnerRecord();
+
+                            if (!$record) {
+                                $fail('The reservation record could not be found.');
+                                return;
+                            }
+
+                            $bookingFeeRequirements = $record->booking_fee;
+
+                            $isFirstPayment = Payment::where('reservation_id', $record->id)->doesntExist();
+
+                            if ($isFirstPayment && $value < $bookingFeeRequirements) {
+                                $fail("The payment amount ₱{$value} is less than the required booking fee ₱{$bookingFeeRequirements}.");
+                            }
+                        }
+                    ]),
+
                 Forms\Components\Select::make('payment_method')
                     ->options([
                         'g-cash' => 'G-Cash',
                         'cash' => 'Cash',
                     ])
                     ->required(),
-                Forms\Components\Hidden::make('payment_status')
-                    ->default('paid')
-                    ->required(),
-                // Forms\Components\Hidden::make('expiration_date')
-                //     ->default(Carbon::now()->addHours(12)),
-                // ->required(),
-                // Forms\Components\Hidden::make('status')
-                //     ->default('onhold'),
-                //     ->required(),
             ]);
     }
 
@@ -55,12 +65,12 @@ class PaymentsRelationManager extends RelationManager
                     ->prefix('₱'),
                 Tables\Columns\TextColumn::make('payment_method')
                     ->formatStateUsing(fn($state) => ucwords($state))
-                    ->label('Payment Method'),
-                Tables\Columns\TextColumn::make('payment_status')
-                    ->label('Payment Status')
-                    ->formatStateUsing(fn($state) => ucwords($state))
                     ->badge()
-                    ->color('success'),
+                    ->color(fn(string $state): string => match ($state) {
+                        'g-cash' => 'success',
+                        'cash' => 'info',
+                    })
+                    ->label('Payment Method'),
             ])
             ->filters([
                 //
@@ -71,12 +81,6 @@ class PaymentsRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 }

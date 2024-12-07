@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('reservation_id');
-            $table->integer('amount')->nullable();
+            $table->decimal('amount', 10, 2)->nullable();
             $table->string('payment_method')->nullable();
-            $table->string('payment_status')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
