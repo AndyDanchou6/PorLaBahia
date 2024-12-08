@@ -108,7 +108,7 @@ main .title {
     position: absolute;
     top: 35%;
     left: 8%;
-    font-family: "Sofia", cursive;
+    font-family: "Pacifico", cursive;
     font-size: 2rem;
     z-index: 3;
 }
@@ -189,7 +189,7 @@ span {
 .about-text h1 {
     font-size: 2.7rem;
     color: var(--text-color);
-    font-family: "Sofia", cursive;
+    font-family: "Pacifico", cursive;
     text-shadow: #555 2px 3px 10px;
 }
 .about-text h4 {
@@ -280,7 +280,7 @@ span {
 }
 .resort h1{
     font-size: 2.5rem;
-    font-family: "Sofia", cursive;
+    font-family: "Pacifico", cursive;
     text-align: center;
     margin-bottom: 1px;
     margin-top: 0;
@@ -427,7 +427,7 @@ span {
 .resort-houses-text h1{
     text-align: center;
     font-size: 2.5rem;
-    font-family: "Sofia", cursive;
+    font-family: "Pacifico", cursive;
     margin: 0;
     color: #3b3b3b;
 }
@@ -576,29 +576,25 @@ hr{
 .video h1{
     color: var(--background-color);
     text-align: center;
-    margin-top: 50px;
-    font-family: "Sofia", cursive;
-    font-size: 3.3rem;
+    margin-top: 30px;
+    font-family: "Pacifico", cursive;
+    font-size: 3rem;
 }
 .circle4{
     left: 33%;
-    top: 14.5%;
-    transform: translate(-50%, -50%);
+    top: 13%;
 }
 .line8{
     left: 35%;
-    top: 14.5%;
-    transform: translate(-50%, -50%);
+    top: 13%;
 }
 .circle5{
     left: 67%;
-    top: 14.5%;
-    transform: translate(-50%, -50%);
+    top: 13%;
 }
 .line7{
     left: 65%;
-    top: 14.5%;
-    transform: translate(-50%, -50%);
+    top: 13%;
 }
 .video h2{
     letter-spacing: 4px;
@@ -606,12 +602,13 @@ hr{
     font-weight: 100;
     color: var(--background-color);
     text-align: center;
+    margin: 0;
 }
 .choose-us{
     position: absolute;
-    top: 500%;
+    top: 510%;
     right: 0;
-    height: 110vh;
+    height: 100vh;
     width: 100%;
     background-color:#f3f3f3;
 }
@@ -641,7 +638,7 @@ hr{
 .choose-us h1{
     text-align: center;
     font-size: 2.8rem;
-    font-family: "Sofia", cursive;
+    font-family: "Pacifico", cursive;
     margin-top: 40px;
     margin-bottom: 10px;
 }
@@ -734,7 +731,7 @@ hr{
 }
 .location{
     position: absolute;
-    top: 630%;
+    top: 640%;
     width: 100%;
     height: 100vh;
 }
@@ -759,7 +756,7 @@ hr{
     box-shadow: #868686 5px 5px 20px;
 }
 .get-in-touch h1{
-    font-family: "Sofia", cursive;
+    font-family: "Pacifico", cursive;
     text-align: center;
     font-size: 2.3rem;
     text-shadow: #979797 5px 5px 10px;
@@ -862,4 +859,11 @@ form {
 }
 .location-box i{
     color: #ffffff;
+}
+footer{
+    position: absolute;
+    top: 740%;
+    height: 100vh;
+    width: 100%;
+    background-color: #ffffff;
 }
