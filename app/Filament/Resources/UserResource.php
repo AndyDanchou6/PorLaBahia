@@ -28,7 +28,13 @@ class UserResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        $count = User::whereNull('deleted_at')->count();
+
+        if ($count == 0) {
+            return null;
+        }
+
+        return $count;
     }
 
     public static function form(Form $form): Form

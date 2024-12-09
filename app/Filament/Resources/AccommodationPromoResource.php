@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AccommodationPromoResource\Pages;
 use App\Filament\Resources\AccommodationPromoResource\RelationManagers;
+use App\Models\Accommodation;
 use App\Models\AccommodationPromo;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
@@ -17,6 +18,7 @@ use Carbon\Carbon;
 use Closure;
 use Filament\Notifications\Notification;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Support\Facades\Log;
 
 class AccommodationPromoResource extends Resource
 {
@@ -71,72 +73,6 @@ class AccommodationPromoResource extends Resource
                                             ->afterStateUpdated(function ($set, $get) {
                                                 $set('discounted_price', $get('discounted_price'));
                                             }),
-
-                                        // Forms\Components\DatePicker::make('promo_start_date')
-                                        //     ->required()
-                                        //     ->date()
-                                        //     ->minDate(today())
-                                        //     ->suffixIcon('heroicon-o-calendar-days')
-                                        //     ->suffixIconColor('success')
-                                        //     ->reactive()
-                                        //     ->native(false)
-                                        //     ->disabledDates(function ($get) {
-                                        //         $accommodationId = $get('accommodation_id');
-                                        //         $existingPromos = AccommodationPromo::where('deleted_at', null)
-                                        //             ->where('accommodation_id', $accommodationId)->get();
-
-                                        //         $reservedDatesFormatted = $existingPromos->flatMap(function ($promo) {
-                                        //             $promoStartDate = Carbon::parse($promo->promo_start_date);
-                                        //             $promoEndDate = Carbon::parse($promo->promo_end_date);
-
-                                        //             return collect(range(0, $promoEndDate->diffInDays($promoStartDate)))
-                                        //                 ->map(fn($days) => $promoStartDate->copy()->addDays($days)->toDateString());
-                                        //         });
-
-                                        //         return $reservedDatesFormatted->toArray();
-                                        //     })
-                                        //     ->afterStateUpdated(function ($set, $get) {
-                                        //         self::updateStatus($get, $set);
-                                        //         $set('promo_end_date', null);
-                                        //     }),
-
-                                        // Forms\Components\DatePicker::make('promo_end_date')
-                                        //     ->required()
-                                        //     ->date()
-                                        //     ->reactive()
-                                        //     ->suffixIcon('heroicon-o-calendar-days')
-                                        //     ->suffixIconColor('danger')
-                                        //     ->disabled(fn($get) => !$get('promo_start_date'))
-                                        //     ->minDate(function ($get) {
-                                        //         $promo_start_date = $get('promo_start_date');
-                                        //         return $promo_start_date ? Carbon::parse($promo_start_date)->addDay() : today()->addDay();
-                                        //     })
-                                        //     ->native(false)
-                                        //     ->disabledDates(function ($get) {
-                                        //         $disabledDates = [];
-
-                                        //         $startDate = $get('promo_start_date');
-                                        //         if ($startDate) {
-                                        //             $accommodationId = $get('accommdation_id');
-                                        //             $existingPromos = AccommodationPromo::where('deleted_at', null)
-                                        //                 ->where('accommodation_id', $accommodationId)->get();
-
-                                        //             $reservedDatesFormatted = $existingPromos->flatMap(function ($promo) {
-                                        //                 $promoStartDate = Carbon::parse($promo->promo_start_date);
-                                        //                 $promoEndDate = Carbon::parse($promo->promo_end_date);
-
-                                        //                 return collect(range(0, $promoEndDate->diffInDays($promoStartDate)))
-                                        //                     ->map(fn($days) => $promoStartDate->copy()->addDays($days)->toDateString());
-                                        //             });
-
-                                        //             $disabledDates = $reservedDatesFormatted->toArray();
-                                        //         }
-
-                                        //         return $disabledDates;
-                                        //     })
-                                        //     ->afterStateUpdated(function ($set, $get) {
-                                        //         self::updateStatus($get, $set);
-                                        //     })->visible(fn($get) => $get('promo_start_date')),
 
                                         Forms\Components\DatePicker::make('promo_start_date')
                                             ->required()
@@ -216,18 +152,20 @@ class AccommodationPromoResource extends Resource
                                             ->afterStateUpdated(function ($set, $get) {
                                                 self::updateStatus($get, $set);
                                             })
+
                                             ->rule(function (\Filament\Forms\Get $get, $state) {
                                                 return [
                                                     function (string $attribute, $value, \Closure $fail) use ($get, $state) {
                                                         $promoStartDate = $get('promo_start_date');
                                                         $accommodationId = $get('accommodation_id');
+                                                        $promoId = $get('id');
                                                         $state = Carbon::parse($state)->format('M d, Y');
 
                                                         if (!$promoStartDate || !$accommodationId) {
                                                             return;
                                                         }
 
-                                                        $overlappingPromos = AccommodationPromo::where('accommodation_id', $accommodationId)
+                                                        $query = AccommodationPromo::where('accommodation_id', $accommodationId)
                                                             ->where(function ($query) use ($promoStartDate, $value) {
                                                                 $query->whereBetween('promo_start_date', [$promoStartDate, $value])
                                                                     ->orWhereBetween('promo_end_date', [$promoStartDate, $value])
@@ -236,10 +174,16 @@ class AccommodationPromoResource extends Resource
                                                                             ->where('promo_end_date', '>=', $value);
                                                                     });
                                                             })
-                                                            ->exists();
+                                                            ->where('status', '!=', 'expired');
+
+                                                        if ($promoId) {
+                                                            $query->where('id', '!=', $promoId);
+                                                        }
+
+                                                        $overlappingPromos = $query->exists();
 
                                                         if ($overlappingPromos) {
-                                                            $fail("The selected promo end date {$state} overlaps with an existing promotion.");
+                                                            $fail("The selected promotion end date, {$state}, conflicts with an existing promotion. Please ensure the dates do not overlap.");
                                                         }
                                                     },
                                                 ];

@@ -24,6 +24,8 @@ class GalleriesRelationManager extends RelationManager
                         Forms\Components\FileUpload::make('image')
                             ->multiple()
                             ->image()
+                            ->reorderable()
+                            ->appendFiles()
                             ->columnSpan(2),
                     ])
             ]);

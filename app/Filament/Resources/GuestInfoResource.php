@@ -5,10 +5,12 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\GuestInfoResource\Pages;
 use App\Filament\Resources\GuestInfoResource\RelationManagers;
 use App\Models\GuestInfo;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -52,6 +54,16 @@ class GuestInfoResource extends Resource
                                 Forms\Components\TextInput::make('email')
                                     ->email()
                                     ->maxLength(255)
+                                    ->rules([
+                                        fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                            $email = $get('email');
+                                            $isEmailExist = GuestInfo::where('email', $email)->exists();
+
+                                            if ($isEmailExist) {
+                                                $fail("{$email} has already been used. Please provide a unique email.");
+                                            }
+                                        }
+                                    ])
                                     ->placeholder('Enter Email'),
                                 Forms\Components\TextInput::make('address')
                                     ->required()

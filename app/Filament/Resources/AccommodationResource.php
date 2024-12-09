@@ -84,6 +84,7 @@ class AccommodationResource extends Resource
                     ->schema([
                         FileUpload::make('main_image')
                             ->required()
+                            ->image()
                             ->columnSpan(2),
                         TextInput::make('free_pax')
                             ->numeric()
