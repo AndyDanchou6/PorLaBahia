@@ -16,8 +16,8 @@
                 <h1 class="about-paragraph"><span>About Us:</span> Get to <br>Know the Heart<br>Behind What We Do.</h1>
             </main>
             <div class="about-image-slider">
-                <!-- <i class="fa fa-arrow-circle-left"></i>
-                <i class="fa fa-arrow-circle-right"></i> -->
+                <i class="fa fa-angle-double-left"></i>
+                <i class="fa fa-angle-double-right"></i>
                 <div>
                     <img src="/images/image1.jpg" alt="">
                 </div>
@@ -67,7 +67,23 @@
                     <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into.</p>
                 </div>
             </div>
+            <div class="history-grid">
+                <div class="history-grid-image">
+                    <img src="/images/image1.jpg" alt="">
+                </div>
+            </div>
+            <div class="history-porla">
+                <h1>History of Por La Bahia</h1>
+                <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+               <div class="history-operation">
+                    <h6>How long has this resort been in operation?</h6>
+                    <p>Lorem Ipsum has been the industry's standard dummy text ever dummy text ever dummy text ever dummy text ever dummy text .</p>
+                </div>
+            </div>
         </div>
+    </section>
+    <section class="footer">
+        @include('footer')
     </section>
 </body>
 </html>
