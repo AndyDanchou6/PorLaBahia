@@ -24,6 +24,7 @@ class Payment extends Model
     protected static function booted()
     {
         static::creating(function ($payment) {
+            // first payment (reservation fee) changes booking status to active
             $payments = Payment::where('reservation_id', $payment->reservation_id)->get();
 
             if ($payments->isEmpty() && $payment->reservation->booking_status == 'on_hold') {
@@ -32,6 +33,30 @@ class Payment extends Model
                     'on_hold_expiration_date' => null,
                 ]);
             }
+            // if credits is used for payment
+            if ($payment->payment_method === 'credits') {
+                $guestCredit = GuestCredit::find($payment->reservation->guest_id)->first();
+
+                $newCredit = $guestCredit->amount - $payment->amount;
+                $guestCredit->update([
+                    'amount' => $newCredit
+                ]);
+            }
+        });
+
+        static::updating(function ($payment) {
+            $guestCredit = GuestCredit::find($payment->reservation->guest_id)->first();
+            $newCredit = $guestCredit->amount;
+
+            if ($payment->isDirty('payment_method') && $payment->getOriginal('payment_method') === 'credits') {
+                $newCredit = $newCredit + $payment->amount;
+            } elseif ($payment->isDirty('payment_method') && $payment->payment_method === 'credits') {
+                $newCredit = $newCredit - $payment->amount;
+            }
+
+            $guestCredit->update([
+                'amount' => $newCredit
+            ]);
         });
     }
 }

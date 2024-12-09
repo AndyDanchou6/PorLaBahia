@@ -56,7 +56,8 @@ class Reservation extends Model
         //     $reservation->appliedDiscount()->update(['deleted_at' => now()]);
         // });
         static::updating(function ($reservation) {
-            if ($reservation->isDirty('booking_status') && $reservation->booking_status === 'cancelled') {
+            $daysPrior = Carbon::today()->diffInDays($reservation->getOriginal('check_in_date'));
+            if ($reservation->isDirty('booking_status') && $reservation->booking_status === 'cancelled' && $daysPrior >= 10) {
 
                 $guestCredits = $reservation->guest->guestCredit->first();
 
