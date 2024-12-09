@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\AccommodationPromo;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class PromotionStatus extends Command
 {
@@ -33,7 +34,7 @@ class PromotionStatus extends Command
         $incomingPromo = AccommodationPromo::where('promo_start_date', '>', $promoStatus)->update(['status' => 'incoming']);
         $activePromo = AccommodationPromo::where('promo_start_date', '=', $promoStatus)->update(['status' => 'active']);
 
-        $this->info("Promotion Status: Expired: {$expiredPromo}, Incoming: {$incomingPromo}, Active: {$activePromo}");
+        Log::info("Promotion status as of {$promoStatus->format('M d, Y')}: Expired: {$expiredPromo}, Incoming: {$incomingPromo}, Active: {$activePromo}");
 
         return 0;
     }
