@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ReservationResource\RelationManagers;
 
+use App\Models\GuestInfo;
 use App\Models\Payment;
 use Carbon\Carbon;
 use Closure;
@@ -65,10 +66,29 @@ class PaymentsRelationManager extends RelationManager
                     ]),
 
                 Forms\Components\Select::make('payment_method')
-                    ->options([
-                        'g-cash' => 'G-Cash',
-                        'cash' => 'Cash',
-                    ])
+                    ->options(function ($get) {
+
+                        $guest_id = $this->getOwnerRecord()->guest_id;
+                        $guest = GuestInfo::find($guest_id);
+                        $credits = $guest->guestCredit->first();
+
+                        if ($credits) {
+                            $creditAmount = $credits->amount;
+
+                            if ($creditAmount >= $get('amount')) {
+                                return [
+                                    'cash' => 'Cash',
+                                    'g-cash' => 'G-Cash',
+                                    'credits' => 'Credits',
+                                ];
+                            }
+                        } else {
+                            return [
+                                'cash' => 'Cash',
+                                'g-cash' => 'G-Cash',
+                            ];
+                        }
+                    })
                     ->required(),
             ]);
     }
@@ -89,6 +109,7 @@ class PaymentsRelationManager extends RelationManager
                     ->color(fn(string $state): string => match ($state) {
                         'g-cash' => 'success',
                         'cash' => 'info',
+                        'credits' => 'warning',
                     })
                     ->label('Payment Method'),
             ])

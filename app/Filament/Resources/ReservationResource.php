@@ -17,17 +17,14 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\Accommodation;
 use App\Models\Discount;
 use App\Models\GuestInfo;
-use DateTime;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 
 class ReservationResource extends Resource
 {
@@ -92,8 +89,10 @@ class ReservationResource extends Resource
                                 $set('check_out_date', Carbon::parse($state)->addDay()->format('M d, Y'));
                             })
                             ->native(false)
-                            ->disabledDates(function () {
-                                $reservedDates = Reservation::where('deleted_at', null)->pluck('check_in_date');
+                            ->disabledDates(function ($get) {
+                                $reservedDates = Reservation::where('deleted_at', null)
+                                ->where('accommodation_id', $get('accommodation_id'))
+                                ->pluck('check_in_date');
 
                                 // $reservedDatesFormatted = $reservedDates->flatMap(function ($reservation) {
                                 //     $checkInDate = Carbon::parse($reservation->check_in_date);
@@ -190,7 +189,8 @@ class ReservationResource extends Resource
                                     ->numeric()
                                     ->prefix('₱')
                                     ->step(0.01)
-                                    ->required(),
+                                    ->required()
+                                    ->readOnly(),
                                 Select::make('booking_status')
                                     ->options(function ($operation) {
                                         if ($operation === 'view') {
@@ -269,25 +269,20 @@ class ReservationResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
-                Filter::make('dateFilter')
-                    ->form([
-                        Select::make('dateRange')
-                            ->label('Date Filter')
-                            ->options([
-                                'present' => 'Present Reservations',
-                                'past' => 'Past Reservations',
-                                'today' => 'Today',
-                                'thisWeek' => 'This Week',
-                                'lastWeek' => 'Last Week',
-                                'thisMonth' => 'This Month',
-                                'lastMonth' => 'Last Month',
-                            ])
-                            ->default('thisWeek')
-                            ->placeholder('No Date Filters'),
+                SelectFilter::make('dateFilter')
+                    ->options([
+                        'present' => 'Present Reservations',
+                        'past' => 'Past Reservations',
+                        'today' => 'Today',
+                        'thisWeek' => 'This Week',
+                        'lastWeek' => 'Last Week',
+                        'thisMonth' => 'This Month',
+                        'lastMonth' => 'Last Month',
                     ])
-                    ->query(function (Builder $query, $data): Builder {
-                        if (isset($data['dateRange'])) {
-                            switch ($data['dateRange']) {
+                    ->default('thisMonth')
+                    ->query(function (Builder $query, $data) {
+                        if (isset($data['value'])) {
+                            switch ($data['value']) {
                                 case 'today':
                                     $query->whereDate('check_in_date', '=', Carbon::today())
                                         ->orWhere(function ($query) {
