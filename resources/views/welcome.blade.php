@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">   
-    <link rel="stylesheet" href="{{asset('styles/welcome.css')}}">
-    <title>Por La Bahia</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">  <link rel="stylesheet" href="{{asset('styles/welcome.css')}}">
+        <link rel="stylesheet" href="{{asset('styles/header.css')}}">
+        <title>Por La Bahia</title>
+    </head>
 <body>
     <div class="container">
             <div class="background">
@@ -69,19 +67,19 @@
                     <img src="/images/image1.jpg" alt="">
                     <h3>Parking Space</h3>
                     <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus. </p>
-                    <button><i class="fa fa-book"></i> Read More</button>
+                    <button>Read More</button>
                 </div>
                 <div class="amenities-box">
                     <img src="/images/image2.jpg" alt="">
                     <h3>Accommodation</h3>
                         <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.</p>
-                    <button><i class="fa fa-book"></i> Read More</button>
+                    <button>Read More</button>
                  </div>
                 <div class="amenities-box"> 
                     <img src="/images/image3.jpg" alt="">
                     <h3>Exclusive Event Venue</h3>
                         <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.</p>
-                    <button><i class="fa fa-book"></i> Read More</button>
+                    <button>Read More</button>
                 
                 </div>
             </div>
@@ -138,7 +136,7 @@
                 <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus and more recently with desktop publishing software like Aldus and more recently with desktop publishing software like Aldus and more recently with desktop publishing software like Aldus.</p>
                 <hr>
             <div class="buttons">
-                <div class="price"><i class="fa fa-money"> </i> 5,500.00</div>
+                <div class="price"><i class="fa fa-money"></i> 5,500.00</div>
                 <button class="book-this"><i class="fa fa-book"> </i> Book This</button>
             </div>
         </div>
@@ -194,6 +192,7 @@
                 </div>
             </div>
    </section>
+
    <section class="location">
         <div class="location-image">
             <img src="/images/location.jpg" alt="">
@@ -243,6 +242,9 @@
            
         </div>
    </section>
-   
+   <section class="footer">
+        @include('footer')  
+   </section> 
 </body>
 </html>
+  
