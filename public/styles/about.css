@@ -27,7 +27,8 @@
     z-index: 4;
     position: absolute;
     top: 60%;
-    left: 8%;
+    max-height: 500px;
+    width: 100%;
 }
 .about-image-slider div{
     width: 270px;
@@ -60,17 +61,32 @@
     line-height: .9;
     z-index: 3;
 }
+.about-image-slider i{
+    position: absolute;
+    z-index: 4;
+    color: #edb91c;
+    font-size: 2.5rem;
+    font-weight: 800;
+    top: 40%;
+    text-shadow: #ffe085 2px 3px 10px;
+}
+.fa-angle-double-left{
+    left: 5%;
+}
+.fa-angle-double-right{
+    right: 5%;
+}
  .know-more{
     position: relative;
     width: 100%;
-    height: 140vh;
+    height: 200vh;
  }
  .history{
     position: absolute;
     top: -10%;
     left: 10%;
     width: 80%;
-    max-height: 130vh;
+    height: 200vh;
     background-color: rgb(255, 255, 255);
     z-index: 3;
     border-radius: 15px;
@@ -127,15 +143,61 @@
 }
 .flex-images div i{
     color: #bf4b37;
-    font-size: 2rem;
-    text-align: center;
+    font-size: 3rem;
+    display: flex;
+    justify-content: center;
 }
 .flex-images h3{
     color: rgb(43, 43, 43);
+    display: flex;
+    justify-content: center;
 }
 .flex-images p{
     text-align: justify;
     text-shadow: rgb(170, 170, 170) 2px 2px 5px;
     line-height: 1.2;
     color: rgb(112, 112, 112);
+}
+.history-grid-image{
+    padding: 20px;
+}
+.history-porla{
+    padding: 20px;
+}
+.history-porla h1{
+    font-family: "Pacifico", cursive;
+    color: rgb(39, 39, 39);
+    text-shadow: rgb(142, 142, 142) 2px 3px 10px;
+    font-size: 1.8rem;
+}
+.history-porla p{
+    color: rgb(112, 112, 112);
+    text-align: justify;
+    line-height: 1.2;
+}
+.history-operation{
+    width: 100%;
+    height: 20%;
+    background-color: #bf4b37;
+    border-radius: 10px;
+    padding: 5px;
+}
+.history-operation h6{
+    color: #ffff;
+    font-weight: 800;
+    text-align: center;
+    font-size: 1rem; 
+    margin: 0;
+}
+.history-operation p{
+    color: #fff;
+    margin: 10px;
+    font-size: .7rem;
+    text-align: justify; 
+}
+.footer{
+    position: absolute;
+    top: 340%;
+    height: 100vh;
+    width: 100%;
 }

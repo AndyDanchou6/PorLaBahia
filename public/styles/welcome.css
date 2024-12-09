@@ -767,3 +767,9 @@ form {
 .location-box i{
     color: #ffffff;
 }
+.footer{
+    position: absolute;
+    top: 740%;
+    height: 100vh;
+    width: 100%;
+}
