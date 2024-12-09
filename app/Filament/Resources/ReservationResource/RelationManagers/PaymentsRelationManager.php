@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentsRelationManager extends RelationManager
 {
@@ -27,7 +28,18 @@ class PaymentsRelationManager extends RelationManager
                     ->numeric()
                     ->prefix('₱')
                     ->required()
-                    ->live()
+                    ->reactive()
+                    ->helperText(function () {
+                        $record = $this->getOwnerRecord();
+
+                        $isFirstPayment = Payment::where('reservation_id', $record->id)->doesntExist();
+
+                        if ($isFirstPayment) {
+                            return 'Reminder: Please settle the booking fee payment first.';
+                        } else {
+                            return null;
+                        }
+                    })
                     ->rules([
                         fn(): Closure => function (string $attribute, $value, Closure $fail) {
                             $record = $this->getOwnerRecord();
@@ -41,8 +53,14 @@ class PaymentsRelationManager extends RelationManager
 
                             $isFirstPayment = Payment::where('reservation_id', $record->id)->doesntExist();
 
-                            if ($isFirstPayment && $value < $bookingFeeRequirements) {
-                                $fail("The payment amount ₱{$value} is less than the required booking fee ₱{$bookingFeeRequirements}.");
+                            if ($isFirstPayment) {
+                                if ($value < $bookingFeeRequirements) {
+                                    $fail("The initial payment of ₱{$value}.00 is insufficient to cover the required booking fee of ₱{$bookingFeeRequirements}. Please settle the full booking fee amount to proceed.");
+                                }
+                            } else {
+                                if ($value < $bookingFeeRequirements) {
+                                    $fail("The initial payment of ₱{$value}.00 is insufficient to cover the required booking fee of ₱{$bookingFeeRequirements}. Please settle the full booking fee amount to proceed.");
+                                }
                             }
                         }
                     ]),
@@ -87,6 +105,7 @@ class PaymentsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('payment_method')
                     ->formatStateUsing(fn($state) => ucwords($state))
                     ->badge()
+                    ->searchable()
                     ->color(fn(string $state): string => match ($state) {
                         'g-cash' => 'success',
                         'cash' => 'info',
@@ -96,6 +115,8 @@ class PaymentsRelationManager extends RelationManager
             ])
             ->filters([
                 //
+                Tables\Filters\TrashedFilter::make()
+                    ->visible(fn() => Auth::user()->role == 1),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()

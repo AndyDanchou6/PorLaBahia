@@ -35,8 +35,8 @@
             <div class="about-text">
                 <h1>Por La Bahia</h1>
                 <h4>ABOUT US</h4>
-                <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. <br> Why do we use it?
-                     it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+                <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Why do we use it?
+                     it look like readable English sometimes on purpose (injected humour and the like).</p>
             <div class="small-nav">
                 <div> <i class="fa fa-home"></i> Accommodations </div>
                 <div> <i class="fa fa-wifi"></i> Enjoy Free Wifi</div>
@@ -47,9 +47,9 @@
             </div>
 
             <div class="grid-images">
-            <div class="item item1"><img src="{{asset("/images/image1.jpg")}}" alt=""></div>
-            <div class="item item2"><img src="{{asset("/images/image2.jpg")}}" alt=""></div>
-            <div class="item item3"><img src="{{asset("/images/image3.jpg")}}" alt=""></div>
+                <div class="item item1"><img src="{{asset("/images/image1.jpg")}}" alt=""></div>
+                <div class="item item2"><img src="{{asset("/images/image2.jpg")}}" alt=""></div>
+                <div class="item item3"><img src="{{asset("/images/image3.jpg")}}" alt=""></div>
             </div>
     </section>
 
@@ -96,10 +96,9 @@
                     <div class="circles circle3"></div>
                 <div class="thinline line6"></div>
                 <h3>OUR ACCOMMODATIONS</h3>
-                <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.
-                Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.
-                Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.
-                </p>
+                <p> Lorem Ipsum is simply dummy passages, and more recently with desktop publishing software like Aldus.
+                Lorem Ipsum is simply dummy text and more recently with desktop publishing software like Aldus.
+               </p>
             </div>
 
             <div class="other-houses-container">
@@ -111,21 +110,21 @@
                         <img src="/images/image1.jpg" alt="House Image 1">
                         <h4>Dominic House</h4>
                         <i class="fa fa-bed"> 2</i>
-                        <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.</p>
+                        <p>Lorem Ipsum is simply dummy publishing Aldus dummy publishing software like Aldus.</p>
                     <button><i class="fa fa-check-circle-o"></i> Check It</button>
                     </div>
                     <div class="house1"> 
                         <img src="/images/image2.jpg" alt="House Image 1">
                         <h4>Paula Ella House</h4>
                         <i class="fa fa-bed"> 2</i>
-                        <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.</p>
+                        <p>Lorem Ipsum is simply dummy publishing like Aldus dummy software like Aldus.</p>
                     <button><i class="fa fa-check-circle-o"></i> Check It</button>
                     </div>
                     <div class="house1">
                         <img src="/images/image3.jpg" alt="House Image 1">
                         <h4>Paulo House</h4>
                         <i class="fa fa-bed"> 2</i>
-                        <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus.</p>
+                        <p>Lorem Ipsum is simply software like Aldus dummy publishing software like Aldus.</p>
                     <button><i class="fa fa-check-circle-o"></i> Check It</button>
                     </div>
                 </div>
@@ -136,11 +135,10 @@
                 <h1>Paulo House</h1>
                 <i class="fa fa-bed"> </i>
                 <i class="fa fa-users"> </i>
-                <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus and more recently with desktop publishing software like Aldus.</p>
-                <p>Lorem passages, and more recently publishing software like Aldus and more recently with desktop publishing software like Aldusand more recently with desktop publishing software like Aldusand more recently with desktop publishing software like Aldus  .</p>
+                <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus and more recently with desktop publishing software like Aldus and more recently with desktop publishing software like Aldus and more recently with desktop publishing software like Aldus.</p>
                 <hr>
             <div class="buttons">
-                <div class="price"><i class="fa fa-money-bill"> </i> 5,500.00</div>
+                <div class="price"><i class="fa fa-money"> </i> 5,500.00</div>
                 <button class="book-this"><i class="fa fa-book"> </i> Book This</button>
             </div>
         </div>

@@ -122,6 +122,7 @@ class AccommodationPromoRelationManager extends RelationManager
                             function (string $attribute, $value, \Closure $fail) use ($get, $state) {
                                 $promoStartDate = $get('promo_start_date');
                                 $accommodationId = $this->getOwnerRecord()->id;
+                                $promoId = $get('id');
                                 $state = Carbon::parse($state)->format('M d, Y');
 
                                 if (
@@ -130,7 +131,7 @@ class AccommodationPromoRelationManager extends RelationManager
                                     return;
                                 }
 
-                                $overlappingPromos = AccommodationPromo::where('accommodation_id', $accommodationId)
+                                $query = AccommodationPromo::where('accommodation_id', $accommodationId)
                                     ->where(function ($query) use ($promoStartDate, $value) {
                                         $query->whereBetween('promo_start_date', [$promoStartDate, $value])
                                             ->orWhereBetween('promo_end_date', [$promoStartDate, $value])
@@ -139,10 +140,16 @@ class AccommodationPromoRelationManager extends RelationManager
                                                     ->where('promo_end_date', '>=', $value);
                                             });
                                     })
-                                    ->exists();
+                                    ->where('status', '!=', 'expired');
+
+                                if ($promoId) {
+                                    $query->where('id', '!=', $promoId);
+                                }
+
+                                $overlappingPromos = $query->exists();
 
                                 if ($overlappingPromos) {
-                                    $fail("The selected promo end date {$state} overlaps with an existing promotion.");
+                                    $fail("The selected promotion end date, {$state}, conflicts with an existing promotion. Please ensure the dates do not overlap.");
                                 }
                             },
                         ];
