@@ -44,7 +44,7 @@ class GuestCreditResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->formatStateUsing(function ($record) {
-                        return $record->guest->first_name . $record->guest->last_name;
+                        return $record->guest->first_name . ' ' . $record->guest->last_name;
                     }),
                 // TextColumn::make('booking_reference_no')
                 //     ->sortable()
