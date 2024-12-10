@@ -280,7 +280,16 @@ class AccommodationPromoResource extends Resource
                         ->visible(fn($record) => !$record->trashed()),
                     Tables\Actions\EditAction::make()
                         ->color('warning')
-                        ->visible(fn($record) => !$record->trashed()),
+                        ->visible(function ($record) {
+                            if ($record->status == 'expired') {
+                                return false;
+                            }
+
+                            if ($record->trashed()) {
+                                return false;
+                            }
+                            return true;
+                        }),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\RestoreAction::make()
                         ->color('success'),
