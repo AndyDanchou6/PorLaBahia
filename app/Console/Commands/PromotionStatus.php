@@ -30,7 +30,7 @@ class PromotionStatus extends Command
     {
         $promoStatus = Carbon::today();
 
-        $expiredPromo = AccommodationPromo::where('promo_end_date', '=', $promoStatus)->update(['status' => 'expired']);
+        $expiredPromo = AccommodationPromo::where('promo_end_date', '<', $promoStatus)->update(['status' => 'expired']);
         $incomingPromo = AccommodationPromo::where('promo_start_date', '>', $promoStatus)->update(['status' => 'incoming']);
         $activePromo = AccommodationPromo::where('promo_start_date', '=', $promoStatus)->update(['status' => 'active']);
 
