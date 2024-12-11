@@ -22,4 +22,9 @@ class RestaurantMenu extends Model
     {
         return $this->morphMany(Galleries::class, 'gallery');
     }
+
+    public function unit()
+    {
+        return $this->belongsTo(NewUnit::class, 'unit_id');
+    }
 }

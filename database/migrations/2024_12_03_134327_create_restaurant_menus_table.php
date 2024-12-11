@@ -17,9 +17,11 @@ return new class extends Migration
             $table->string('name');
             $table->decimal('price', 10, 2);
             $table->string('category');
-            $table->string('unit')->nullable();
+            $table->unsignedBigInteger('unit_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('unit_id')->references('id')->on('new_units');
         });
     }
 

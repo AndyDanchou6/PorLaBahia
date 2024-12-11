@@ -4,11 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RestaurantMenuResource\Pages;
 use App\Filament\Resources\RestaurantMenuResource\RelationManagers;
+use App\Models\NewUnit;
 use App\Models\RestaurantMenu;
+use Closure;
+use Filament\Actions\Action;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,6 +24,8 @@ class RestaurantMenuResource extends Resource
     protected static ?string $model = RestaurantMenu::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard';
+
+    protected static ?string $navigationGroup = 'Data';
 
     public static function form(Form $form): Form
     {
@@ -59,10 +66,31 @@ class RestaurantMenuResource extends Resource
                                 'beer' => 'Beer',
                             ])
                             ->searchable(),
-                        Forms\Components\TextInput::make('unit')
-                            ->label('Unit')
-                            ->placeholder('e.g., Per Serving, Per Kilo or 200 ML')
-                            ->maxLength(255),
+
+                        Forms\Components\Select::make('unit_id')
+                            ->relationship(name: 'unit', titleAttribute: 'new_unit')
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('new_unit')
+                                    ->label('New Unit')
+                                    ->required()
+                                    ->rules([
+                                        fn(): Closure => function (string $attribute, $value, Closure $fail) {
+
+                                            $exists = NewUnit::where('new_unit', $value)->exists();
+
+                                            if ($exists) {
+                                                $fail('This unit already exists, please choose a different one.');
+                                            }
+                                        },
+                                    ]),
+                            ])
+                            ->createOptionAction(
+                                fn(Forms\Components\Actions\Action $action) => $action
+                                    ->modalWidth('2xl')
+                                    ->modalHeading('Creating New Unit')
+                            )
+                            // ->searchable()
+                            ->label('Units'),
                     ])->columnSpan([
                         'md' => 2,
                         'lg' => 2,
@@ -88,7 +116,7 @@ class RestaurantMenuResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
-                    ->circular(),
+                    ->square(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Menu Name')
                     ->formatStateUsing(fn($state) => ucwords($state))
@@ -99,9 +127,10 @@ class RestaurantMenuResource extends Resource
                 // Tables\Columns\TextColumn::make('category')
                 //     ->formatStateUsing(fn($state) => ucwords($state))
                 //     ->searchable(),
-                Tables\Columns\TextColumn::make('unit')
-                    ->formatStateUsing(fn($state) => ucwords($state))
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('unit.new_unit')
+                    ->label('Units')
+                    ->searchable()
+                    ->default('Not Specified'),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
