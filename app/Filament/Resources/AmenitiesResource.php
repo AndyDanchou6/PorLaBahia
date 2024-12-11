@@ -21,6 +21,8 @@ class AmenitiesResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-lifebuoy';
 
+    protected static ?string $navigationGroup = 'Data';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -78,7 +80,7 @@ class AmenitiesResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('main_image')
                     ->label('Main Image')
-                    ->circular(),
+                    ->square(),
                 Tables\Columns\TextColumn::make('amenity_name')
                     ->formatStateUsing(fn($state) => ucwords($state))
                     ->label('Amenity Name')
