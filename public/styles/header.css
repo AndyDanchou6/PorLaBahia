@@ -10,7 +10,7 @@ body {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Poppins", sans-serif;
     background-color: var(--background-color);
     color: var(--text-color);
     overflow-x: hidden;
@@ -24,7 +24,8 @@ header {
     justify-content: space-evenly;
     align-items: center;
     width: 100%;
-    z-index: 3;
+    z-index: 100;
+    border-bottom: 1px solid #edb91c;
 }
 ul {
     display: flex;
@@ -46,8 +47,8 @@ li a:hover {
     transition: all 1.2s ease-in-out;
 }
 
-button {
-    padding: 10px 20px;
+.booknow {
+    padding: 10px;
     font-size: 0.8rem;
     background-color: var(--primary-color);
     color: white;
@@ -55,8 +56,16 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    justify-content: space-evenly;
+    align-content: center;
+    font-weight: 600;
 }
-
+.buttonImage{
+    width: 20%;
+    height: auto;
+}
 button:hover {
     background-color: var(--secondary-color);
 }
@@ -67,20 +76,6 @@ button:hover {
     width: 230px;
     height: auto;
     z-index: 4;
-}
-.lines {
-    position: relative;
-}
-
-.line1,.line2 {
-    background-color: var(--primary-color);
-    position: absolute;
-    top: 100px;
-    height: 1px;
-    z-index: 2;
-}
-.line1 {
-    width: 100%;
 }
 main .title {
     color: white;
@@ -98,7 +93,7 @@ main .title {
     left: 8%;
     color:white;
     font-size: 3.5rem;
-    font-weight: 950;
+    font-weight: 900;
     line-height: .9;
     z-index: 3;
 }
