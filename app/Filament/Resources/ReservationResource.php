@@ -22,6 +22,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -48,26 +49,166 @@ class ReservationResource extends Resource
     {
         return $form
             ->schema([
-                Group::make()
+                Section::make()
                     ->schema([
-                        Select::make('accommodation_id')
-                            ->label('Room Name')
-                            ->options(function () {
-                                return Accommodation::inRandomOrder()
-                                    ->limit(5)
-                                    ->get()
-                                    ->pluck('room_name', 'id');
+                        DatePicker::make('check_in_date_picker')
+                            ->required()
+                            ->date()
+                            ->minDate(function ($operation, $record) {
+                                if ($operation === 'create') {
+                                    return today();
+                                } elseif ($operation === 'edit' && $record) {
+                                    return $record->check_in_date;
+                                }
+                                return null;
                             })
-                            ->searchable()
-                            ->live()
-                            ->afterStateUpdated(function ($state, $set) {
-                                $bookingFee = Accommodation::find($state)?->booking_fee;
+                            ->afterStateUpdated(function ($set) {
+                                $set('check_in_date', null);
+                                $set('check_out_date', null);
+                                $set('check_out_date_picker', null);
+                                $set('booking_fee', null);
+                            })
+                            ->live(debounce: 100)
+                            ->hidden(fn($operation) => $operation === 'view')
+                            ->native(false),
 
-                                if ($bookingFee !== null) {
-                                    $set('booking_fee', $bookingFee);
+                        DatePicker::make('check_out_date_picker')
+                            ->required()
+                            ->date()
+                            ->minDate(function ($get) {
+                                $checkInDate = $get('check_in_date_picker');
+                                if ($checkInDate) {
+                                    return Carbon::parse($checkInDate)->addDay();
+                                } else {
+                                    return today();
                                 }
                             })
-                            ->required(),
+                            ->afterStateUpdated(function ($set) {
+                                $set('check_in_date', null);
+                                $set('check_out_date', null);
+                                $set('booking_fee', null);
+                                $set('availableDates', null);
+                            })
+                            ->disabled(function ($get) {
+                                if (!$get('check_in_date_picker')) {
+                                    return true;
+                                }
+                            })
+                            ->hidden(fn($operation) => $operation === 'view')
+                            ->live(debounce: 100)
+                            ->native(false),
+
+                        Select::make('accommodation_id')
+                            ->label('Room Name')
+                            ->relationship('accommodation', 'room_name')
+                            ->live(debounce: 100)
+                            ->required()
+                            ->hidden(function ($get, $operation) {
+                                if ($operation === 'view') {
+                                    return false;
+                                } else {
+                                    if (!$get('check_in_date_picker') || !$get('check_out_date_picker')) {
+                                        return true;
+                                    }
+                                }
+                            }),
+
+                        Select::make('availableDates')
+                            ->options(function ($get, $record) {
+
+                                $checkInDate = $get('check_in_date_picker');
+                                $checkOutDate = $get('check_out_date_picker');
+                                $accommodationId = $get('accommodation_id');
+
+                                if ($checkInDate && $checkOutDate) {
+
+                                    $bookings = Reservation::where('accommodation_id', $accommodationId)
+                                        ->where(function ($query) use ($checkInDate, $checkOutDate) {
+                                            $query->whereBetween('check_in_date', [$checkInDate, $checkOutDate])
+                                                ->orWhereBetween('check_out_date', [$checkInDate, $checkOutDate])
+                                                ->orWhere(function ($query) use ($checkInDate, $checkOutDate) {
+                                                    $query->where('check_in_date', '>', $checkInDate)
+                                                        ->where('check_out_date', '<', $checkOutDate);
+                                                });
+                                        })
+                                        ->orderBy('check_in_date', 'asc')
+                                        ->get();
+                                    $availableAccommodation = [];
+
+                                    if ($bookings->isEmpty()) {
+                                        $availableAccommodation[Carbon::parse($checkInDate) . '/' . Carbon::parse($checkOutDate)] = Carbon::parse($checkInDate)->format('M d, Y') . ' - ' . Carbon::parse($checkOutDate)->format('M d, Y');
+                                    }
+
+                                    $nextCheckIn = Carbon::parse($checkInDate);
+
+                                    foreach ($bookings as $key => $book) {
+                                        // if editing, make the current reservation available
+                                        if ($record) {
+                                            if ($record->id === $book->id) {
+                                                if (!isset($bookings[$key + 1])) {
+                                                    $availableAccommodation[Carbon::parse($nextCheckIn) . '/' . Carbon::parse($checkOutDate)] = Carbon::parse($nextCheckIn)->format('M d, Y') . ' - ' . Carbon::parse($checkOutDate)->format('M d, Y');
+                                                } else {
+                                                    if (!$nextCheckIn->eq($bookings[$key + 1]->check_in_date)) {
+                                                        $availableAccommodation[Carbon::parse($nextCheckIn) . '/' . Carbon::parse($bookings[$key + 1]->check_in_date)] = Carbon::parse($nextCheckIn)->format('M d, Y') . ' - ' . Carbon::parse($bookings[$key + 1]->check_in_date)->format('M d, Y');
+                                                    }
+                                                    $nextCheckIn = Carbon::parse($bookings[$key + 1]->check_out_date)->format('M d, Y');
+
+                                                    continue;
+                                                }
+                                            }
+                                        }
+
+                                        $beforeBookedCheckIn = Carbon::parse($nextCheckIn)->lt(Carbon::parse($book->check_in_date));
+                                        $equalsToBooked = Carbon::parse($nextCheckIn)->eq(Carbon::parse($book->check_in_date));
+
+                                        if ($beforeBookedCheckIn && !$equalsToBooked) {
+                                            $availableAccommodation[Carbon::parse($nextCheckIn) . '/' . Carbon::parse($book->check_in_date)] = Carbon::parse($nextCheckIn)->format('M d, Y') . ' - ' . Carbon::parse($book->check_in_date)->format('M d, Y');
+                                        }
+
+                                        $nextCheckIn = Carbon::parse($book->check_out_date)->format('M d, Y');
+
+                                        if (!isset($bookings[$key + 1]) && Carbon::parse($nextCheckIn)->lt(Carbon::parse($checkOutDate))) {
+                                            $availableAccommodation[Carbon::parse($nextCheckIn) . '/' . Carbon::parse($checkOutDate)] = Carbon::parse($nextCheckIn)->format('M d, Y') . ' - ' . Carbon::parse($checkOutDate)->format('M d, Y');
+                                        }
+                                    }
+
+                                    return $availableAccommodation;
+                                }
+
+                                return null;
+                            })
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                if ($state) {
+                                    $availableDates = explode('/', $state);
+                                    $checkInDate = Carbon::parse($availableDates[0]);
+                                    $checkOutDate = Carbon::parse($availableDates[1]);
+                                    $accommodationId = $get('accommodation_id');
+                                    $accommodation = Accommodation::find($accommodationId);
+
+                                    $set('check_in_date', Carbon::parse($checkInDate)->format('M d, Y'));
+                                    $set('check_out_date', Carbon::parse($checkOutDate)->format('M d, Y'));
+
+                                    $daysBooked = $checkInDate->diffInDays($checkOutDate);
+                                    $bookingFee = $daysBooked * $accommodation->booking_fee;
+
+                                    $set('booking_fee', $bookingFee);
+                                } else {
+                                    $set('check_in_date', null);
+                                    $set('check_out_date', null);
+                                    $set('booking_fee', null);
+                                }
+                            })
+                            ->hidden(function ($get, $operation) {
+                                if ($operation === 'view') {
+                                    return true;
+                                } else {
+                                    if (!$get('accommodation_id') || !$get('check_in_date_picker') || !$get('check_out_date_picker')) {
+                                        return true;
+                                    }
+                                }
+                            })
+                            ->live(debounce: 100),
+
                         Select::make('guest_id')
                             ->label('Guest Name')
                             ->options(function () {
@@ -79,165 +220,82 @@ class ReservationResource extends Resource
                                     });
                             })
                             ->searchable()
-                            ->required(),
-                        DatePicker::make('check_in_date')
                             ->required()
-                            ->date()
-                            ->minDate(today())
-                            ->live()
-                            ->afterStateUpdated(function ($set, $state) {
-                                $set('check_out_date', Carbon::parse($state)->addDay()->format('M d, Y'));
+                            ->hidden(function ($get, $operation) {
+                                if ($operation === 'view') {
+                                    return false;
+                                } else {
+                                    if (!$get('availableDates')) {
+                                        return true;
+                                    }
+                                }
                             })
-                            ->native(false)
-                            ->disabledDates(function ($get) {
-                                $reservedDates = Reservation::where('deleted_at', null)
-                                ->where('accommodation_id', $get('accommodation_id'))
-                                ->pluck('check_in_date');
-
-                                // $reservedDatesFormatted = $reservedDates->flatMap(function ($reservation) {
-                                //     $checkInDate = Carbon::parse($reservation->check_in_date);
-                                //     $checkOutDate = Carbon::parse($reservation->check_out_date);
-
-                                //     return collect(range(0, $checkOutDate->diffInDays($checkInDate) - 1))
-                                //         ->map(fn($days) => $checkInDate->copy()->addDays($days)->toDateString());
-                                // });
-
-                                $reservedDateArray = $reservedDates->toArray();
-
-                                return $reservedDateArray;
-                            }),
-                        TextInput::make('check_out_date')
-                            ->required()
+                            ->disabled(fn($operation) => $operation === 'edit'),
+                    ])->columns(2),
+                Section::make()
+                    ->schema([
+                        TextInput::make('booking_reference_no')
+                            ->label('Booking Reference Number')
+                            ->default(fn() => (new Reservation())->generateBookingReference())
+                            ->readOnly(),
+                        TextInput::make('booking_fee')
+                            ->numeric()
+                            ->prefix('₱')
+                            ->step(0.01)
+                            ->readOnly()
+                            ->required(),
+                        TextInput::make('check_in_date')
                             ->formatStateUsing(function ($record) {
-                                if ($record != null) {
+                                if ($record) {
+                                    return Carbon::parse($record->check_in_date)->format('M d, Y');
+                                }
+                            })
+                            ->readOnly(),
+                        TextInput::make('check_out_date')
+                            ->formatStateUsing(function ($record) {
+                                if ($record) {
                                     return Carbon::parse($record->check_out_date)->format('M d, Y');
                                 }
                             })
                             ->readOnly(),
 
-                        Select::make('discount_id')
-                            ->label('Discount')
-                            ->options(function ($get) {
-                                $accommodation = Accommodation::find($get('accommodation_id'));
-                                $checkInDate = $get('check_in_date');
-                                $isWeekDay = Carbon::parse($checkInDate)->isWeekday();                                        // return Discount::where('status', true)
-                                $accommodationPrice = 0;
-                                if ($accommodation) {
-                                    if ($isWeekDay) {
-                                        $accommodationPrice = $accommodation->weekday_price;
-                                    } else {
-                                        $accommodationPrice = $accommodation->weekend_price;
-                                    }
+                        TextInput::make('on_hold_expiration_date')
+                            ->disabled()
+                            ->hidden(function ($operation, $record) {
+                                if ($operation !== 'view') {
+                                    return true;
+                                } elseif ($record->booking_status === 'active' || $record->booking_status === 'cancelled') {
+                                    return true;
                                 }
-
-                                return Discount::where('status', true)
-                                    ->where(function ($query) {
-                                        return $query->where('usage_limit', '>', 0)
-                                            ->orWhereNull('usage_limit');
-                                    })
-                                    ->where(function ($query) use ($accommodationPrice) {
-                                        return $query->where('minimum_payable', '<=', $accommodationPrice)
-                                            ->orWhere('minimum_payable', '==', 0.00);
-                                    })
-                                    ->where(function ($query) use ($accommodationPrice) {
-                                        return $query->where('maximum_payable', '>=', $accommodationPrice)
-                                            ->orWhere('maximum_payable', '==', 0.00);
-                                    })
-                                    ->inRandomOrder()
-                                    ->limit(5)
-                                    ->pluck('discount_code', 'id');
                             })
-                            ->searchable()
-                            ->live(100)
-                            ->afterStateUpdated(function ($state, $old) {
-                                if ($state !== null) {
-                                    $discount = Discount::find($state);
-                                    if ($discount) {
-                                        $usageLimit = $discount->usage_limit;
-                                        if ($usageLimit != null) {
-                                            $newUsageLimit = $usageLimit - 1;
-                                            $discount->update(['usage_limit' => $newUsageLimit]);
-                                        }
-                                    }
-                                }
-
-                                if ($old !== null && $state !== $old) {
-                                    $discount = Discount::find($old);
-                                    if ($discount) {
-                                        if ($discount->usage_limit != null) {
-                                            $newUsageLimit = $usageLimit + 1;
-                                            $discount->update(['usage_limit' => $newUsageLimit]);
-                                        }
-                                    }
+                            ->formatStateUsing(function ($record) {
+                                if ($record) {
+                                    return Carbon::parse($record->on_hold_expiration_date)->format('M d, Y H:i a');
                                 }
                             }),
 
-                    ])->columnSpan([
-                        'md' => 2,
-                        'lg' => 2,
+                        TextInput::make('booking_status')
+                            ->readOnly()
+                            ->formatStateUsing(function ($record) {
+                                if ($record) {
+                                    switch ($record->booking_status) {
+                                        case 'active':
+                                            return 'Active';
+                                            break;
+                                        case 'cancelled':
+                                            return 'Cancelled';
+                                            break;
+                                        case 'on_hold':
+                                            return 'On Hold';
+                                            break;
+                                        case 'expired':
+                                            return 'Expired';
+                                            break;
+                                    }
+                                }
+                            })
+                            ->hidden(fn($operation) => $operation !== 'view'),
                     ])->columns(2),
-
-                Section::make()
-                    ->schema([
-                        Group::make()
-                            ->schema([
-                                TextInput::make('booking_reference_no')
-                                    ->label('Booking Reference Number')
-                                    ->default(fn() => (new Reservation())->generateBookingReference())
-                                    ->readOnly(),
-                                TextInput::make('booking_fee')
-                                    ->numeric()
-                                    ->prefix('₱')
-                                    ->step(0.01)
-                                    ->required()
-                                    ->readOnly(),
-                                Select::make('booking_status')
-                                    ->options(function ($operation) {
-                                        if ($operation === 'view') {
-                                            return [
-                                                'active' => 'Active',
-                                                'cancelled' => 'Cancelled',
-                                                'on_hold' => 'On Hold',
-                                            ];
-                                        } else {
-                                            return [
-                                                'active' => 'Active',
-                                                'cancelled' => 'Cancelled',
-                                            ];
-                                        }
-                                    })
-                                    ->default(function ($operation) {
-                                        if ($operation === 'create') {
-                                            return 'on_hold';
-                                        }
-                                    })
-                                    ->required()
-                                    ->hidden(function ($operation, $record) {
-                                        if ($operation === 'create') {
-                                            return true;
-                                        } elseif ($operation === 'edit' && $record->booking_status === 'on_hold') {
-                                            return true;
-                                        }
-                                        return false;
-                                    }),
-                                DateTimePicker::make('on_hold_expiration_date')
-                                    ->date()
-                                    ->disabled()
-                                    ->hidden(function ($operation, $record) {
-                                        if ($operation === 'create' || $operation === 'edit') {
-                                            return true;
-                                        } elseif ($record->booking_status === 'active' || $record->booking_status === 'cancelled') {
-                                            return true;
-                                        }
-                                    }),
-                            ]),
-                    ])->columnSpan([
-                        'md' => 1,
-                        'lg' => 1,
-                    ]),
-            ])->columns([
-                'md' => 3,
-                'lg' => 3,
             ]);
     }
 
@@ -247,7 +305,7 @@ class ReservationResource extends Resource
             ->columns([
                 TextColumn::make('booking_reference_no')
                     ->searchable(),
-                TextColumn::make('accommodation_id')
+                TextColumn::make('accommodation.room_name')
                     ->label('Accommodation')
                     ->searchable()
                     ->formatStateUsing(function ($record) {
@@ -269,6 +327,13 @@ class ReservationResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                SelectFilter::make('booking_status')
+                    ->options([
+                        'on_hold' => 'On Hold',
+                        'active' => 'Active',
+                        'cancelled' => 'Cancelled',
+                        'expired' => 'Expired',
+                    ]),
                 SelectFilter::make('dateFilter')
                     ->options([
                         'present' => 'Present Reservations',
@@ -284,71 +349,163 @@ class ReservationResource extends Resource
                         if (isset($data['value'])) {
                             switch ($data['value']) {
                                 case 'today':
-                                    $query->whereDate('check_in_date', '=', Carbon::today())
-                                        ->orWhere(function ($query) {
-                                            $query->whereDate('check_in_date', '<', Carbon::today())
-                                                ->whereDate('check_out_date', '>', Carbon::today());
+                                    // $query->whereDate('check_in_date', '=', Carbon::today())
+                                    //     ->orWhere(function ($query) {
+                                    //         $query->whereDate('check_in_date', '<', Carbon::today())
+                                    //             ->whereDate('check_out_date', '>', Carbon::today());
+                                    //     });
+
+                                    $query->where(function ($query) {
+                                        $query->where('booking_status', 'on_hold')
+                                            ->orWhere('booking_status', 'active');
+                                    })
+                                        ->where(function ($query) {
+                                            $query->whereDate('check_in_date', '=', Carbon::today())
+                                                ->orWhere(function ($query) {
+                                                    $query->whereDate('check_in_date', '<', Carbon::today())
+                                                        ->whereDate('check_out_date', '>', Carbon::today());
+                                                });
                                         });
+
                                     break;
 
                                 case 'present':
-                                    $query->whereDate('check_in_date', '>=', Carbon::today())
-                                        ->orWhere(function ($query) {
-                                            $query->whereDate('check_in_date', '<', Carbon::today())
-                                                ->where('check_out_date', '>', Carbon::today());
+                                    // $query->whereDate('check_in_date', '>=', Carbon::today())
+                                    //     ->orWhere(function ($query) {
+                                    //         $query->whereDate('check_in_date', '<', Carbon::today())
+                                    //             ->where('check_out_date', '>', Carbon::today());
+                                    //     });
+
+                                    $query->where(function ($query) {
+                                        $query->where('booking_status', 'on_hold')
+                                            ->orWhere('booking_status', 'active');
+                                    })
+                                        ->where(function ($query) {
+                                            $query->whereDate('check_in_date', '>=', Carbon::today())
+                                                ->orWhere(function ($query) {
+                                                    $query->whereDate('check_in_date', '<', Carbon::today())
+                                                        ->where('check_out_date', '>', Carbon::today());
+                                                });
                                         });
+
                                     break;
 
                                 case 'past':
-                                    $query->whereDate('check_out_date', '<', Carbon::today());
+                                    $query->where(function ($query) {
+                                        $query->where('booking_status', 'on_hold')
+                                            ->orWhere('booking_status', 'active');
+                                    })
+                                        ->whereDate('check_out_date', '<', Carbon::today());
                                     break;
 
                                 case 'thisWeek':
+                                    // $query->where(function ($query) {
+                                    //     $query->whereBetween('check_in_date', [
+                                    //         Carbon::now()->startOfWeek(),
+                                    //         Carbon::now()->endOfWeek(),
+                                    //     ])
+                                    //         ->orWhereBetween('check_out_date', [
+                                    //             Carbon::now()->startOfWeek()->addDay(),
+                                    //             Carbon::now()->endOfWeek(),
+                                    //         ]);
+                                    // });
+
                                     $query->where(function ($query) {
-                                        $query->whereBetween('check_in_date', [
-                                            Carbon::now()->startOfWeek(),
-                                            Carbon::now()->endOfWeek(),
-                                        ])
-                                            ->orWhereBetween('check_out_date', [
-                                                Carbon::now()->startOfWeek()->addDay(),
+                                        $query->where('booking_status', 'on_hold')
+                                            ->orWhere('booking_status', 'active');
+                                    })
+                                        ->where(function ($query) {
+                                            $query->whereBetween('check_in_date', [
+                                                Carbon::now()->startOfWeek(),
                                                 Carbon::now()->endOfWeek(),
-                                            ]);
-                                    });
+                                            ])
+                                                ->orWhereBetween('check_out_date', [
+                                                    Carbon::now()->startOfWeek()->addDay(),
+                                                    Carbon::now()->endOfWeek(),
+                                                ]);
+                                        });
+
                                     break;
 
                                 case 'lastWeek':
+                                    // $query->where(function ($query) {
+                                    //     $query->whereBetween('check_in_date', [
+                                    //         Carbon::now()->subWeek()->startOfWeek(),
+                                    //         Carbon::now()->subWeek()->endOfWeek(),
+                                    //     ])
+                                    //         ->orWhereBetween('check_out_date', [
+                                    //             Carbon::now()->subWeek()->startOfWeek()->addDay(),
+                                    //             Carbon::now()->subWeek()->endOfWeek(),
+                                    //         ]);
+                                    // });
+
                                     $query->where(function ($query) {
-                                        $query->whereBetween('check_in_date', [
-                                            Carbon::now()->subWeek()->startOfWeek(),
-                                            Carbon::now()->subWeek()->endOfWeek(),
-                                        ])
-                                            ->orWhereBetween('check_out_date', [
-                                                Carbon::now()->subWeek()->startOfWeek()->addDay(),
+                                        $query->where('booking_status', 'on_hold')
+                                            ->orWhere('booking_status', 'active');
+                                    })
+                                        ->where(function ($query) {
+                                            $query->whereBetween('check_in_date', [
+                                                Carbon::now()->subWeek()->startOfWeek(),
                                                 Carbon::now()->subWeek()->endOfWeek(),
-                                            ]);
-                                    });
+                                            ])
+                                                ->orWhereBetween('check_out_date', [
+                                                    Carbon::now()->subWeek()->startOfWeek()->addDay(),
+                                                    Carbon::now()->subWeek()->endOfWeek(),
+                                                ]);
+                                        });
+
                                     break;
 
                                 case 'thisMonth':
+                                    // $query->where(function ($query) {
+                                    //     $query->whereMonth('check_in_date', '=', Carbon::now()->month)
+                                    //         ->whereYear('check_in_date', '=', Carbon::now()->year)
+                                    //         ->orWhere(function ($query) {
+                                    //             $query->whereMonth('check_out_date', '=', Carbon::now()->month)
+                                    //                 ->whereYear('check_out_date', '=', Carbon::now()->year)
+                                    //                 ->whereDay('check_out_date', '>', 1);
+                                    //         });
+                                    // });
+
                                     $query->where(function ($query) {
-                                        $query->whereMonth('check_in_date', '=', Carbon::now()->month)
-                                            ->whereYear('check_in_date', '=', Carbon::now()->year)
-                                            ->orWhere(function ($query) {
-                                                $query->whereMonth('check_out_date', '=', Carbon::now()->month)
-                                                    ->whereYear('check_out_date', '=', Carbon::now()->year)
-                                                    ->whereDay('check_out_date', '>', 1);
-                                            });
-                                    });
+                                        $query->where('booking_status', 'on_hold')
+                                            ->orWhere('booking_status', 'active');
+                                    })
+                                        ->where(function ($query) {
+                                            $query->whereMonth('check_in_date', '=', Carbon::now()->month)
+                                                ->whereYear('check_in_date', '=', Carbon::now()->year)
+                                                ->orWhere(function ($query) {
+                                                    $query->whereMonth('check_out_date', '=', Carbon::now()->month)
+                                                        ->whereYear('check_out_date', '=', Carbon::now()->year)
+                                                        ->whereDay('check_out_date', '>', 1);
+                                                });
+                                        });
+
                                     break;
 
                                 case 'lastMonth':
-                                    $query->whereMonth('check_in_date', '=', Carbon::now()->subMonth()->month)
-                                        ->whereYear('check_in_date', '=', Carbon::now()->subMonth()->year)
-                                        ->orWhere(function ($query) {
-                                            $query->whereMonth('check_out_date', '=', Carbon::now()->subMonth()->month)
-                                                ->whereYear('check_out_date', '=', Carbon::now()->subMonth()->year)
-                                                ->whereDay('check_out_date', '>', 1);
+                                    // $query->whereMonth('check_in_date', '=', Carbon::now()->subMonth()->month)
+                                    //     ->whereYear('check_in_date', '=', Carbon::now()->subMonth()->year)
+                                    //     ->orWhere(function ($query) {
+                                    //         $query->whereMonth('check_out_date', '=', Carbon::now()->subMonth()->month)
+                                    //             ->whereYear('check_out_date', '=', Carbon::now()->subMonth()->year)
+                                    //             ->whereDay('check_out_date', '>', 1);
+                                    //     });
+
+                                    $query->where(function ($query) {
+                                        $query->where('booking_status', 'on_hold')
+                                            ->orWhere('booking_status', 'active');
+                                    })
+                                        ->where(function ($query) {
+                                            $query->whereMonth('check_in_date', '=', Carbon::now()->subMonth()->month)
+                                                ->whereYear('check_in_date', '=', Carbon::now()->subMonth()->year)
+                                                ->orWhere(function ($query) {
+                                                    $query->whereMonth('check_out_date', '=', Carbon::now()->subMonth()->month)
+                                                        ->whereYear('check_out_date', '=', Carbon::now()->subMonth()->year)
+                                                        ->whereDay('check_out_date', '>', 1);
+                                                });
                                         });
+
                                     break;
                             }
                         }

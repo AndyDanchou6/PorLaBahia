@@ -6,7 +6,6 @@ use App\Filament\Resources\AccommodationResource\Pages;
 use App\Filament\Resources\AccommodationResource\RelationManagers;
 use App\Filament\Resources\AccommodationResource\RelationManagers\GalleriesRelationManager;
 use App\Models\Accommodation;
-use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
@@ -15,7 +14,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Support\Markdown;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -105,7 +103,7 @@ class AccommodationResource extends Resource
         return $table
             ->columns([
                 ImageColumn::make('main_image')
-                    ->circular(),
+                ->square(),
                 TextColumn::make('room_name')
                     ->sortable()
                     ->searchable(),

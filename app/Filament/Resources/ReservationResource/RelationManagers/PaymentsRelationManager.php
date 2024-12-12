@@ -29,6 +29,9 @@ class PaymentsRelationManager extends RelationManager
                     ->prefix('₱')
                     ->required()
                     ->reactive()
+                    ->afterStateUpdated(function ($set) {
+                        $set('payment_method', null);
+                    })
                     ->helperText(function () {
                         $record = $this->getOwnerRecord();
 
@@ -41,17 +44,17 @@ class PaymentsRelationManager extends RelationManager
                         }
                     })
                     ->rules([
-                        fn(): Closure => function (string $attribute, $value, Closure $fail) {
-                            $record = $this->getOwnerRecord();
+                        fn(): Closure => function (string $attribute, $value, Closure $fail, $record) {
+                            $reservationRecord = $this->getOwnerRecord();
 
-                            if (!$record) {
+                            if (!$reservationRecord) {
                                 $fail('The reservation record could not be found.');
                                 return;
                             }
 
-                            $bookingFeeRequirements = $record->booking_fee;
+                            $bookingFeeRequirements = $reservationRecord->booking_fee;
 
-                            $isFirstPayment = Payment::where('reservation_id', $record->id)->doesntExist();
+                            $isFirstPayment = Payment::where('reservation_id', $reservationRecord->id)->doesntExist();
 
                             if ($isFirstPayment) {
                                 if ($value < $bookingFeeRequirements) {
@@ -62,10 +65,13 @@ class PaymentsRelationManager extends RelationManager
                                     $fail("The initial payment of ₱{$value}.00 is insufficient to cover the required booking fee of ₱{$bookingFeeRequirements}. Please settle the full booking fee amount to proceed.");
                                 }
                             }
+
+                            dd($record);
                         }
                     ]),
 
                 Forms\Components\Select::make('payment_method')
+                    ->live()
                     ->options(function ($get) {
 
                         $guest_id = $this->getOwnerRecord()->guest_id;
@@ -80,6 +86,11 @@ class PaymentsRelationManager extends RelationManager
                                     'cash' => 'Cash',
                                     'g-cash' => 'G-Cash',
                                     'credits' => 'Credits',
+                                ];
+                            } else {
+                                return [
+                                    'cash' => 'Cash',
+                                    'g-cash' => 'G-Cash',
                                 ];
                             }
                         } else {
