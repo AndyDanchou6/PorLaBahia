@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">  
         <title>Por La Bahia</title>
         <link rel="stylesheet" href="{{asset('styles/welcome.css')}}">
         <link rel="stylesheet" href="{{asset('styles/header.css')}}">
+        <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/x-icon">
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
                 integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
@@ -15,15 +17,18 @@
         @vite('resources/js/app.js')
         <script src="/javascript/welcome.js"></script>
     </head>
+
 <body>
     <div class="container">
         <div class="background">
             <div class="overlay"></div>
             @include('header')
+
             <main>
                 <h2 class="title">Welcome to Por La Bahia</h2>
                 <h1 class="tagline">Your <span>Home</span> by <br> the Bay.</h1>
                 <button class="explore"><i class="fa fa-home"></i>  Explore Houses</button>
+
             </main>
         </div>
     </div>
@@ -33,6 +38,7 @@
             <a href="#"><i class="fa fa-calendar"></i> Check-in</a>
             <a href="#"><i class="fa fa-calendar"></i> Check-Out</a>
             <a href="#"><i class="fa fa-user"></i> Guests</a>
+
         </div>
         <div class="check-availability">Check Availability</div>
     </section>
@@ -46,6 +52,7 @@
                 <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages (injected humour and the like).</p>
                 
                 <div class="small-nav">
+
                 <div> <i class="fa fa-home"></i> Accommodations </div>
                 <div> <i class="fa fa-wifi"></i> Enjoy Free Wifi</div>
                 <div> <i class="fa fa-car"></i> Parking Space </div>
@@ -54,11 +61,12 @@
             <button class="readmore"><img src="/images/book.svg" alt="" class="readmoreImage"> Read More</button>
             </div>
 
-            <div class="grid-images">
-                <div class="item item1"><img src="{{asset("/images/image1.jpg")}}" alt=""></div>
-                <div class="item item2"><img src="{{asset("/images/image2.jpg")}}" alt=""></div>
-                <div class="item item3"><img src="{{asset("/images/image3.jpg")}}" alt=""></div>
-            </div>
+
+        <div class="grid-images">
+            <div class="item item1"><img src="{{asset("/images/image1.jpg")}}" alt=""></div>
+            <div class="item item2"><img src="{{asset("/images/image2.jpg")}}" alt=""></div>
+            <div class="item item3"><img src="{{asset("/images/image3.jpg")}}" alt=""></div>
+        </div>
     </section>
 
     <section class="resort-facilities">
@@ -92,8 +100,8 @@
                 </div>
                 <h3>OUR ACCOMMODATIONS</h3>
                 <p> Lorem Ipsum is simply dummy passages, and more recently with desktop publishing software like Aldus.
-                Lorem Ipsum is simply dummy text and more recently with desktop publishing software like Aldus.
-               </p>
+                    Lorem Ipsum is simply dummy text and more recently with desktop publishing software like Aldus.
+                </p>
             </div>
 
             <div class="other-houses-container">
@@ -133,7 +141,7 @@
                         </div>
                     </div>
                 </div>
-            </div>       
+            </div>
         </div>
         <div class="resort-houses-image">
             <img src="/images/image1.jpg" alt="">
@@ -154,7 +162,7 @@
             <img src="/images/lineRight.svg" alt="" class="lineRight">
         </div>
         <h2>LET US TAKE YOU TO A QUICK TOUR!</h2>
-   </section>
+    </section>
 
    <section class="choose-us">
     <div class="bg-overlay">
@@ -209,7 +217,7 @@
             </div>
    </section>
 
-   <section class="location">
+    <section class="location">
         <div class="location-image">
             <img src="/images/location.jpg" alt="">
             <div class="location-box">
@@ -251,13 +259,13 @@
                     <input type="text" id="idea" name="idea" placeholder="What's on your mind?"><br>
                 </div>
                 <button class="submit"><i class="fa fa-paper-plane"></i> SUBMIT</button>
-           </form>
-           
+            </form>
+
         </div>
-   </section>
-   <section class="footer">
-        @include('footer')  
-   </section> 
+    </section>
+    <section class="footer">
+        @include('footer')
+    </section>
 </body>
+
 </html>
-  

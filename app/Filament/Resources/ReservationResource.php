@@ -91,8 +91,8 @@ class ReservationResource extends Resource
                             ->native(false)
                             ->disabledDates(function ($get) {
                                 $reservedDates = Reservation::where('deleted_at', null)
-                                ->where('accommodation_id', $get('accommodation_id'))
-                                ->pluck('check_in_date');
+                                    ->where('accommodation_id', $get('accommodation_id'))
+                                    ->pluck('check_in_date');
 
                                 // $reservedDatesFormatted = $reservedDates->flatMap(function ($reservation) {
                                 //     $checkInDate = Carbon::parse($reservation->check_in_date);
@@ -402,4 +402,12 @@ class ReservationResource extends Resource
             'edit' => Pages\EditReservation::route('/{record}/edit'),
         ];
     }
+
+    // protected function getHeaderActions(): array
+    // {
+    //     return [
+    //         Actions\ImportAction::make()
+    //             ->importer(UserImporter::class),
+    //     ];
+    // }
 }
