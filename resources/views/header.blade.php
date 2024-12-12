@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
     <link rel="stylesheet" href="{{asset('styles/header.css')}}">
     <title>Document</title>
@@ -21,11 +22,7 @@
         <li><a href="">Restaurant Menu</a></li>
         <li><a href="">Contact Us</a></li>
     </ul>
-    <button><i class="fa fa-book"></i> Book Now</button>
-</header>
-    <div class="lines">
-        <div class="line1"></div>
-        <div class="line2"></div>
-    </div>  
+    <button class="booknow"><img src="/images/Icon.svg" alt="" class="buttonImage"> Book Now</button>
+</header> 
 </body>
 </html>
