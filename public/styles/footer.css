@@ -1,6 +1,6 @@
 .rectangle{
     width: 100%;
-    height: 100vh;
+    height: 80vh;
     position: static;
 }
 .board{
@@ -8,7 +8,7 @@
     right: -15%;
     top: 28%;
     transform: rotate(270deg);
-    width: 650px;
+    width: 40vw;
     height: auto;
 }
 .footer-title{
@@ -30,125 +30,62 @@
     text-align: center;
     margin: 0;
 }
-.quick-links{
-    padding: 10px;
+.footer-content{
+    display: flex;
+    flex-wrap: wrap;
+    position: absolute;
+    top: 40%;
+    justify-content: space-evenly;
+    align-items:baseline;
+    width: 80%;
+    height: 200px;
+    gap: 40px;  
+    color: #ffffff;
 }
-.quick-links h5{
-    font-size: 2rem;
-    margin-bottom: 0;
+.quick-links{
+    padding: 5px;
 }
 .quick-links p a{
     text-decoration: none;
     color: #ffffff;
-    margin-top: 0;
+    font-size: .7em;
 }
-.quick-links i{
-    margin: 5px;
-    font-size: 1rem;
-    color: var(--primary-color);
+.quick-links h5{
+    margin: 0;
 }
-.quickcircle{
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: var(--primary-color);
-    position: absolute;
-    transform: translate(-50%, -50%);
-    top:44%;
-    left: 72%;
-}
-.quickline{
-    width: 70%;
-    height: 2px;
-    background-color: var(--primary-color);
-    position: absolute;
-    top: 44%;
-    left: 3%;
-}
-.social-media{
-    position: absolute;
-    top: 31%;
-    left: 35%;
-}
-.social-media h5{
-    color: #ffffff;
-    font-size: 2rem;
-    margin-bottom: 0;
-}
-.social-media i{
-    color: var(--primary-color);
-    font-size: 1.5rem;
-    margin: 7px;
+.quick-links p{
+    margin: 0;
 }
 .social-media p a{
     text-decoration: none;
     color: #ffffff;
-    font-weight: 800;
+    font-size: .7em;
+    margin: 0;
 }
-.socialcircle{
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: var(--primary-color);
-    position: absolute;
-    transform: translate(-50%, -50%);
-    top:34%;
-    left: 102%;
+.social-media h5{
+    margin: 0;
 }
-.socialline{
-    width: 100%;
-    height: 2px;
-    background-color: var(--primary-color);
-    position: absolute;
-    top: 34%;
-    left: 3%;
+.social-media p{
+    margin: 0;
+}
+.location-footer p{
+    color: #ffffff;
+    font-size: .7em;
+    margin: 0;
+}
+.location-footer h5{
+    margin: 0;
 }
 .footerline{
     position: absolute;
     bottom: 5%;
-    width: 70%;
-    left: 13%;
+    width: 76%;
+    left: 12%;
 }
 .porlabahia{
     position: absolute;
-    bottom: -1%;
+    bottom: -2%;
     left: 40%;
     color: #ffffff;
-}
-.location-footer h2{
-    position: absolute;
-    top: 35%;
-    color: #ffffff;
-    font-size: 2rem;
-    left: 60%;
-}
-.locationcircle{
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: var(--primary-color);
-    position: absolute;
-    top:44.7%;
-    left: 75%;
-}
-.locationline{
-    width: 15.3%;
-    height: 2px;
-    background-color: var(--primary-color);
-    position: absolute;
-    top: 45.5%;
-    left: 60%;
-}
-.address{
-    position: absolute;
-    top: 50%;
-    left: 60%;
-    color: #ffffff;
-}
-.address h1{  
-    font-size: 1.2rem;
-}
-.address p{
-    font-size: 1rem;
-    color: #ffffff;
+    font-size: .8rem;
 }
