@@ -118,23 +118,34 @@ class PaymentsRelationManager extends RelationManager
                     ->badge()
                     ->searchable()
                     ->color(fn(string $state): string => match ($state) {
-                        'g-cash' => 'success',
+                        'GCash' => 'success',
                         'cash' => 'info',
                         'credits' => 'warning',
                     })
                     ->label('Payment Method'),
             ])
             ->filters([
-                //
                 Tables\Filters\TrashedFilter::make()
                     ->visible(fn() => Auth::user()->role == 1),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->label('New Payment'),
+                // Tables\Actions\CreateAction::make()
+                //     ->label('New Payment'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
+                // // ->visible(function ($record) {
+                // //     $reservationId = $this->getOwnerRecord()->id;
+                // //     $isFirstPayment = Payment::where('reservation_id', $reservationId)->first();
+                // //     // $recordId = $record->reservation_id;
+                // //     if ($record->id == $isFirstPayment->id) {
+                // //         return false;
+                // //     }
+
+                // //     return true;
+                // // }),
+                // Tables\Actions\DeleteAction::make()
+
             ]);
     }
 }

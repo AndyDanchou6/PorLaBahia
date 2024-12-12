@@ -37,7 +37,9 @@ class GalleriesRelationManager extends RelationManager
                 Tables\Columns\ImageColumn::make('image')
                     ->label('All Images')
                     ->stacked()
-                    ->circular(),
+                    ->square()
+                    ->limit(3)
+                    ->limitedRemainingText(),
             ])
             ->filters([
                 //

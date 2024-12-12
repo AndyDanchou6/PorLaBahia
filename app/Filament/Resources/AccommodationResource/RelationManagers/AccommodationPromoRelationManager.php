@@ -208,7 +208,13 @@ class AccommodationPromoRelationManager extends RelationManager
             ->actions([
                 // Tables\Actions\ActionGroup::make([
                 Tables\Actions\EditAction::make()
-                    ->color('warning'),
+                    ->color('warning')
+                    ->visible(function ($record) {
+                        if ($record->status == 'expired') {
+                            return false;
+                        }
+                        return true;
+                    }),
                 Tables\Actions\DeleteAction::make(),
                 // ])
             ])

@@ -251,6 +251,7 @@ class ReservationResource extends Resource
                                 }
                             })
                             ->readOnly(),
+
                         TextInput::make('check_out_date')
                             ->formatStateUsing(function ($record) {
                                 if ($record) {
@@ -559,4 +560,12 @@ class ReservationResource extends Resource
             'edit' => Pages\EditReservation::route('/{record}/edit'),
         ];
     }
+
+    // protected function getHeaderActions(): array
+    // {
+    //     return [
+    //         Actions\ImportAction::make()
+    //             ->importer(UserImporter::class),
+    //     ];
+    // }
 }
