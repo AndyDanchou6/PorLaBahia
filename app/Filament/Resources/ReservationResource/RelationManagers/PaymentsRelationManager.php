@@ -20,79 +20,89 @@ class PaymentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'payments';
 
-    // public function form(Form $form): Form
-    // {
-    //     return $form
-    //         ->schema([
-    //             Forms\Components\TextInput::make('amount')
-    //                 ->numeric()
-    //                 ->prefix('₱')
-    //                 ->required()
-    //                 ->reactive()
-    //                 ->helperText(function () {
-    //                     $record = $this->getOwnerRecord();
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('amount')
+                    ->numeric()
+                    ->prefix('₱')
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(function ($set) {
+                        $set('payment_method', null);
+                    })
+                    ->helperText(function () {
+                        $record = $this->getOwnerRecord();
 
-    //                     $isFirstPayment = Payment::where('reservation_id', $record->id)->doesntExist();
+                        $isFirstPayment = Payment::where('reservation_id', $record->id)->doesntExist();
 
-    //                     if ($isFirstPayment) {
-    //                         return 'Reminder: Please settle the booking fee payment first.';
-    //                     } else {
-    //                         return null;
-    //                     }
-    //                 })
-    //                 ->rules([
-    //                     fn(): Closure => function (string $attribute, $value, Closure $fail) {
-    //                         $record = $this->getOwnerRecord();
+                        if ($isFirstPayment) {
+                            return 'Reminder: Please settle the booking fee payment first.';
+                        } else {
+                            return null;
+                        }
+                    })
+                    ->rules([
+                        fn(): Closure => function (string $attribute, $value, Closure $fail, $record) {
+                            $reservationRecord = $this->getOwnerRecord();
 
-    //                         if (!$record) {
-    //                             $fail('The reservation record could not be found.');
-    //                             return;
-    //                         }
+                            if (!$reservationRecord) {
+                                $fail('The reservation record could not be found.');
+                                return;
+                            }
 
-    //                         $bookingFeeRequirements = $record->booking_fee;
+                            $bookingFeeRequirements = $reservationRecord->booking_fee;
 
-    //                         $isFirstPayment = Payment::where('reservation_id', $record->id)->doesntExist();
+                            $isFirstPayment = Payment::where('reservation_id', $reservationRecord->id)->doesntExist();
 
-    //                         if ($isFirstPayment) {
-    //                             if ($value < $bookingFeeRequirements) {
-    //                                 $fail("The initial payment of ₱{$value}.00 is insufficient to cover the required booking fee of ₱{$bookingFeeRequirements}. Please settle the full booking fee amount to proceed.");
-    //                             }
-    //                         }
-    //                     }
-    //                 ]),
+                            if ($isFirstPayment) {
+                                if ($value < $bookingFeeRequirements) {
+                                    $fail("The initial payment of ₱{$value}.00 is insufficient to cover the required booking fee of ₱{$bookingFeeRequirements}. Please settle the full booking fee amount to proceed.");
+                                }
+                            } else {
+                                if ($value < $bookingFeeRequirements) {
+                                    $fail("The initial payment of ₱{$value}.00 is insufficient to cover the required booking fee of ₱{$bookingFeeRequirements}. Please settle the full booking fee amount to proceed.");
+                                }
+                            }
 
-    //             Forms\Components\Select::make('payment_method')
-    //                 ->options(function ($get) {
+                            dd($record);
+                        }
+                    ]),
 
-    //                     $guest_id = $this->getOwnerRecord()->guest_id;
-    //                     $guest = GuestInfo::find($guest_id);
-    //                     $credits = $guest->guestCredit->first();
+                Forms\Components\Select::make('payment_method')
+                    ->live()
+                    ->options(function ($get) {
 
-    //                     if ($credits) {
-    //                         $creditAmount = $credits->amount;
+                        $guest_id = $this->getOwnerRecord()->guest_id;
+                        $guest = GuestInfo::find($guest_id);
+                        $credits = $guest->guestCredit->first();
 
-    //                         if ($creditAmount >= $get('amount')) {
-    //                             return [
-    //                                 'cash' => 'Cash',
-    //                                 'gcash' => 'G-Cash',
-    //                                 'credits' => 'Credits',
-    //                             ];
-    //                         } else {
-    //                             return [
-    //                                 'cash' => 'Cash',
-    //                                 'gcash' => 'G-Cash',
-    //                             ];
-    //                         }
-    //                     } else {
-    //                         return [
-    //                             'cash' => 'Cash',
-    //                             'gcash' => 'G-Cash',
-    //                         ];
-    //                     }
-    //                 })
-    //                 ->required(),
-    //         ]);
-    // }
+                        if ($credits) {
+                            $creditAmount = $credits->amount;
+
+                            if ($creditAmount >= $get('amount')) {
+                                return [
+                                    'cash' => 'Cash',
+                                    'g-cash' => 'G-Cash',
+                                    'credits' => 'Credits',
+                                ];
+                            } else {
+                                return [
+                                    'cash' => 'Cash',
+                                    'g-cash' => 'G-Cash',
+                                ];
+                            }
+                        } else {
+                            return [
+                                'cash' => 'Cash',
+                                'g-cash' => 'G-Cash',
+                            ];
+                        }
+                    })
+                    ->required(),
+            ]);
+    }
 
     public function table(Table $table): Table
     {

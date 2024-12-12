@@ -92,7 +92,7 @@ class Reservation extends Model
             }
 
             if ($reservation->booking_status == 'on_hold') {
-                $reservation->on_hold_expiration_date = Carbon::now()->addHours(12);
+                $reservation->on_hold_expiration_date = Carbon::now()->addHours(12)->startOfMinute();
             }
         });
     }

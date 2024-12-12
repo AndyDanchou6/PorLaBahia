@@ -15,6 +15,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\Summarizers\Sum;
 
+
 class EditReservation extends EditRecord
 {
     protected static string $resource = ReservationResource::class;
@@ -22,6 +23,8 @@ class EditReservation extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+
+
             Action::make('Payment')
                 ->label('Pay')
                 ->color('success')
@@ -110,8 +113,16 @@ class EditReservation extends EditRecord
                     return true;
                 })->modalWidth('2xl')
                 ->modalHeading('Payment'),
+          
+                      Action::make('Cancel Booking')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->modalDescription('Are you sure you\'d like to cancel this booking? This cannot be undone.')
+                ->action(function ($record) {
+                    $record->booking_status = 'cancelled';
+                    $record->save();
+                }),
 
-            Actions\DeleteAction::make(),
             Actions\Action::make('back')
                 ->url(ReservationResource::getUrl())
                 ->button()
