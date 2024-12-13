@@ -28,11 +28,12 @@
                 <div class="social-media">
                     <h5>SOCIAL MEDIA</h5>
                     <img src="/images/lineRight.svg" alt="">
-                    <p><a href="/"><i class="fa fa-facebook"></i> FACEBOOK</a></p>
-                    <p><a href="/"><i class="fa fa-instagram"></i> INSTAGRAM</a> </p>
-                    <p><a href="/"><i class="fa fa-youtube"></i> YOUTUBE</a> </p>
+                    <div class="social-media-icons">
+                        <a href=""><img src="/images/Group 221.svg" alt=""></a>
+                        <a href=""><img src="/images/Group 222.svg" alt=""></a>
+                        <a href=""><img src="/images/Group 223.svg" alt=""></a>
+                    </div>
                 </div>
-
                 <div class="location-footer">
                     <h5>LOCATION</h5>
                     <img src="/images/lineRight.svg" alt="">

@@ -19,13 +19,15 @@ body {
     position: relative;
 }
 header {
-    position: absolute;
+    position: sticky;
+    top: 0;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     width: 100%;
-    z-index: 100;
+    z-index: 99;
     border-bottom: 1px solid #edb91c;
+    backdrop-filter: blur(5px);
 }
 ul {
     display: flex;
@@ -35,7 +37,7 @@ ul {
 }
 li a {
     text-decoration: none;
-    padding: 10px 10px;
+    padding: 8px;
     font-size: 0.8rem;
     color: white;
     margin: 15px;
@@ -61,6 +63,7 @@ li a:hover {
     justify-content: space-evenly;
     align-content: center;
     font-weight: 600;
+    width: 120px;
 }
 .buttonImage{
     width: 20%;
@@ -69,13 +72,11 @@ li a:hover {
 button:hover {
     background-color: var(--secondary-color);
 }
-
 .logo img {
     position: relative;
     top: 20px;
     width: 230px;
     height: auto;
-    z-index: 4;
 }
 main .title {
     color: white;
@@ -84,7 +85,7 @@ main .title {
     left: 8%;
     font-family: "Pacifico", cursive;
     font-size: 2rem;
-    z-index: 3;
+    z-index: 2;
     font-weight: 500;
 }
 .tagline {
@@ -95,7 +96,7 @@ main .title {
     font-size: 3.5rem;
     font-weight: 900;
     line-height: .9;
-    z-index: 3;
+    z-index: 2;
 }
 span {
     color: var(--primary-color);
