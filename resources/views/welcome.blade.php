@@ -12,8 +12,8 @@
                 crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 
-        @vite('resources/js/app.js')
         <script src="/javascript/welcome.js"></script>
+        @vite('resources/js/app.js')
     </head>
 <body>
     <div class="container">
@@ -106,29 +106,12 @@
                 </div>
                 <div class="other-houses">
                     <div class="house1">
-                        <div class="house-context">
-                            <img src="/images/image1.jpg" alt="House Image 1">
-                            <h4>Dominic House</h4>
-                            <h6> <i class="fa fa-bed"> </i> 2</h6>
-                            <p>Lorem Ipsum is simply dummy publishing Aldus dummy publishing software like Aldus.</p>
-                            <button class="checkItButton"><i class="fa fa-check-circle-o"></i> Check It</button>
-                        </div>
-                    </div>
-                    <div class="house1">
-                        <div class="house-context">
-                            <img src="/images/image1.jpg" alt="House Image 1">
-                            <h4>Dominic House</h4>
-                            <h6> <i class="fa fa-bed"> </i> 2</h6>
-                            <p>Lorem Ipsum is simply dummy publishing Aldus dummy publishing software like Aldus.</p>
-                            <button class="checkItButton"><i class="fa fa-check-circle-o"></i> Check It</button>
-                        </div>
-                    </div>
-                    <div class="house1">
-                        <div class="house-context">
-                            <img src="/images/image1.jpg" alt="House Image 1">
-                            <h4>Dominic House</h4>
-                            <h6> <i class="fa fa-bed"> </i> 2</h6>
-                            <p>Lorem Ipsum is simply dummy publishing Aldus dummy publishing software like Aldus.</p>
+                        <div class="house-context" id="clickable">
+                            <img src=" " alt="">
+                            <h4> </h4>
+                            <h6> <i class="fa fa-bed"> </i> </h6>
+                            <p> </p>
+                            <div class="priceHouse"> </div>
                             <button class="checkItButton"><i class="fa fa-check-circle-o"></i> Check It</button>
                         </div>
                     </div>
@@ -136,50 +119,62 @@
             </div>       
         </div>
         <div class="resort-houses-image">
-            <img src="/images/image1.jpg" alt="">
-                <h1>Paulo House</h1>
+            <img id="large-image" src=" " alt="">
+                <h1> </h1>
                 <i class="fa fa-bed"> </i>
-                <p>Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently recently with desktop publishing software like Aldus and more recently with desktop publishing software like Aldus.</p>
+                <p> </p>
                 <hr>
             <div class="buttons">
-                <div class="price"><i class="fa fa-money"></i> 5,500.00</div>
+                <div class="price"><i class="fa fa-money"></i> </div>
                 <button class="book-this"><img src="/images/Icon.svg" alt="" class="bookImage"> Book This</button>
             </div>
         </div>
     </section>
-   <section class="video">
+   <section class="quick-video">
         <div class="video-title">
             <img src="/images/lineLeft.svg" alt="" class="lineLeft">
                 <h1>Quick Video</h1>
             <img src="/images/lineRight.svg" alt="" class="lineRight">
         </div>
         <h2>LET US TAKE YOU TO A QUICK TOUR!</h2>
+
+        <div class="video-container">
+            <video id="video" src="/video/PorLaBahia.mp4" width="500" height="300"></video>
+            <button id="playPauseBtn" class="play-pause-btn"> <i class="fa fa-youtube-play"></i> </button>
+        </div>
+
    </section>
 
-   <section class="choose-us">
-    <div class="bg-overlay">
+   <section class="choose-us"> 
+    <img src="/images/Rectangle 97.svg" alt="" class="testimonial-bg">
+    <img src="/images/10.svg" alt="" class="choose-bg coconut">
+    <img src="/images/11.svg" alt="" class="choose-bg board">
         <div class="choose-us-title">
             <img src="/images/redLineLeft.svg" alt="" class="lineLeft">
                 <h1>Why Choose Us</h1>
             <img src="/images/redLineRight.svg" alt="" class="lineRight">
         </div>
             <h3>ESCAPE, RELAX AND REDISCOVER COMFORT.</h3>
-            <div class="choose-slider">
-
             <img src="/images/redArrowLeft.svg" alt="" class="red-arrowLeft">
-                <div> 
+            <img src="/images/redArrowRight.svg" alt="" class="red-arrowRight">
+            
+            <div class="choose-slider">
+                <div class="choose-container"> 
                     <h4>Exceptional Homes</h4>
                     <p>Lorem Ipsum passages, and more recently with desktop publishing software like Aldus</p>
                 </div>
-                <div> 
+                <div class="choose-container"> 
+                    <h4>Exceptional Homes</h4>
+                    <p>Lorem Ipsum passages, and more recently with desktop publishing software like Aldus</p>
+                </div>
+                <div class="choose-container"> 
                     <h4>Redefining Hospitality</h4>
                     <p>Lorem Ipsum passages, and more recently with desktop publishing software like Aldus</p>
                 </div>
-                <div> 
+                <div class="choose-container"> 
                     <h4>Exceptional Homes</h4>
                     <p>Lorem Ipsum passages, and more recently with desktop publishing software like Aldus</p>
                 </div>
-                <img src="/images/redArrowRight.svg" alt="" class="red-arrowRight">
             </div>
             
          <h5>OUR CLIENTS TESTIMONIALS</h5>
@@ -206,22 +201,25 @@
                     <p>Tonet ngaubs ingon anin taa Lorem Ipsum passages, and more recently with desktop publishing software Lorem Ipsum passages, a publishing software</p>
                 </div>
             </div>
-            </div>
    </section>
 
    <section class="location">
         <div class="location-image">
-            <img src="/images/location.jpg" alt="">
+            <img src="/images/Rectangle 98.svg" alt="">
+            <img src="/images/Vector.svg" alt="" class="vector">
             <div class="location-box">
-                <i class="fa fa-map-marker"></i>
-                <h6> Santo Nino, Malitbog, Southern Leyte, Philippines</h6>
+                <img src="/images/maps-search.svg" alt="" class="map">
+                <div class="address">
+                    <h1>OUR LOCATION</h1>
+                    <h6> Santo Nino, Malitbog, Southern Leyte, Philippines</h6>
+                </div>
             </div>
         </div>
         <div class="get-in-touch">
             <div class="get-in-touch-title">
-                <!-- <img src="/images/lineLeft.svg" alt="" class="getLineLeft"> -->
+                <img src="/images/lineLeft.svg" alt="" class="getLineLeft">
                     <h1> Get in Touch</h1>
-                <!-- <img src="/images/lineRight.svg" alt=""> -->
+                <img src="/images/lineRight.svg" alt="" class="getLineRight">
             </div> 
             
         <h4>CONNECT TO US IF YOU HAVE PROBLEM</h4>
@@ -246,18 +244,15 @@
                     <i class="fa fa-phone"></i>
                     <input type="number" id="contact_number" name="contact_number" placeholder="Contact Number">
                 </div>
-                <div class="input-container">
+                <div class="input-container idea">
                     <i class="fa fa-commenting"></i>
-                    <input type="text" id="idea" name="idea" placeholder="What's on your mind?"><br>
+                    <textarea id="idea" name="idea" rows="4" cols="50" placeholder="What's on your mind?"></textarea>
                 </div>
                 <button class="submit"><i class="fa fa-paper-plane"></i> SUBMIT</button>
            </form>
            
         </div>
    </section>
-   <section class="footer">
-        @include('footer')  
-   </section> 
 </body>
 </html>
   
