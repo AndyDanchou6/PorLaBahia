@@ -29,6 +29,9 @@ class PaymentsRelationManager extends RelationManager
                     ->prefix('₱')
                     ->required()
                     ->reactive()
+                    ->afterStateUpdated(function ($set) {
+                        $set('payment_method', null);
+                    })
                     ->helperText(function () {
                         $record = $this->getOwnerRecord();
 
@@ -41,56 +44,34 @@ class PaymentsRelationManager extends RelationManager
                         }
                     })
                     ->rules([
-                        fn(): Closure => function (string $attribute, $value, Closure $fail) {
-                            $record = $this->getOwnerRecord();
+                        fn(): Closure => function (string $attribute, $value, Closure $fail, $record) {
+                            $reservationRecord = $this->getOwnerRecord();
 
-                            if (!$record) {
+                            if (!$reservationRecord) {
                                 $fail('The reservation record could not be found.');
                                 return;
                             }
 
-                            $bookingFeeRequirements = $record->booking_fee;
+                            $bookingFeeRequirements = $reservationRecord->booking_fee;
 
-                            $isFirstPayment = Payment::where('reservation_id', $record->id)->doesntExist();
+                            $isFirstPayment = Payment::where('reservation_id', $reservationRecord->id)->doesntExist();
 
                             if ($isFirstPayment) {
                                 if ($value < $bookingFeeRequirements) {
                                     $fail("The initial payment of ₱{$value}.00 is insufficient to cover the required booking fee of ₱{$bookingFeeRequirements}. Please settle the full booking fee amount to proceed.");
                                 }
+                            } else {
+                                if ($value < $bookingFeeRequirements) {
+                                    $fail("The initial payment of ₱{$value}.00 is insufficient to cover the required booking fee of ₱{$bookingFeeRequirements}. Please settle the full booking fee amount to proceed.");
+                                }
                             }
+
+                            dd($record);
                         }
                     ]),
-                // ->rules([
-                //     fn(): Closure => function (string $attribute, $value, Closure $fail) {
-                //         // Get the reservation record for the current payment
-                //         $record = $this->getOwnerRecord();
-
-                //         if (!$record) {
-                //             $fail('The reservation record could not be found.');
-                //             return;
-                //         }
-
-                //         $bookingFeeRequirements = $record->booking_fee;
-
-                //         // Check if this is the first payment (no previous payments)
-                //         $isFirstPayment = Payment::where('reservation_id', $record->id)->doesntExist();
-
-                //         // Check if this payment is being edited or is the first payment
-                //         $isEditingFirstPayment = $this->getRecord() && $this->getRecord()->reservation_id === $record->id;
-
-                //         // If this is the first payment or editing the first payment, validate the booking fee
-                //         if ($isFirstPayment || $isEditingFirstPayment) {
-                //             if ($value < $bookingFeeRequirements) {
-                //                 $fail("The initial payment of ₱{$value}.00 is insufficient to cover the required booking fee of ₱{$bookingFeeRequirements}. Please settle the full booking fee amount to proceed.");
-                //             }
-                //         }
-
-                //         // No validation for the booking fee for subsequent payments
-                //     }
-                // ]),
-
 
                 Forms\Components\Select::make('payment_method')
+                    ->live()
                     ->options(function ($get) {
 
                         $guest_id = $this->getOwnerRecord()->guest_id;
@@ -137,7 +118,7 @@ class PaymentsRelationManager extends RelationManager
                     ->badge()
                     ->searchable()
                     ->color(fn(string $state): string => match ($state) {
-                        'g-cash' => 'success',
+                        'GCash' => 'success',
                         'cash' => 'info',
                         'credits' => 'warning',
                     })
@@ -148,21 +129,23 @@ class PaymentsRelationManager extends RelationManager
                     ->visible(fn() => Auth::user()->role == 1),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->label('New Payment'),
+                // Tables\Actions\CreateAction::make()
+                //     ->label('New Payment'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->visible(function ($record) {
-                        $reservationId = $this->getOwnerRecord()->id;
-                        $isFirstPayment = Payment::where('reservation_id', $reservationId)->first();
-                        // $recordId = $record->reservation_id;
-                        if ($record->id == $isFirstPayment->id) {
-                            return false;
-                        }
+                // Tables\Actions\EditAction::make(),
+                // // ->visible(function ($record) {
+                // //     $reservationId = $this->getOwnerRecord()->id;
+                // //     $isFirstPayment = Payment::where('reservation_id', $reservationId)->first();
+                // //     // $recordId = $record->reservation_id;
+                // //     if ($record->id == $isFirstPayment->id) {
+                // //         return false;
+                // //     }
 
-                        return true;
-                    }),
+                // //     return true;
+                // // }),
+                // Tables\Actions\DeleteAction::make()
+
             ]);
     }
 }

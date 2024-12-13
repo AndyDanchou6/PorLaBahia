@@ -16,6 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('reservation_id');
             $table->decimal('amount', 10, 2)->nullable();
             $table->string('payment_method')->nullable();
+            $table->string('payment_status')->nullable();
+            $table->string('gcash_reference_number')->nullable();
+            $table->string('gcash_screenshot')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
