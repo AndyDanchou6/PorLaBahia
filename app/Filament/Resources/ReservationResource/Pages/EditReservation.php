@@ -40,7 +40,7 @@ class EditReservation extends EditRecord
                             $remainingBalance = $record->booking_fee - $getBalance;
 
                             if ($remainingBalance) {
-                                return "Remaining Balance: ₱{$remainingBalance}.00";
+                                return "Remaining Payable: ₱{$remainingBalance}.00";
                             }
 
                             return false;
@@ -149,7 +149,7 @@ class EditReservation extends EditRecord
                 })->visible(function ($record) {
                     $record = $this->getRecord();
 
-                    $getAmount = Payment::where('reservation_id', $record->id)->sum('amount');
+                    $getAmount = Payment::where('reservation_id', $record->id)->where('payment_status', '!=', 'void')->sum('amount');
 
                     $bookingFee = $record->booking_fee;
 
