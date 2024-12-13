@@ -21,42 +21,57 @@ class Payment extends Model
         return $this->belongsTo(Reservation::class);
     }
 
-    // protected static function booted()
-    // {
-    //     static::creating(function ($payment) {
-    //         // first payment (reservation fee) changes booking status to active
-    //         $payments = Payment::where('reservation_id', $payment->reservation_id)->get();
+    protected static function booted()
+    {
+        static::creating(function ($payment) {
+            $payments = Payment::where('reservation_id', $payment->reservation_id)
+                // ->where('payment_status', 'paid')
+                ->get();
 
-    //         if ($payments->isEmpty() && $payment->reservation->booking_status == 'on_hold') {
-    //             $payment->reservation->update([
-    //                 'booking_status' => 'active',
-    //                 'on_hold_expiration_date' => null,
-    //             ]);
-    //         }
-    //         // if credits is used for payment
-    //         if ($payment->payment_method === 'credits') {
-    //             $guestCredit = GuestCredit::find($payment->reservation->guest_id)->first();
+            // first payment (reservation fee) changes booking status to active
+            if ($payments->isEmpty() && $payment->amount == $payment->reservation->booking_fee) {
+                $payment->reservation->update([
+                    'booking_status' => 'active',
+                    'on_hold_expiration_date' => null,
+                ]);
+            }
 
-    //             $newCredit = $guestCredit->amount - $payment->amount;
-    //             $guestCredit->update([
-    //                 'amount' => $newCredit
-    //             ]);
-    //         }
-    //     });
+            if (!$payments->isEmpty()) {
+                $totalPaid = $payments->sum('amount') + $payment->amount;
 
-    //     static::updating(function ($payment) {
-    //         $guestCredit = GuestCredit::find($payment->reservation->guest_id)->first();
-    //         $newCredit = $guestCredit->amount;
+                if ($totalPaid == $payment->reservation->booking_fee) {
+                    $payment->reservation->update([
+                        'booking_status' => 'active',
+                        'on_hold_expiration_date' => null,
+                    ]);
+                }
+            }
 
-    //         if ($payment->isDirty('payment_method') && $payment->getOriginal('payment_method') === 'credits') {
-    //             $newCredit = $newCredit + $payment->amount;
-    //         } elseif ($payment->isDirty('payment_method') && $payment->payment_method === 'credits') {
-    //             $newCredit = $newCredit - $payment->amount;
-    //         }
+            // dd($payment->reservation->booking_fee);
+            // if credits is used for payment
+            // if ($payment->payment_method === 'credits') {
+            //     $guestCredit = GuestCredit::find($payment->reservation->guest_id)->first();
 
-    //         $guestCredit->update([
-    //             'amount' => $newCredit
-    //         ]);
-    //     });
-    // }
+            //     $newCredit = $guestCredit->amount - $payment->amount;
+            //     $guestCredit->update([
+            //         'amount' => $newCredit
+            //     ]);
+            // }
+        });
+
+        // static::updating(function ($payment) {
+        //     $guestCredit = GuestCredit::find($payment->reservation->guest_id)->first();
+        //     $newCredit = $guestCredit->amount;
+
+        //     if ($payment->isDirty('payment_method') && $payment->getOriginal('payment_method') === 'credits') {
+        //         $newCredit = $newCredit + $payment->amount;
+        //     } elseif ($payment->isDirty('payment_method') && $payment->payment_method === 'credits') {
+        //         $newCredit = $newCredit - $payment->amount;
+        //     }
+
+        //     $guestCredit->update([
+        //         'amount' => $newCredit
+        //     ]);
+        // });
+    }
 }

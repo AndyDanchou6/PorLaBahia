@@ -54,14 +54,7 @@ class ReservationResource extends Resource
                         DatePicker::make('check_in_date_picker')
                             ->required()
                             ->date()
-                            ->minDate(function ($operation, $record) {
-                                if ($operation === 'create') {
-                                    return today();
-                                } elseif ($operation === 'edit' && $record) {
-                                    return $record->check_in_date;
-                                }
-                                return null;
-                            })
+                            ->minDate(today())
                             ->afterStateUpdated(function ($set) {
                                 $set('check_in_date', null);
                                 $set('check_out_date', null);
@@ -89,10 +82,12 @@ class ReservationResource extends Resource
                                 $set('booking_fee', null);
                                 $set('availableDates', null);
                             })
-                            ->disabled(function ($get) {
+                            ->visible(function ($get) {
                                 if (!$get('check_in_date_picker')) {
-                                    return true;
+                                    return false;
                                 }
+
+                                return true;
                             })
                             ->hidden(fn($operation) => $operation === 'view')
                             ->live(debounce: 100)
@@ -104,7 +99,7 @@ class ReservationResource extends Resource
                             ->live(debounce: 100)
                             ->required()
                             ->hidden(function ($get, $operation) {
-                                if ($operation === 'view') {
+                                if ($operation === 'view' || $operation === 'edit') {
                                     return false;
                                 } else {
                                     if (!$get('check_in_date_picker') || !$get('check_out_date_picker')) {
@@ -123,6 +118,10 @@ class ReservationResource extends Resource
                                 if ($checkInDate && $checkOutDate) {
 
                                     $bookings = Reservation::where('accommodation_id', $accommodationId)
+                                        ->where(function ($query) {
+                                            $query->where('booking_status', '=', 'on_hold')
+                                                ->orWhere('booking_status', '=', 'active');
+                                        })
                                         ->where(function ($query) use ($checkInDate, $checkOutDate) {
                                             $query->whereBetween('check_in_date', [$checkInDate, $checkOutDate])
                                                 ->orWhereBetween('check_out_date', [$checkInDate, $checkOutDate])
@@ -222,7 +221,7 @@ class ReservationResource extends Resource
                             ->searchable()
                             ->required()
                             ->hidden(function ($get, $operation) {
-                                if ($operation === 'view') {
+                                if ($operation === 'view' || $operation === 'edit') {
                                     return false;
                                 } else {
                                     if (!$get('availableDates')) {
@@ -325,6 +324,26 @@ class ReservationResource extends Resource
                     ->date()
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('booking_status')
+                    ->searchable()
+                    ->formatStateUsing(function ($record) {
+                        if ($record) {
+                            switch ($record->booking_status) {
+                                case 'active':
+                                    return 'Active';
+                                    break;
+                                case 'cancelled':
+                                    return 'Cancelled';
+                                    break;
+                                case 'on_hold':
+                                    return 'On Hold';
+                                    break;
+                                case 'expired':
+                                    return 'Expired';
+                                    break;
+                            }
+                        }
+                    }),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -522,10 +541,13 @@ class ReservationResource extends Resource
                         }),
                     Tables\Actions\EditAction::make()
                         ->visible(function ($record) {
-                            return !$record->trashed();
+                            if ($record->booking_status === 'expired') {
+                                return false;
+                            }
+                            return true;
                         })
                         ->color('warning'),
-                    Tables\Actions\DeleteAction::make(),
+                    // Tables\Actions\DeleteAction::make(),
                     Tables\Actions\RestoreAction::make()
                         ->visible(function ($record) {
                             return auth()->check() && auth()->user()->role === 1 && $record->trashed();
@@ -560,12 +582,4 @@ class ReservationResource extends Resource
             'edit' => Pages\EditReservation::route('/{record}/edit'),
         ];
     }
-
-    // protected function getHeaderActions(): array
-    // {
-    //     return [
-    //         Actions\ImportAction::make()
-    //             ->importer(UserImporter::class),
-    //     ];
-    // }
 }

@@ -113,9 +113,10 @@ class EditReservation extends EditRecord
                     return true;
                 })->modalWidth('2xl')
                 ->modalHeading('Payment'),
-          
-                      Action::make('Cancel Booking')
+
+            Action::make('Cancel Booking')
                 ->color('danger')
+                ->visible(fn($record) => $record->booking_status === 'active')
                 ->requiresConfirmation()
                 ->modalDescription('Are you sure you\'d like to cancel this booking? This cannot be undone.')
                 ->action(function ($record) {
