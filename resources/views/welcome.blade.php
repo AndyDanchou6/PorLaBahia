@@ -14,7 +14,6 @@
                 crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 
-        @vite('resources/js/app.js')
         <script src="/javascript/welcome.js"></script>
     </head>
 
