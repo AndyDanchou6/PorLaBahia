@@ -10,11 +10,13 @@ use App\Models\GuestInfo;
 use App\Models\Payment;
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\Summarizers\Sum;
-
 
 class EditReservation extends EditRecord
 {
@@ -23,14 +25,27 @@ class EditReservation extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-
-
             Action::make('Payment')
                 ->label('Pay')
                 ->color('success')
                 ->icon('heroicon-o-credit-card')
                 ->form([
                     TextInput::make('amount')
+                        ->hint(function ($record) {
+
+                            $record = $this->getRecord();
+
+                            $getBalance = Payment::where('reservation_id', $record->id)->where('payment_status', '!=', 'void')->sum('amount');
+
+                            $remainingBalance = $record->booking_fee - $getBalance;
+
+                            if ($remainingBalance) {
+                                return "Remaining Balance: ₱{$remainingBalance}.00";
+                            }
+
+                            return false;
+                        })
+                        ->hintColor('success')
                         ->numeric()
                         ->prefix('₱')
                         ->required()
@@ -39,7 +54,7 @@ class EditReservation extends EditRecord
                             fn(): Closure => function (string $attribute, $value, Closure $fail) {
                                 $record = $this->getRecord();
 
-                                $getAmount = Payment::where('reservation_id', $record->id)->sum('amount');
+                                $getAmount = Payment::where('reservation_id', $record->id)->where('payment_status', '!=', 'void')->sum('amount');
 
                                 $bookingFee = $record->booking_fee;
 
@@ -48,7 +63,7 @@ class EditReservation extends EditRecord
                                 $remainingBalance = $bookingFee - $getAmount;
 
                                 if ($newTotal > $bookingFee) {
-                                    $fail("Your payment exceeds the booking fee of ₱{$bookingFee}. Your remaining balance is ₱{$remainingBalance}.00");
+                                    $fail("Your payment exceeds the booking fee of ₱{$bookingFee}. Your remaining payable is ₱{$remainingBalance}.00");
                                 }
                             }
                         ]),
@@ -82,14 +97,46 @@ class EditReservation extends EditRecord
                                 ];
                             }
                         })
+                        ->required()
+                        ->reactive(),
+
+                    TextInput::make('gcash_reference_number')
+                        ->visible(function ($get) {
+                            $paymentMethod = $get('payment_method');
+
+                            if ($paymentMethod == 'GCash') {
+                                return true;
+                            }
+
+                            return false;
+                        })
+                        ->reactive()
+                        ->label('Gcash Reference #')
                         ->required(),
+
+                    FileUpload::make('gcash_screenshot')
+                        ->visible(function ($get) {
+                            $paymentMethod = $get('payment_method');
+
+                            if ($paymentMethod == 'GCash') {
+                                return true;
+                            }
+
+                            return false;
+                        })
+                        ->image()
+                        ->reactive()
+                        ->label('Gcash Screenshot'),
 
                 ])->action(function (array $data, $record): void {
                     $payment = Payment::create([
                         'reservation_id' => $record->id,
                         'amount' => $data['amount'],
                         'payment_method' => $data['payment_method'],
+                        'gcash_reference_number' => $data['gcash_reference_number'] ?? null,
+                        'gcash_screenshot' => $data['gcash_screenshot'] ?? null,
                     ]);
+
                     $payment->save();
 
                     Notification::make()
@@ -113,8 +160,8 @@ class EditReservation extends EditRecord
                     return true;
                 })->modalWidth('2xl')
                 ->modalHeading('Payment'),
-          
-                      Action::make('Cancel Booking')
+
+            Action::make('Cancel Booking')
                 ->color('danger')
                 ->requiresConfirmation()
                 ->modalDescription('Are you sure you\'d like to cancel this booking? This cannot be undone.')
