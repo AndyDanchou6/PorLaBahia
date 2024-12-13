@@ -147,7 +147,7 @@
         <h2>LET US TAKE YOU TO A QUICK TOUR!</h2>
 
         <div class="video-container">
-            <video id="video" src="/video/PorLaBahia.mp4" width="500" height="300"></video>
+            <video id="video" src=" " width="500" height="300"></video>
             <button id="playPauseBtn" class="play-pause-btn"> <i class="fa fa-youtube-play"></i> </button>
         </div>
 
