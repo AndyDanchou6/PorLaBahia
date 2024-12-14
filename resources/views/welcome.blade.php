@@ -16,7 +16,6 @@
 
 
         <script src="/javascript/welcome.js"></script>
-        @vite('resources/js/app.js')
     </head>
 
 <body>
