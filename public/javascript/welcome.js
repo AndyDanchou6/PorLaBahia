@@ -49,9 +49,13 @@ $(document).ready(function () {
 
                 accommodation.forEach(function(house){
                     const accommodationBox = `
-                    <div class="house1">
+                    <div class="house1" 
+                        src="${house.main_image}"
+                        data-room_name="${house.room_name}" 
+                        data-description="${house.description}" 
+                        data-weekday_price="${house.weekday_price}">
                         <div class="house-context">
-                            <img class="clickable" src="${house.main_image}" alt="${house.room_name}">
+                            <img class="clickable" src="${house.main_image}" 
                             <h4>${house.room_name}</h4>
                             <h6> <i class="fa fa-bed"> </i> </h6>
                             <p>${house.description}</p>
@@ -59,7 +63,6 @@ $(document).ready(function () {
                         </div>
                     </div>
                         `;
-
                     accommodationContainer.append(accommodationBox);
                 });
                 const largeImage = document.getElementById('large-image');
@@ -71,7 +74,20 @@ $(document).ready(function () {
                 largeImage.src = firstHouse.main_image;
                 titleElement.textContent = firstHouse.room_name;
                 descriptionElement.textContent = firstHouse.description;
-                priceElement.textContent = firstHouse.price;
+                priceElement.textContent = firstHouse.weekday_price;
+
+                $('.other-houses').on('click', '.house1', function() {
+                    const clickedImage = $(this);
+                    const newImageSrc = clickedImage.attr('src');
+                    const newRoomName = clickedImage.data('room_name');
+                    const newDescription = clickedImage.data('description');
+                    const newPrice = clickedImage.data('weekday_price');
+    
+                    largeImage.src = newImageSrc;
+                    titleElement.textContent = newRoomName;
+                    descriptionElement.textContent = newDescription;
+                    priceElement.textContent = `₱ ${newPrice}`;
+                });
             }
         },
     });

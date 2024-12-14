@@ -114,12 +114,11 @@
                 </div>
                 <div class="other-houses">
                     <div class="house1">
-                        <div class="house-context" id="clickable">
+                        <div class="house-context">
                             <img src=" " alt="">
                             <h4> </h4>
                             <h6> <i class="fa fa-bed"> </i> </h6>
                             <p> </p>
-                            <div class="priceHouse"> </div>
                             <button class="checkItButton"><i class="fa fa-check-circle-o"></i> Check It</button>
                         </div>
                     </div>
@@ -132,10 +131,10 @@
                 <i class="fa fa-bed"> </i>
                 <p> </p>
                 <hr>
-            <div class="buttons">
-                <div class="price"><i class="fa fa-money"></i> </div>
-                <button class="book-this"><img src="/images/Icon.svg" alt="" class="bookImage"> Book This</button>
-            </div>
+                <div class="buttons">
+                    <div class="price"> ₱</div>
+                    <button class="book-this"><img src="/images/Icon.svg" alt="" class="bookImage"> Book This</button>
+                </div>
         </div>
     </section>
    <section class="quick-video">
