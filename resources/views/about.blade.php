@@ -82,8 +82,5 @@
             </div>
         </div>
     </section>
-    <section class="footer">
-        @include('footer')
-    </section>
 </body>
 </html>
