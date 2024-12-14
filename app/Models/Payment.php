@@ -14,6 +14,8 @@ class Payment extends Model
         'reservation_id',
         'amount',
         'payment_method',
+        'gcash_reference_number',
+        'gcash_screenshot'
     ];
 
     public function reservation()
@@ -24,30 +26,15 @@ class Payment extends Model
     protected static function booted()
     {
         static::creating(function ($payment) {
-            $payments = Payment::where('reservation_id', $payment->reservation_id)
-                // ->where('payment_status', 'paid')
-                ->get();
-
             // first payment (reservation fee) changes booking status to active
-            if ($payments->isEmpty() && $payment->amount == $payment->reservation->booking_fee) {
-                $payment->reservation->update([
-                    'booking_status' => 'active',
-                    'on_hold_expiration_date' => null,
-                ]);
-            }
+            // $payments = Payment::where('reservation_id', $payment->reservation_id)->get();
 
-            if (!$payments->isEmpty()) {
-                $totalPaid = $payments->sum('amount') + $payment->amount;
-
-                if ($totalPaid == $payment->reservation->booking_fee) {
-                    $payment->reservation->update([
-                        'booking_status' => 'active',
-                        'on_hold_expiration_date' => null,
-                    ]);
-                }
-            }
-
-            // dd($payment->reservation->booking_fee);
+            // if ($payments->isEmpty() && $payment->reservation->booking_status == 'on_hold') {
+            //     $payment->reservation->update([
+            //         'booking_status' => 'active',
+            //         'on_hold_expiration_date' => null,
+            //     ]);
+            // }
             // if credits is used for payment
             // if ($payment->payment_method === 'credits') {
             //     $guestCredit = GuestCredit::find($payment->reservation->guest_id)->first();
@@ -57,6 +44,12 @@ class Payment extends Model
             //         'amount' => $newCredit
             //     ]);
             // }
+
+            if ($payment->payment_method == 'cash') {
+                $payment->payment_status = 'paid';
+            } elseif ($payment->payment_method == 'GCash') {
+                $payment->payment_status = 'unpaid';
+            }
         });
 
         // static::updating(function ($payment) {
