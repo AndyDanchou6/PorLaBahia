@@ -14,7 +14,13 @@ class ViewReservation extends ViewRecord
     {
         return [
             Actions\EditAction::make()
-                ->color('warning'),
+                ->color('warning')
+                ->visible(function ($record) {
+                    if ($record->booking_status === 'cancelled' || $record->booking_status === 'expired' || $record->booking_status === 'finished') {
+                        return false;
+                    }
+                    return true;
+                }),
             Actions\Action::make('back')
                 ->url(ReservationResource::getUrl())
                 ->button()
