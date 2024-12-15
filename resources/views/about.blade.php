@@ -16,8 +16,6 @@
                 <h1 class="about-paragraph"><span>About Us:</span> Get to <br>Know the Heart<br>Behind What We Do.</h1>
             </main>
             <div class="about-image-slider">
-                <i class="fa fa-angle-double-left"></i>
-                <i class="fa fa-angle-double-right"></i>
                 <div>
                     <img src="/images/image1.jpg" alt="">
                 </div>

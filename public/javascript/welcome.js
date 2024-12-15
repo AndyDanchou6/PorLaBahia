@@ -6,7 +6,7 @@ $(document).ready(function () {
             } else {
               header.classList.remove('scrolled');
             }
-    });
+        });
     $.ajax({
         url: '/api/amenities', 
         method: 'GET',
@@ -14,9 +14,7 @@ $(document).ready(function () {
         success: function (data) {
             if (data.length > 0) {
                 const amenitiesContainer = $('.amenities-boxes');
-
                 amenitiesContainer.html('');
-
                 data.forEach(function (amenity) {
                     const amenityBox = `
                         <div class="amenities-box">
