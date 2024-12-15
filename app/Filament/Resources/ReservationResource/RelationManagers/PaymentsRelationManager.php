@@ -32,62 +32,23 @@ class PaymentsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                TextInput::make('amount')
+                \Filament\Forms\Components\TextInput::make('amount')
                     ->numeric()
                     ->prefix('₱')
                     ->required()
-                    ->reactive()
-                    ->rules([
-                        fn(): Closure => function (string $attribute, $value, Closure $fail) {
-                            $record = $this->getOwnerRecord();
+                    ->stripCharacters(',')
+                    ->reactive(),
 
-                            $getAmount = Payment::where('reservation_id', $record->id)->where('payment_status', '!=', 'void')->sum('amount');
-
-                            $bookingFee = $record->booking_fee;
-
-                            $newTotal = $getAmount + $value;
-
-                            $remainingBalance = $bookingFee - $getAmount;
-
-                            if ($newTotal > $bookingFee) {
-                                $fail("Your payment exceeds the booking fee of ₱{$bookingFee}. Your remaining payable is ₱{$remainingBalance}.00");
-                            }
-                        }
-                    ]),
-
-                Select::make('payment_method')
-                    ->options(function ($get) {
-
-                        $guest_id = $this->getOwnerRecord()->guest_id;
-                        $guest = GuestInfo::find($guest_id);
-                        $credits = $guest->guestCredit->first();
-
-                        if ($credits) {
-                            $creditAmount = $credits->amount;
-
-                            if ($creditAmount >= $get('amount')) {
-                                return [
-                                    'cash' => 'Cash',
-                                    'GCash' => 'GCash',
-                                    'credits' => 'Credits',
-                                ];
-                            } else {
-                                return [
-                                    'cash' => 'Cash',
-                                    'GCash' => 'GCash',
-                                ];
-                            }
-                        } else {
-                            return [
-                                'cash' => 'Cash',
-                                'GCash' => 'GCash',
-                            ];
-                        }
-                    })
+                \Filament\Forms\Components\Select::make('payment_method')
+                    ->options([
+                        'cash' => 'Cash',
+                        'GCash' => 'GCash',
+                        'credits' => 'Credits',
+                    ])
                     ->required()
                     ->reactive(),
 
-                TextInput::make('gcash_reference_number')
+                \Filament\Forms\Components\TextInput::make('gcash_reference_number')
                     ->visible(function ($get) {
                         $paymentMethod = $get('payment_method');
 
@@ -101,12 +62,12 @@ class PaymentsRelationManager extends RelationManager
                     ->label('Gcash Reference #')
                     ->required(),
 
-                TextInput::make('payment_status')
+                \Filament\Forms\Components\TextInput::make('payment_status')
                     ->reactive()
                     ->label('Payment Status')
                     ->required(),
 
-                FileUpload::make('gcash_screenshot')
+                \Filament\Forms\Components\FileUpload::make('gcash_screenshot')
                     ->visible(function ($get) {
                         $paymentMethod = $get('payment_method');
 
@@ -135,7 +96,7 @@ class PaymentsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('payment_method')
                     ->formatStateUsing(fn($state) => ucwords($state))
                     ->badge()
-                    ->searchable()
+                    // ->searchable()
                     ->color(fn(string $state): string => match ($state) {
                         'GCash' => 'success',
                         'cash' => 'info',
@@ -146,7 +107,7 @@ class PaymentsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('payment_status')
                     ->formatStateUsing(fn($state) => ucwords($state))
                     ->badge()
-                    ->searchable()
+                    // ->searchable()
                     ->color(fn(string $state): string => match ($state) {
                         'paid' => 'success',
                         'unpaid' => 'danger',
@@ -155,37 +116,25 @@ class PaymentsRelationManager extends RelationManager
                     ->label('Payment Status'),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make()
-                    ->visible(fn() => Auth::user()->role == 1),
+                // Tables\Filters\TrashedFilter::make()
+                //     ->visible(fn() => Auth::user()->role == 1),
             ])
             ->headerActions([
                 //
             ])
             ->actions([
-
-                // Action::make('View')
-                //     ->form([
-                //         TextInput::make('amount')
-                //             ->label('Amount')
-                //             ->disabled()
-                //             ->default(function ($record) {
-                //                 return $record->amount;
-                //             }),
-                //     ])
-                //     ->slideOver(),
-
                 Tables\Actions\ViewAction::make(),
 
                 Action::make('Paid')
-                    ->icon('heroicon-o-credit-card')
+                    ->icon('heroicon-o-check-badge')
                     ->requiresConfirmation()
+                    ->modalIcon('heroicon-o-check-circle')
                     ->modalHeading('Confirm GCash Payment')
                     ->modalDescription('Are you sure you want to mark this reservation as paid via GCash? This action cannot be undone.')
                     ->modalSubmitActionLabel('Yes, Mark as Paid')
                     ->action(function ($record) {
-                        if ($record) {
-                            $record->payment_status = 'paid';
-                        }
+
+                        $record->payment_status = 'paid';
 
                         $record->save();
 
@@ -214,36 +163,38 @@ class PaymentsRelationManager extends RelationManager
                     ->color('warning')
                     ->icon('heroicon-o-trash')
                     ->action(function ($record) {
-                        if ($record) {
-                            $record->payment_status = 'void';
-                        }
+
+                        $record->payment_status = 'void';
 
                         $record->save();
 
+                        Notification::make()
+                            ->title('Payment Voided Successfully')
+                            ->body('Payment record has been marked as void.')
+                            ->success()
+                            ->send();
+
                         $this->redirect(ReservationResource::getUrl('edit', ['record' => $record->reservation_id]));
                     })
-                    ->visible(function ($record) {
-                        if ($record->payment_status == 'void') {
-                            return false;
+                    ->hidden(function ($record) {
+                        // $viewUrl = ReservationResource::getUrl('view', ['record' => $record->reservation_id]);
+
+                        if ($record->getOriginal('payment_status') == 'void') {
+                            return true;
                         }
 
-                        return true;
-                    }),
+                        // if($viewUrl){
+                        //     return true;
+
+                        // }
+
+                        return false;
+                    })
 
 
-            ])->defaultSort(function ($query) {
+            ])
+            ->defaultSort(function ($query) {
                 $query->orderByRaw("FIELD(payment_status, 'paid', 'unpaid', 'void')");
             });
     }
-
-    // public static function infolist(Infolist $infolist): Infolist
-    // {
-    //     return $infolist
-    //         ->schema([
-    //             Infolists\Components\TextEntry::make('name'),
-    //             Infolists\Components\TextEntry::make('email'),
-    //             Infolists\Components\TextEntry::make('notes')
-    //                 ->columnSpanFull(),
-    //         ]);
-    // }
 }

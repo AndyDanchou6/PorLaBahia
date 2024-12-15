@@ -27,9 +27,9 @@ class AmenitiesResource extends Resource
     {
         return $form
             ->schema([
-                Group::make()
+                \Filament\Forms\Components\Group::make()
                     ->schema([
-                        Section::make()
+                        \Filament\Forms\Components\Section::make()
                             ->schema([
                                 Forms\Components\TextInput::make('amenity_name')
                                     ->required()
@@ -56,7 +56,7 @@ class AmenitiesResource extends Resource
                         'md' => 2,
                         'lg' => 2,
                     ])->columns(2),
-                Section::make()
+                \Filament\Forms\Components\Section::make()
                     ->schema([
                         Group::make()
                             ->schema([

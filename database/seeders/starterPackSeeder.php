@@ -31,7 +31,7 @@ class starterPackSeeder extends Seeder
         GuestInfo::create([
             'first_name' => 'Aeri',
             'last_name' => 'Uchinaga',
-            'contact_no' => 9698633244,
+            'contact_no' => '09698633244',
             'email' => 'aeriuchinaga@gmail.com',
             'address' => 'Tokyo, Japan',
             'fb_name' => 'Aeri Uchinaga',
