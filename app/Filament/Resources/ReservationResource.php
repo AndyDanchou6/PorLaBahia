@@ -89,10 +89,12 @@ class ReservationResource extends Resource
                                 $set('booking_fee', null);
                                 $set('availableDates', null);
                             })
-                            ->disabled(function ($get) {
+                            ->visible(function ($get) {
                                 if (!$get('check_in_date_picker')) {
-                                    return true;
+                                    return false;
                                 }
+
+                                return true;
                             })
                             ->hidden(fn($operation) => $operation === 'view')
                             ->live(debounce: 100)

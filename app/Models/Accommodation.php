@@ -36,7 +36,7 @@ class Accommodation extends Model
         return $this->hasMany(Reservation::class);
     }
 
-    public function galleries()
+    public function Galleries()
     {
         return $this->morphMany(Galleries::class, 'gallery');
     }

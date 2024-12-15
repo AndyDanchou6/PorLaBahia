@@ -32,6 +32,8 @@ class DiscountResource extends Resource
 
     protected static ?string $navigationGroup = 'Settings';
 
+    protected static ?int $navigationSort = 2;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -114,17 +116,16 @@ class DiscountResource extends Resource
                 TextColumn::make('status')
                     ->sortable()
                     ->searchable()
-                    ->formatStateUsing(function($record) {
-                        switch ($record->status) 
-                        {
+                    ->formatStateUsing(function ($record) {
+                        switch ($record->status) {
                             case 1: {
-                                return 'Active';
-                                break;
-                            }
+                                    return 'Active';
+                                    break;
+                                }
                             case 0: {
-                                return 'Expired';
-                                break;
-                            }
+                                    return 'Expired';
+                                    break;
+                                }
                         }
                     }),
             ])
