@@ -299,7 +299,69 @@ class ReservationResource extends Resource
     {
         return $infolist
             ->schema([
-                \Filament\Infolists\Components\TextEntry::make('accommodation_id'),
+                \Filament\Infolists\Components\TextEntry::make('check_in_date')
+                    ->color('primary')
+                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_in_date)->format('M d, Y')),
+                \Filament\Infolists\Components\TextEntry::make('check_out_date')
+                    ->color('primary')
+                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_out_date)->format('M d, Y')),
+                \Filament\Infolists\Components\TextEntry::make('accommodation.room_name')
+                    ->color('primary'),
+                \Filament\Infolists\Components\TextEntry::make('guest.full_name')
+                    ->color('primary'),
+                \Filament\Infolists\Components\TextEntry::make('booking_reference_no')
+                    ->color('primary'),
+                \Filament\Infolists\Components\TextEntry::make('booking_fee')
+                    ->money('PHP')
+                    ->color('primary'),
+                \Filament\Infolists\Components\TextEntry::make('booking_status')
+                    ->formatStateUsing(function ($record) {
+                        switch ($record->booking_status) {
+                            case 'active':
+                                return 'Active';
+                                break;
+                            case 'finished':
+                                return 'Finished';
+                                break;
+                            case 'on_hold':
+                                return 'On Hold';
+                                break;
+                            case 'expired':
+                                return 'Expired';
+                                break;
+                            case 'pending':
+                                return 'Pending';
+                                break;
+                            case null:
+                                return 'Unknown Status';
+                                break;
+                        }
+                    })
+                    ->badge()
+                    ->color(function ($record) {
+                        switch ($record->booking_status) {
+                            case 'active':
+                                return 'success';
+                                break;
+                            case 'finished':
+                                return 'gray';
+                                break;
+                            case 'on_hold':
+                                return 'info';
+                                break;
+                            case 'expired':
+                                return 'danger';
+                                break;
+                            case 'pending':
+                                return 'info';
+                                break;
+                        }
+                    }),
+
+                \Filament\Infolists\Components\TextEntry::make('on_hold_expiration_date')
+                    ->formatStateUsing(fn($record) => Carbon::parse($record->on_hold_expiration_date)->format('M d, Y h:i'))
+                    ->color('primary')
+                    ->visible(fn($record) => $record->on_hold_expiration_date && $record->booking_status !== 'active'),
             ]);
     }
 
@@ -589,20 +651,20 @@ class ReservationResource extends Resource
 
     public static function getCheckAvailabilityForm()
     {
-        return \Filament\Forms\Components\Section::make()
+        return Forms\Components\Section::make()
             ->schema([
-                \Filament\Forms\Components\DatePicker::make('check_in_date_picker')
+                Forms\Components\DatePicker::make('check_in_date_picker')
                     ->label('Select check in date')
-                    ->required()
+                    ->required(fn($operation) => $operation === 'create')
                     ->date()
                     ->minDate(today())
                     ->live(debounce: 100)
                     ->native(false)
                     ->afterStateUpdated(fn($set) => $set('check_out_date_picker', null)),
 
-                \Filament\Forms\Components\DatePicker::make('check_out_date_picker')
+                Forms\Components\DatePicker::make('check_out_date_picker')
                     ->label('Select check out date')
-                    ->required()
+                    ->required(fn($operation) => $operation === 'create')
                     ->date()
                     ->minDate(function ($get) {
                         $checkInDate = $get('check_in_date_picker');
@@ -616,12 +678,17 @@ class ReservationResource extends Resource
                     ->native(false)
                     ->visible(fn($get) => $get('check_in_date_picker')),
 
-                \Filament\Forms\Components\Select::make('guest')
+                Forms\Components\Select::make('guest')
                     ->options(fn() => \App\Models\GuestInfo::all()->mapWithKeys(fn($guest) => [
                         $guest->id => $guest->first_name . ' ' . $guest->last_name,
                     ]))
-                    ->required()
-                    ->afterStateUpdated(fn($state, $set) => $set('guest_id', $state)),
+                    ->required(fn($operation) => $operation === 'create')
+                    ->afterStateUpdated(function ($state, $set) {
+                        $guest = GuestInfo::find($state);
+
+                        $set('guest_id', $state);
+                        $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
+                    }),
             ])
             ->columns(2)
             ->columnSpan(2);
@@ -630,74 +697,84 @@ class ReservationResource extends Resource
     public static function getAvailableDatesForm()
     {
         return
-            \Filament\Forms\Components\Radio::make('Available Dates')
-            ->options(fn($get) => (new \App\Models\Reservation())->getAvailableAccommodations($get('check_in_date_picker'), $get('check_out_date_picker')))
+            Forms\Components\Radio::make('Available Dates')
+            ->options(fn($get, $record) => (new \App\Models\Reservation())->getAvailableAccommodations($get('check_in_date_picker'), $get('check_out_date_picker'), $record ? $record->id : null))
             ->visible(fn($get) => $get('check_in_date_picker') && $get('check_out_date_picker'))
-            ->afterStateUpdated(function ($state, $set) {
+            ->afterStateUpdated(function ($state, $set, $get) {
                 $bookingInfo = explode('/', $state);
+                $accommodation = Accommodation::find($bookingInfo[0]);
+                $checkInDate = \Illuminate\Support\Carbon::parse($bookingInfo[1]);
+                $checkOutDate = \Illuminate\Support\Carbon::parse($bookingInfo[2]);
+                $stayDuration = $checkInDate->diffInDays($checkOutDate);
+                $bookingFee = $accommodation->booking_fee * $stayDuration;
 
+                $set('booking_fee', $bookingFee);
                 $set('accommodation_id', $bookingInfo[0]);
-                $set('check_in_date', $bookingInfo[1]);
-                $set('check_out_date', $bookingInfo[2]);
+                $set('accommodation_name', $accommodation->room_name);
+                $set('check_in_date', $checkInDate->format('M d, Y'));
+                $set('check_out_date', $checkOutDate->format('M d, Y'));
             })
             ->disableOptionWhen(fn($value) => $value == null)
-            ->required()
+            ->required(fn($operation) => $operation === 'create')
             ->columnSpan(1);
     }
 
     public static function getSummaryForm()
     {
         return
-            \Filament\Forms\Components\Section::make()
+            Forms\Components\Section::make()
             ->schema([
-                \Filament\Forms\Components\TextInput::make('check_in_date')
+                Forms\Components\TextInput::make('check_in_date')
+                    ->formatStateUsing(function ($record) {
+                        if ($record) {
+                            return Carbon::parse($record->check_in_date)->format('M d, Y');
+                        }
+                    })
                     ->readOnly(),
 
-                \Filament\Forms\Components\TextInput::make('check_out_date')
+                Forms\Components\TextInput::make('check_out_date')
+                    ->formatStateUsing(function ($record) {
+                        if ($record) {
+                            return Carbon::parse($record->check_out_date)->format('M d, Y');
+                        }
+                    })
                     ->readOnly(),
 
-                \Filament\Forms\Components\TextInput::make('accommodation_id')
+                Forms\Components\Hidden::make('accommodation_id'),
+                Forms\Components\TextInput::make('accommodation_name')
                     ->label('Accommodation')
-                    ->hint(function ($state) {
-                        if ($state) {
-                            $accommodation = \App\Models\Accommodation::find($state);
-
+                    ->formatStateUsing(function ($get) {
+                        $accommodationId = $get('accommodation_id');
+                        if ($accommodationId) {
+                            $accommodation = Accommodation::find($accommodationId);
                             return $accommodation->room_name;
                         }
                     })
-                    ->hintColor('info')
-                    ->live()
                     ->readOnly(),
 
-                \Filament\Forms\Components\TextInput::make('guest_id')
-                    ->hint(function ($state) {
-                        if ($state) {
-                            $guest = \App\Models\GuestInfo::find($state)->first();
-
-                            return $guest->full_name;
+                Forms\Components\Hidden::make('guest_id'),
+                Forms\Components\TextInput::make('guest_name')
+                    ->label('Guest')
+                    ->formatStateUsing(function ($get) {
+                        $guestId = $get('guest_id');
+                        if ($guestId) {
+                            $guest = GuestInfo::find($guestId);
+                            return $guest->first_name . ' ' . $guest->last_name;
                         }
                     })
-                    ->hintColor('info')
-                    ->label('Guest')
                     ->readOnly(),
 
-                \Filament\Forms\Components\TextInput::make('booking_reference_no')
+                Forms\Components\TextInput::make('booking_reference_no')
                     ->label('Booking Reference Number')
                     ->default(fn() => (new \App\Models\Reservation())->generateBookingReference())
                     ->readOnly(),
 
-                \Filament\Forms\Components\TextInput::make('booking_fee')
+                Forms\Components\TextInput::make('booking_fee')
                     ->numeric()
                     ->prefix('₱')
                     ->step(0.01)
                     ->readOnly()
                     ->required(),
-
-                \Filament\Forms\Components\TextInput::make('on_hold_expiration_date')
-                    ->readOnly(),
-
-                // \Filament\Forms\Components\TextInput::make('booking_status')
-                //     ->readOnly(),
-            ]);
+            ])->columns(2);
     }
 }

@@ -154,6 +154,10 @@ class Reservation extends Model
                     ->orWhere(function ($query) use ($checkInDate, $checkOutDate) {
                         $query->where('check_in_date', '>', $checkInDate)
                             ->where('check_out_date', '<', $checkOutDate);
+                    })
+                    ->orWhere(function ($query) use ($checkInDate, $checkOutDate) {
+                        $query->where('check_in_date', '<', $checkInDate)
+                            ->where('check_out_date', '>', $checkOutDate);
                     });
             })
             ->orderBy('check_in_date', 'asc')
@@ -173,7 +177,9 @@ class Reservation extends Model
                 $bookedCheckIn = Carbon::parse($booked->check_in_date);
                 $bookedCheckOut = Carbon::parse($booked->check_out_date);
 
-                if ($nextCheckIn->lt($bookedCheckIn)) {
+                if ($record != null && $booked->id === $record) {
+                    $availableAccommodation[$accommodation->id . '/' . $nextCheckIn . '/' . $bookedCheckOut] = $accommodation->room_name . ' available on ' . $nextCheckIn->format($dateFormat) . ' to ' . $bookedCheckOut->format($dateFormat);
+                } elseif ($nextCheckIn->lt($bookedCheckIn)) {
                     $availableAccommodation[$accommodation->id . '/' . $nextCheckIn . '/' . $bookedCheckIn] = $accommodation->room_name . ' available on ' . $nextCheckIn->format($dateFormat) . ' to ' . $bookedCheckIn->format($dateFormat);
                 }
 
@@ -191,6 +197,7 @@ class Reservation extends Model
             ];
         }
 
+        // dd($availableAccommodation);
         return $availableAccommodation;
     }
 }

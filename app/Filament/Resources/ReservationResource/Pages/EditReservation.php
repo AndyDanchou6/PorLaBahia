@@ -20,6 +20,8 @@ use Filament\Tables\Columns\Summarizers\Sum;
 
 class EditReservation extends EditRecord
 {
+    use EditRecord\Concerns\HasWizard;
+
     protected static string $resource = ReservationResource::class;
 
     protected function getHeaderActions(): array
@@ -168,7 +170,14 @@ class EditReservation extends EditRecord
                 ->modalDescription('Are you sure you\'d like to cancel this booking? This cannot be undone.')
                 ->action(function ($record) {
                     $record->booking_status = 'cancelled';
-                    $record->save();
+
+                    if ($record->save()) {
+                        return \Filament\Notifications\Notification::make()
+                            ->title($record->booking_reference_no . ' has been cancelled')
+                            ->danger()
+                            ->duration(5000)
+                            ->send();
+                    }
                 }),
 
             Actions\Action::make('back')
@@ -176,5 +185,26 @@ class EditReservation extends EditRecord
                 ->button()
                 ->color('gray'),
         ];
+    }
+
+    public function getSteps(): array
+    {
+        return [
+            \Filament\Forms\Components\Wizard\Step::make('Check Availability')
+                ->schema([
+                    \App\Filament\Resources\ReservationResource::getCheckAvailabilityForm(),
+                    \App\Filament\Resources\ReservationResource::getAvailableDatesForm(),
+                ])->columns(3),
+
+            \Filament\Forms\Components\Wizard\Step::make('Summary')
+                ->schema([
+                    \App\Filament\Resources\ReservationResource::getSummaryForm(),
+                ]),
+        ];
+    }
+
+    public function hasSkippableSteps(): bool
+    {
+        return true;
     }
 }
