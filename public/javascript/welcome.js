@@ -15,10 +15,9 @@ $(document).ready(function () {
                             <img src="${amenity.main_image}" alt="${amenity.amenity_name}">
                             <h3>${amenity.amenity_name}</h3>
                             <p>${amenity.description}</p>
-                            <button class="readmore"> Read More</button>
+                            <button class="amenities-readmore"> Read More</button>
                         </div>
                    `;
-
                     amenitiesContainer.append(amenityBox);
                 });
                 amenitiesContainer.slick({
@@ -49,21 +48,30 @@ $(document).ready(function () {
 
                 accommodation.forEach(function(house){
                     const accommodationBox = `
-                    <div class="house1" 
-                        src="${house.main_image}"
-                        data-room_name="${house.room_name}" 
-                        data-description="${house.description}" 
-                        data-weekday_price="${house.weekday_price}">
-                        <div class="house-context">
-                            <img class="clickable" src="${house.main_image}" 
-                            <h4>${house.room_name}</h4>
-                            <h6> <i class="fa fa-bed"> </i> </h6>
-                            <p>${house.description}</p>
-                            <button class="checkItButton"><i class="fa fa-check-circle-o"></i> Check It</button>
-                        </div>
+                <div class="house1" 
+                            src="${house.main_image}"
+                            data-room_name="${house.room_name}" 
+                            data-description="${house.description}" 
+                            data-weekday_price="${house.weekday_price}">
+                        <img src="${house.main_image}" 
+                        <h4>${house.room_name}</h4>
+                        <h6> <i class="fa fa-bed"> </i> </h6>
+                        <p>${house.description}</p>
+                        <button class="checkItButton"><i class="fa fa-check-circle-o"></i> Check It</button>
                     </div>
                         `;
                     accommodationContainer.append(accommodationBox);
+                });
+                accommodationContainer.slick({
+                    infinite: true,
+                    slidesToScroll:1,
+                    slidesToShow:3,
+                })
+                $('.arrowL').click(function (){
+                    accommodationContainer.slick('slickPrev');
+                });
+                $('.arrowR').click(function (){
+                    accommodationContainer.slick('slickNext');
                 });
                 const largeImage = document.getElementById('large-image');
                 const titleElement = document.querySelector('.resort-houses-image h1');
@@ -74,7 +82,7 @@ $(document).ready(function () {
                 largeImage.src = firstHouse.main_image;
                 titleElement.textContent = firstHouse.room_name;
                 descriptionElement.textContent = firstHouse.description;
-                priceElement.textContent = firstHouse.weekday_price;
+                priceElement.textContent = `₱ ${firstHouse.weekday_price}`;
 
                 $('.other-houses').on('click', '.house1', function() {
                     const clickedImage = $(this);
@@ -88,6 +96,8 @@ $(document).ready(function () {
                     descriptionElement.textContent = newDescription;
                     priceElement.textContent = `₱ ${newPrice}`;
                 });
+            }else{
+                $('.other-houses').html('<i><p>Please add accommodation/s.</p></i>');
             }
         },
     });
