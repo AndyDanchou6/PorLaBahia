@@ -15,9 +15,8 @@
         <script src="/javascript/welcome.js"></script>
     </head>
 <body>
-    <div class="container">
-        <div class="background">
-            <div class="overlay"></div>
+    <div class="background">
+        <div class="overlay">
             @include('header')
             <main>
                 <h2 class="title">Welcome to Por La Bahia</h2>
@@ -30,7 +29,7 @@
                     <a href="#"><i class="fa fa-user"></i> Guests</a>
                 </div>
                 <div class="check-availability">Check Availability</div>
-            </div>
+                </div>
             </main>
         </div>
     </div>
@@ -43,7 +42,6 @@
             <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages (injected humour and the like).</p>
 
             <div class="small-nav">
-
                 <div> <i class="fa fa-home"></i> Accommodations </div>
                 <div> <i class="fa fa-wifi"></i> Enjoy Free Wifi</div>
                 <div> <i class="fa fa-car"></i> Parking Space </div>
@@ -51,8 +49,6 @@
             </div>
             <button class="readmore"><img src="/images/book.svg" alt="" class="readmoreImage"> Read More</button>
         </div>
-
-
         <div class="grid-images">
             <div class="item item1"><img src="{{asset("/images/image1.jpg")}}" alt=""></div>
             <div class="item item2"><img src="{{asset("/images/image2.jpg")}}" alt=""></div>
@@ -106,7 +102,7 @@
                     <div class="house1">
                         <img src=" " alt="">
                         <h4> </h4>
-                        <h6> <i class="fa fa-bed"> </i> </h6>
+                        <h6> <i class="fa fa-bed"> </i> 2</h6>
                         <p> </p>
                         <button class="checkItButton"><i class="fa fa-check-circle-o"></i> Check It</button>
                     </div>
