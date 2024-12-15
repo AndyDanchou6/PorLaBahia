@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">  
@@ -13,36 +12,29 @@
                 integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
                 crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-
         <script src="/javascript/welcome.js"></script>
         @vite('resources/js/app.js')
     </head>
-
 <body>
     <div class="container">
         <div class="background">
             <div class="overlay"></div>
             @include('header')
-
             <main>
                 <h2 class="title">Welcome to Por La Bahia</h2>
                 <h1 class="tagline">Your <span>Home</span> by <br> the Bay.</h1>
                 <button class="explore"><i class="fa fa-home"></i>  Explore Houses</button>
-
+                <div class="date-section">
+                <div class="choose-date">
+                    <a href="#"><i class="fa fa-calendar"></i> Check-in</a>
+                    <a href="#"><i class="fa fa-calendar"></i> Check-Out</a>
+                    <a href="#"><i class="fa fa-user"></i> Guests</a>
+                </div>
+                <div class="check-availability">Check Availability</div>
+            </div>
             </main>
         </div>
     </div>
-
-    <section class="date-section">
-        <div class="choose-date">
-            <a href="#"><i class="fa fa-calendar"></i> Check-in</a>
-            <a href="#"><i class="fa fa-calendar"></i> Check-Out</a>
-            <a href="#"><i class="fa fa-user"></i> Guests</a>
-
-        </div>
-        <div class="check-availability">Check Availability</div>
-    </section>
-
     <section class="about-layout">
             <div class="about-text">
                 <h1>Por La Bahia</h1>
@@ -103,7 +95,6 @@
                     Lorem Ipsum is simply dummy text and more recently with desktop publishing software like Aldus.
                 </p>
             </div>
-
             <div class="other-houses-container">
                 <div class="other-houses-arrows">
                     <h2>OTHER HOUSES</h2>
@@ -114,13 +105,11 @@
                 </div>
                 <div class="other-houses">
                     <div class="house1">
-                        <div class="house-context">
-                            <img src=" " alt="">
-                            <h4> </h4>
-                            <h6> <i class="fa fa-bed"> </i> </h6>
-                            <p> </p>
-                            <button class="checkItButton"><i class="fa fa-check-circle-o"></i> Check It</button>
-                        </div>
+                        <img src=" " alt="">
+                        <h4> </h4>
+                        <h6> <i class="fa fa-bed"> </i> </h6>
+                        <p> </p>
+                        <button class="checkItButton"><i class="fa fa-check-circle-o"></i> Check It</button>
                     </div>
                 </div>
             </div>
@@ -149,7 +138,6 @@
             <video id="video" src="/video/PorLaBahia.mp4" width="500" height="300"></video>
             <button id="playPauseBtn" class="play-pause-btn"> <i class="fa fa-youtube-play"></i> </button>
         </div>
-
    </section>
 
    <section class="choose-us"> 
@@ -167,20 +155,21 @@
             
             <div class="choose-slider">
                 <div class="choose-container"> 
-                    <h4>Exceptional Homes</h4>
-                    <p>Lorem Ipsum passages, and more recently with desktop publishing software like Aldus</p>
+                    <h4>Exclusive Amenities for Your Comfort</h4>
+                    <p>Enjoy access to private pools, videoke nights, and exceptional catering services. Every detail is designed to make your stay unforgettable.</p>
                 </div>
                 <div class="choose-container"> 
-                    <h4>Exceptional Homes</h4>
-                    <p>Lorem Ipsum passages, and more recently with desktop publishing software like Aldus</p>
+                    <h4>Ideal Location for Every Occasion</h4>
+                    <p>Whether it's a family getaway, a romantic escape, or a celebration, our resort offers the perfect backdrop for your special moments.</p>
                 </div>
                 <div class="choose-container"> 
-                    <h4>Redefining Hospitality</h4>
-                    <p>Lorem Ipsum passages, and more recently with desktop publishing software like Aldus</p>
+                    <h4>Memories Made by the Waves</h4>
+                    <p>Every stay is an opportunity to create cherished moments with loved ones in your perfect seaside retreat.</p>
                 </div>
                 <div class="choose-container"> 
-                    <h4>Exceptional Homes</h4>
-                    <p>Lorem Ipsum passages, and more recently with desktop publishing software like Aldus</p>
+                    <h4>A Getaway That Feels Like Home</h4>
+                    <p>
+                    Experience the warmth and comfort of home with the added luxury of breathtaking coastal views.</p>
                 </div>
             </div>
             
@@ -189,21 +178,21 @@
                 <div class="testimonial-container">
                     <div class="profile-name">
                         <img src="/images/image1.jpg" alt="">
-                        <h6 class="name">Tonet Magparoc</h6>
+                        <h6 class="name">Tonet Pacumbaba</h6>
                     </div>
                     <p>Tonet ngaubs ingon anin taa Lorem Ipsum passages, and more recently with desktop publishing software Lorem Ipsum passages, a publishing software</p>
                 </div>
                 <div class="testimonial-container">
                     <div class="profile-name">
                         <img src="/images/image1.jpg" alt="">
-                        <h6 class="name">Tonet Magparoc</h6>
+                        <h6 class="name">Rico Baroto</h6>
                     </div>
                     <p>Tonet ngaubs ingon anin taa Lorem Ipsum passages, and more recently with desktop publishing software Lorem Ipsum passages, a publishing software</p>
                 </div>
                 <div class="testimonial-container">
                     <div class="profile-name">
                         <img src="/images/image1.jpg" alt="">
-                        <h6 class="name">Tonet Magparoc</h6>
+                        <h6 class="name">Malie Batang Bronze</h6>
                     </div>
                     <p>Tonet ngaubs ingon anin taa Lorem Ipsum passages, and more recently with desktop publishing software Lorem Ipsum passages, a publishing software</p>
                 </div>
