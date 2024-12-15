@@ -15,7 +15,7 @@ class RestaurantMenu extends Model
         'name',
         'price',
         'category',
-        'unit'
+        'unit_id'
     ];
 
     public function galleries()

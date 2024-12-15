@@ -16,6 +16,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
+use Filament\Support\RawJs;
 use Filament\Tables\Columns\Summarizers\Sum;
 
 class EditReservation extends EditRecord
@@ -25,17 +26,17 @@ class EditReservation extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('Payment')
+            \Filament\Actions\Action::make('Payment')
                 ->label('Pay')
                 ->color('success')
                 ->icon('heroicon-o-credit-card')
                 ->form([
-                    TextInput::make('amount')
+                    \Filament\Forms\Components\TextInput::make('amount')
                         ->hint(function ($record) {
 
                             $record = $this->getRecord();
 
-                            $getBalance = Payment::where('reservation_id', $record->id)->where('payment_status', '!=', 'void')->sum('amount');
+                            $getBalance = Payment::where('reservation_id', $record->id)->whereNotIn('payment_status', ['void', 'unpaid'])->sum('amount');
 
                             $remainingBalance = $record->booking_fee - $getBalance;
 
@@ -47,6 +48,10 @@ class EditReservation extends EditRecord
                         })
                         ->hintColor('success')
                         ->numeric()
+                        ->minValue(1)
+                        ->reactive()
+                        ->mask(RawJs::make('$money($input)'))
+                        ->stripCharacters(',')
                         ->prefix('₱')
                         ->required()
                         ->reactive()
@@ -54,7 +59,7 @@ class EditReservation extends EditRecord
                             fn(): Closure => function (string $attribute, $value, Closure $fail) {
                                 $record = $this->getRecord();
 
-                                $getAmount = Payment::where('reservation_id', $record->id)->where('payment_status', '!=', 'void')->sum('amount');
+                                $getAmount = Payment::where('reservation_id', $record->id)->whereNotIn('payment_status', ['void', 'unpaid'])->sum('amount');
 
                                 $bookingFee = $record->booking_fee;
 
@@ -63,12 +68,12 @@ class EditReservation extends EditRecord
                                 $remainingBalance = $bookingFee - $getAmount;
 
                                 if ($newTotal > $bookingFee) {
-                                    $fail("Your payment exceeds the booking fee of ₱{$bookingFee}. Your remaining payable is ₱{$remainingBalance}.00");
+                                    $fail("The amount exceeds your remaining payable of ₱{$remainingBalance}.00. Please enter the correct amount.");
                                 }
                             }
                         ]),
 
-                    Select::make('payment_method')
+                    \Filament\Forms\Components\Select::make('payment_method')
                         ->options(function ($get) {
 
                             $guest_id = $this->getRecord()->guest_id;
@@ -100,7 +105,7 @@ class EditReservation extends EditRecord
                         ->required()
                         ->reactive(),
 
-                    TextInput::make('gcash_reference_number')
+                    \Filament\Forms\Components\TextInput::make('gcash_reference_number')
                         ->visible(function ($get) {
                             $paymentMethod = $get('payment_method');
 
@@ -114,7 +119,7 @@ class EditReservation extends EditRecord
                         ->label('Gcash Reference #')
                         ->required(),
 
-                    FileUpload::make('gcash_screenshot')
+                    \Filament\Forms\Components\FileUpload::make('gcash_screenshot')
                         ->visible(function ($get) {
                             $paymentMethod = $get('payment_method');
 
@@ -146,7 +151,8 @@ class EditReservation extends EditRecord
                         ->send();
 
                     $this->redirect($this->getResource()::getUrl('edit', ['record' => $record->id]));
-                })->visible(function ($record) {
+                })
+                ->visible(function ($record) {
                     $record = $this->getRecord();
 
                     $getAmount = Payment::where('reservation_id', $record->id)->where('payment_status', '!=', 'void')->sum('amount');
@@ -158,7 +164,8 @@ class EditReservation extends EditRecord
                     }
 
                     return true;
-                })->modalWidth('2xl')
+                })
+                ->modalWidth('2xl')
                 ->modalHeading('Payment'),
 
             Action::make('Cancel Booking')

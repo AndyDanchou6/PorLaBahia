@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Carbon\Carbon;
 use Closure;
 use Filament\Notifications\Notification;
+use Filament\Support\RawJs;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Log;
 
@@ -34,7 +35,7 @@ class AccommodationPromoResource extends Resource
     {
         return $form
             ->schema([
-                Section::make()
+                \Filament\Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Grid::make(2)
                             ->schema([
@@ -69,6 +70,8 @@ class AccommodationPromoResource extends Resource
                                             ->label('Discounted Price')
                                             ->required()
                                             ->readOnly()
+                                            ->mask(RawJs::make('$money($input)'))
+                                            ->stripCharacters(',')
                                             ->live()
                                             ->prefix('₱')
                                             ->numeric()

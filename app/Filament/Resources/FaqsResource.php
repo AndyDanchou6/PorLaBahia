@@ -29,9 +29,9 @@ class FaqsResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()
+                \Filament\Forms\Components\Section::make()
                     ->schema([
-                        Forms\Components\Select::make('category')
+                        \Filament\Forms\Components\Select::make('category')
                             ->required()
                             ->options([
                                 "booking" => "Booking",
@@ -39,11 +39,11 @@ class FaqsResource extends Resource
                                 "policies" => "Policies",
                                 "payments" => "Payments",
                             ]),
-                        Forms\Components\TextInput::make('questions')
+                        \Filament\Forms\Components\TextInput::make('questions')
                             ->label('Question')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\MarkdownEditor::make('answer')
+                        \Filament\Forms\Components\MarkdownEditor::make('answer')
                             ->toolbarButtons([
                                 'attachFiles',
                                 'blockquote',
