@@ -10,7 +10,7 @@
     <title>Document</title>
 </head>
 <body>
-    <header>
+    <header id="header">
         <div class="logo">
             <img src="{{ asset('images/logo.png') }}" alt="Logo">
         </div>

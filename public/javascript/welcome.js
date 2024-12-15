@@ -1,4 +1,12 @@
 $(document).ready(function () {
+    const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 600) {
+              header.classList.add('scrolled'); 
+            } else {
+              header.classList.remove('scrolled');
+            }
+    });
     $.ajax({
         url: '/api/amenities', 
         method: 'GET',
