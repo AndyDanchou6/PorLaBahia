@@ -12,7 +12,7 @@ $(document).ready(function () {
                 data.forEach(function (amenity) {
                     const amenityBox = `
                         <div class="amenities-box">
-                            <img src="${amenity.main_image}" alt="${amenity.amenity_name}">
+                            <img src="/storage/${amenity.main_image}" alt="${amenity.amenity_name}">
                             <h3>${amenity.amenity_name}</h3>
                             <p>${amenity.description}</p>
                             <button class="amenities-readmore"> Read More</button>
@@ -48,14 +48,14 @@ $(document).ready(function () {
 
                 accommodation.forEach(function(house){
                     const accommodationBox = `
-                <div class="house1" 
-                            src="${house.main_image}"
+                    <div class="house1" 
+                            src="/storage/${house.main_image}"
                             data-room_name="${house.room_name}" 
                             data-description="${house.description}" 
                             data-weekday_price="${house.weekday_price}">
-                        <img src="${house.main_image}" 
+                        <img src="/storage/${house.main_image}" 
                         <h4>${house.room_name}</h4>
-                        <h6> <i class="fa fa-bed"> </i> </h6>
+                        <h6> <i class="fa fa-bed"> </i> 2</h6>
                         <p>${house.description}</p>
                         <button class="checkItButton"><i class="fa fa-check-circle-o"></i> Check It</button>
                     </div>
@@ -79,7 +79,7 @@ $(document).ready(function () {
                 const priceElement = document.querySelector('.resort-houses-image .price');
                 const firstHouse = accommodation[0];
                 
-                largeImage.src = firstHouse.main_image;
+                largeImage.src = `/storage/${firstHouse.main_image}`;
                 titleElement.textContent = firstHouse.room_name;
                 descriptionElement.textContent = firstHouse.description;
                 priceElement.textContent = `₱ ${firstHouse.weekday_price}`;
