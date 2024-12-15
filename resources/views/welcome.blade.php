@@ -151,7 +151,7 @@
             <div class="choose-slider">
                 <div class="choose-container"> 
                     <h4>Exclusive Amenities for Your Comfort</h4>
-                    <p>Enjoy access to private pools, videoke nights, and exceptional catering services. Every detail is designed to make your stay unforgettable.</p>
+                    <p>Enjoy access to private pools, videoke nights, and exceptional catering services.</p>
                 </div>
                 <div class="choose-container"> 
                     <h4>Ideal Location for Every Occasion</h4>
@@ -159,7 +159,7 @@
                 </div>
                 <div class="choose-container"> 
                     <h4>Memories Made by the Waves</h4>
-                    <p>Every stay is an opportunity to create cherished moments with loved ones in your perfect seaside retreat.</p>
+                    <p>Every stay is an opportunity to create cherished moments with loved ones.</p>
                 </div>
                 <div class="choose-container"> 
                     <h4>A Getaway That Feels Like Home</h4>
