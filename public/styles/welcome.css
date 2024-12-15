@@ -285,7 +285,7 @@
     max-height: 80%;  
 }
 .amenities-box{
-    width:300px;
+    width:280px;
     height: 350px;
     box-shadow: #c3c3c3 5px 5px 20px;
     padding: 20px;
@@ -377,7 +377,7 @@
     border-radius: 20px;
     padding: 10px;
     margin: 10px;
-    height: 600px;
+    max-height: 350px;
     width: 600px;
 }
 .other-houses-arrows{
@@ -482,7 +482,7 @@
     background-color: #f3f3f3;
     border-radius: 20px;
     height: 550px;
-    overflow-y:scroll;
+    overflow-y: scroll;
     transition: all 0.8s ease;
 }
 .resort-houses-image img{
@@ -497,10 +497,11 @@
     margin: 0;
     font-weight: 900;
 }
-.resort-houses-image i{
+.resort-houses-image h6{
     color: var(--primary-color);
     font-size: 1.2rem;
     padding-right: 20px;
+    margin: 0;
 }
 .resort-houses-image p{
     font-size: clamp(10px, 16px, 20px);

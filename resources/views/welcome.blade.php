@@ -112,7 +112,7 @@
         <div class="resort-houses-image">
             <img id="large-image" src=" " alt="">
                 <h1> </h1>
-                <i class="fa fa-bed"> </i>
+                <h6> <i class="fa fa-bed"> </i> 2</h6>
                 <p> </p>
                 <hr>
                 <div class="buttons">
