@@ -18,7 +18,7 @@
     <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/about">About Us</a></li>
-        <li><a href="">Accommodations</a></li>
+        <li><a href="/accommodation">Accommodations</a></li>
         <li><a href="">Amenities</a></li>
         <li><a href="">Restaurant Menu</a></li>
         <li><a href="">Contact Us</a></li>

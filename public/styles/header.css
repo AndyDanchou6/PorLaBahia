@@ -77,26 +77,3 @@ button:hover {
     width: 230px;
     height: auto;
 }
-main .title {
-    color: white;
-    position: absolute;
-    top: 32%;
-    left: 8%;
-    font-family: "Pacifico", cursive;
-    font-size: 2rem;
-    z-index: 2;
-    font-weight: 500;
-}
-.tagline {
-    position: absolute;
-    top: 38%;
-    left: 8%;
-    color:white;
-    font-size: 3.5rem;
-    font-weight: 900;
-    line-height: .9;
-    z-index: 2;
-}
-span {
-    color: var(--primary-color);
-}
