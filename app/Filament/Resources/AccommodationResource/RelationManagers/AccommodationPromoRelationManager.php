@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\AccommodationPromo;
 use Carbon\Carbon;
+use Filament\Support\RawJs;
 
 class AccommodationPromoRelationManager extends RelationManager
 {
@@ -34,6 +35,8 @@ class AccommodationPromoRelationManager extends RelationManager
                     ->label('Discounted Price')
                     ->required()
                     ->readOnly()
+                    // ->mask(RawJs::make('$money($input)'))
+                    // ->stripCharacters(',')
                     ->reactive()
                     ->prefix('₱')
                     ->numeric()

@@ -27,14 +27,14 @@ class PolicyResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()
+                \Filament\Forms\Components\Section::make()
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        \Filament\Forms\Components\TextInput::make('name')
                             ->label('Policy Name')
                             ->required()
                             ->maxLength(255),
 
-                        Forms\Components\MarkdownEditor::make('description')
+                        \Filament\Forms\Components\MarkdownEditor::make('description')
                             ->toolbarButtons([
                                 'blockquote',
                                 'bold',

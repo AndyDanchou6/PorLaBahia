@@ -13,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
+use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,44 +33,39 @@ class GuestInfoResource extends Resource
     {
         return $form
             ->schema([
-                Section::make()
+                \Filament\Forms\Components\Section::make()
                     ->schema([
-                        Forms\Components\Grid::make(2)
+                        \Filament\Forms\Components\Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('first_name')
+                                \Filament\Forms\Components\TextInput::make('first_name')
                                     ->label('First Name')
                                     ->required()
                                     ->maxLength(255)
                                     ->placeholder('Enter First Name'),
-                                Forms\Components\TextInput::make('last_name')
+                                \Filament\Forms\Components\TextInput::make('last_name')
                                     ->label('Last Name')
                                     ->required()
                                     ->maxLength(255)
                                     ->placeholder('Enter Last Name'),
-                                Forms\Components\TextInput::make('contact_no')
+                                \Filament\Forms\Components\TextInput::make('contact_no')
                                     ->label('Contact Number')
                                     ->required()
+                                    ->maxLength(11)
+                                    ->minLength(11)
+                                    ->tel()
                                     ->numeric()
                                     ->placeholder('Enter Contact Number'),
-                                Forms\Components\TextInput::make('email')
-                                    ->email()
-                                    ->maxLength(255)
-                                    ->rules([
-                                        fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                                            $email = $get('email');
-                                            $isEmailExist = GuestInfo::where('email', $email)->exists();
 
-                                            if ($isEmailExist) {
-                                                $fail("{$email} has already been used. Please provide a unique email.");
-                                            }
-                                        }
-                                    ])
+                                \Filament\Forms\Components\TextInput::make('email')
+                                    ->email()
+                                    ->unique(ignoreRecord: true)
+                                    ->maxLength(255)
                                     ->placeholder('Enter Email'),
-                                Forms\Components\TextInput::make('address')
+                                \Filament\Forms\Components\TextInput::make('address')
                                     ->required()
                                     ->maxLength(255)
                                     ->placeholder('Enter Address'),
-                                Forms\Components\TextInput::make('fb_name')
+                                \Filament\Forms\Components\TextInput::make('fb_name')
                                     ->label('Facebook Name')
                                     ->maxLength(255)
                                     ->placeholder('Enter Facebook Name (Optional)'),
@@ -90,7 +86,6 @@ class GuestInfoResource extends Resource
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('contact_no')
                     ->searchable()
-                    ->formatStateUsing(fn($state) => '0' . ltrim($state, '0'))
                     ->label('Contact Number')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('email')
