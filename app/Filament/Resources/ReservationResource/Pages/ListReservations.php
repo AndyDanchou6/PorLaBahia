@@ -22,18 +22,28 @@ class ListReservations extends ListRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make(),
+            'all' => Tab::make()
+                ->badge(\App\Models\Reservation::query()->count()),
             'active' => Tab::make()
-                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'active')),
+                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'active'))
+                ->badge(\App\Models\Reservation::query()->where('booking_status', 'active')->count())
+                ->badgeColor('success'),
             'pending' => Tab::make()
-                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'pending')),
+                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'pending'))
+                ->badge(\App\Models\Reservation::query()->where('booking_status', 'pending')->count())
+                ->badgeColor('info'),
             'on_hold' => Tab::make()
-                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'on_hold')),
+                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'on_hold'))
+                ->badge(\App\Models\Reservation::query()->where('booking_status', 'on_hold')->count())
+                ->badgeColor('info'),
             'expired' => Tab::make()
-                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'expired')),
+                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'expired'))
+                ->badge(\App\Models\Reservation::query()->where('booking_status', 'expired')->count())
+                ->badgeColor('gray'),
             'cancelled' => Tab::make()
-                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'cancelled')),
-
+                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'cancelled'))
+                ->badge(\App\Models\Reservation::query()->where('booking_status', 'cancelled')->count())
+                ->badgeColor('gray'),
         ];
     }
 }

@@ -240,6 +240,20 @@ class ReservationResource extends Resource
     {
         return Forms\Components\Section::make()
             ->schema([
+                Forms\Components\Select::make('guest')
+                    ->options(fn() => \App\Models\GuestInfo::all()->mapWithKeys(fn($guest) => [
+                        $guest->id => $guest->first_name . ' ' . $guest->last_name,
+                    ]))
+                    ->required(fn($operation) => $operation === 'create')
+                    ->afterStateUpdated(function ($state, $set) {
+                        $guest = GuestInfo::find($state);
+
+                        $set('guest_id', $state);
+                        $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
+                    })
+                    ->hidden(fn($operation) => $operation === 'edit')
+                    ->columnSpanFull(),
+
                 Forms\Components\DatePicker::make('check_in_date_picker')
                     ->label('Select check in date')
                     ->required(fn($operation) => $operation === 'create')
@@ -247,7 +261,13 @@ class ReservationResource extends Resource
                     ->minDate(today())
                     ->live(debounce: 100)
                     ->native(false)
-                    ->afterStateUpdated(fn($set) => $set('check_out_date_picker', null)),
+                    ->afterStateUpdated(function ($set, $get) {
+                        if ($get('check_out_date_picker')) {
+                            return $set('check_out_date_picker', null);
+                        }
+
+                        return;
+                    }),
 
                 Forms\Components\DatePicker::make('check_out_date_picker')
                     ->label('Select check out date')
@@ -264,19 +284,6 @@ class ReservationResource extends Resource
                     ->live(debounce: 100)
                     ->native(false)
                     ->visible(fn($get) => $get('check_in_date_picker')),
-
-                Forms\Components\Select::make('guest')
-                    ->options(fn() => \App\Models\GuestInfo::all()->mapWithKeys(fn($guest) => [
-                        $guest->id => $guest->first_name . ' ' . $guest->last_name,
-                    ]))
-                    ->required(fn($operation) => $operation === 'create')
-                    ->afterStateUpdated(function ($state, $set) {
-                        $guest = GuestInfo::find($state);
-
-                        $set('guest_id', $state);
-                        $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
-                    })
-                    ->disabled(fn($operation) => $operation === 'edit'),
             ])
             ->columns(2)
             ->columnSpan(2);

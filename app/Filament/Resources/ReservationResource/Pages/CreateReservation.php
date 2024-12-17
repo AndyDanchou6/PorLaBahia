@@ -20,6 +20,7 @@ class CreateReservation extends CreateRecord
                     \App\Filament\Resources\ReservationResource::getCheckAvailabilityForm(),
                     \App\Filament\Resources\ReservationResource::getAvailableDatesForm(),
                 ])->columns(3)
+                ->icon('heroicon-o-magnifying-glass')
                 ->afterValidation(function ($get, $set) {
                     $onHoldExpirationDate = \Illuminate\Support\Carbon::now()->addDays(12)->startOfMinute();
 
@@ -29,7 +30,8 @@ class CreateReservation extends CreateRecord
             \Filament\Forms\Components\Wizard\Step::make('Summary')
                 ->schema([
                     \App\Filament\Resources\ReservationResource::getSummaryForm(),
-                ]),
+                ])
+                ->icon('heroicon-o-clipboard-document-list'),
         ];
     }
 }
