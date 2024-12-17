@@ -42,17 +42,17 @@
             <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages (injected humour and the like).</p>
 
             <div class="small-nav">
-                <div> <i class="fa fa-home"></i> Accommodations </div>
-                <div> <i class="fa fa-wifi"></i> Enjoy Free Wifi</div>
-                <div> <i class="fa fa-car"></i> Parking Space </div>
-                <div> <i class="fa fa-tint"></i> Relaxing Pool </div>
+                <div> <img src="/images/home-09.svg" alt="" > Accommodations </div>
+                <div> <img src="/images/wifi-square.svg" alt="" > Enjoy Free Wifi</div>
+                <div> <img src="/images/car-parking-02.svg" alt="" > Parking Space </div>
+                <div> <img src="/images/pool.svg" alt="" > Relaxing Pool </div>
             </div>
             <button class="readmore"><img src="/images/book.svg" alt="" class="readmoreImage"> Read More</button>
         </div>
         <div class="grid-images">
-            <div class="item item1"><img src="{{asset("/images/image1.jpg")}}" alt=""></div>
-            <div class="item item2"><img src="{{asset("/images/image2.jpg")}}" alt=""></div>
-            <div class="item item3"><img src="{{asset("/images/image3.jpg")}}" alt=""></div>
+            <div class="item item1"><img src="{{asset("/images/edited.jpg")}}" alt=""></div>
+            <div class="item item2"><img src="{{asset("/images/home-grid4.jpg")}}" alt=""></div>
+            <div class="item item3"><img src="{{asset("/images/home-grid3.jpg")}}" alt=""></div>
         </div>
     </section>
 
@@ -87,7 +87,10 @@
                 </div>
                 <h3>OUR ACCOMMODATIONS</h3>
                 <p> Lorem Ipsum is simply dummy passages, and more recently with desktop publishing software like Aldus.
-                    Lorem Ipsum is simply dummy text and more recently with desktop publishing software like Aldus.
+                    Lorem Ipsum is simply dummy text and more recently with desktop publishing software like Aldus. Lorem Ipsum is simply dummy text and more recently with desktop publishing.
+                </p>
+                <p> Lorem Ipsum is simply dummy passages, and more recently with desktop publishing software like Aldus.
+                    Lorem Ipsum is simply dummy text and more recently with desktop publishing.
                 </p>
             </div>
             <div class="other-houses-container">
@@ -202,7 +205,7 @@
                 <img src="/images/maps-search.svg" alt="" class="map">
                 <div class="address">
                     <h1>OUR LOCATION</h1>
-                    <h6> Santo Nino, Malitbog, Southern Leyte, Philippines</h6>
+                    <h6> Santo Niño, Malitbog, Southern Leyte, Philippines</h6>
                 </div>
             </div>
         </div>
