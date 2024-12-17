@@ -238,9 +238,13 @@
                     <i class="fa fa-phone"></i>
                     <input type="number" id="contact_number" name="contact_number" placeholder="Contact Number">
                 </div>
+                <div class="input-container">
+                    <i class="fa fa-envelope"></i>
+                    <input type="email" id="email" name="email" placeholder="Email">
+                </div>
                 <div class="input-container idea">
                     <i class="fa fa-commenting"></i>
-                    <textarea id="idea" name="idea" rows="4" cols="50" placeholder="What's on your mind?"></textarea>
+                    <textarea id="idea" name="idea" rows="3" cols="50" placeholder="What's on your mind?"></textarea>
                 </div>
                 <button class="submit"><i class="fa fa-paper-plane"></i> SUBMIT</button>
             </form>
