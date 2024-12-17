@@ -29,6 +29,10 @@ class Reservation extends Model
         'booking_fee' => 'decimal:2',
     ];
 
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
 
     public function accommodation()
     {
@@ -130,5 +134,70 @@ class Reservation extends Model
         }
 
         return $bookingReference;
+    }
+
+    public function getAvailableAccommodations($checkInDate, $checkOutDate, $record = null)
+    {
+        $dateFormat = 'M d, Y';
+        $accommodations = Accommodation::all();
+        $availableAccommodation = [];
+        $checkIn = Carbon::parse($checkInDate);
+        $checkOut = Carbon::parse($checkOutDate);
+
+        $bookings = $this->where(function ($query) {
+            $query->where('booking_status', '=', 'on_hold')
+                ->orWhere('booking_status', '=', 'active');
+        })
+            ->where(function ($query) use ($checkInDate, $checkOutDate) {
+                $query->whereBetween('check_in_date', [$checkInDate, $checkOutDate])
+                    ->orWhereBetween('check_out_date', [$checkInDate, $checkOutDate])
+                    ->orWhere(function ($query) use ($checkInDate, $checkOutDate) {
+                        $query->where('check_in_date', '>', $checkInDate)
+                            ->where('check_out_date', '<', $checkOutDate);
+                    })
+                    ->orWhere(function ($query) use ($checkInDate, $checkOutDate) {
+                        $query->where('check_in_date', '<', $checkInDate)
+                            ->where('check_out_date', '>', $checkOutDate);
+                    });
+            })
+            ->orderBy('check_in_date', 'asc')
+            ->get()
+            ->groupBy('accommodation_id');
+
+        foreach ($accommodations as $accommodation) {
+            if (!isset($bookings[$accommodation->id])) {
+                $availableAccommodation[$accommodation->id . '/' . $checkIn . '/' . $checkOut] = $accommodation->room_name . ' available on ' . $checkIn->format($dateFormat) . ' to ' . $checkOut->format($dateFormat);
+                continue;
+            }
+
+            $bookedAccommodations = $bookings[$accommodation->id];
+            $nextCheckIn = $checkIn;
+
+            foreach ($bookedAccommodations as $booked) {
+                $bookedCheckIn = Carbon::parse($booked->check_in_date);
+                $bookedCheckOut = Carbon::parse($booked->check_out_date);
+
+                if ($record != null && $booked->id === $record) {
+                    $availableAccommodation[$accommodation->id . '/' . $nextCheckIn . '/' . $bookedCheckOut] = $accommodation->room_name . ' available on ' . $nextCheckIn->format($dateFormat) . ' to ' . $bookedCheckOut->format($dateFormat);
+                } elseif ($nextCheckIn->lt($bookedCheckIn)) {
+                    $availableAccommodation[$accommodation->id . '/' . $nextCheckIn . '/' . $bookedCheckIn] = $accommodation->room_name . ' available on ' . $nextCheckIn->format($dateFormat) . ' to ' . $bookedCheckIn->format($dateFormat);
+                }
+
+                $nextCheckIn = $bookedCheckOut;
+            }
+
+            if ($nextCheckIn->lt($checkOut)) {
+                $availableAccommodation[$accommodation->id . '/' . $bookedCheckOut . '/' . $checkOut] = $accommodation->room_name . ' available on ' . $bookedCheckOut->format($dateFormat) . ' to ' . $checkOut->format($dateFormat);
+            }
+        }
+
+        if (!$availableAccommodation) {
+            return [
+                null => 'No Available Accommodation',
+            ];
+        }
+
+        // dd($availableAccommodation);
+        return $availableAccommodation;
     }
 }
