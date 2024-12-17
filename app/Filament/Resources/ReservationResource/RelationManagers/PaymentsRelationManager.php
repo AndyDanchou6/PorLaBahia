@@ -144,7 +144,7 @@ class PaymentsRelationManager extends RelationManager
                             ->success()
                             ->send();
 
-                        $this->redirect(ReservationResource::getUrl('edit', ['record' => $record->reservation_id]));
+                        $this->redirect(ReservationResource::getUrl('view', ['record' => $record->reservation_id]));
                     })
                     ->visible(function ($record) {
                         if ($record->payment_status == 'paid' && $record->payment_status = 'void') {
@@ -174,7 +174,7 @@ class PaymentsRelationManager extends RelationManager
                             ->success()
                             ->send();
 
-                        $this->redirect(ReservationResource::getUrl('edit', ['record' => $record->reservation_id]));
+                        $this->redirect(ReservationResource::getUrl('view', ['record' => $record->reservation_id]));
                     })
                     ->hidden(function ($record) {
                         // $viewUrl = ReservationResource::getUrl('view', ['record' => $record->reservation_id]);
