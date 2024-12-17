@@ -163,6 +163,9 @@ class ReservationResource extends Resource
                                 case 'expired':
                                     return 'Expired';
                                     break;
+                                case 'finished':
+                                    return 'Finished';
+                                    break;
                             }
                         }
                     }),

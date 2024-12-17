@@ -134,6 +134,12 @@ class ViewReservation extends ViewRecord
                         'gcash_screenshot' => $data['gcash_screenshot'] ?? null,
                     ]);
 
+                    if ($data['payment_method'] == 'GCash') {
+                        $payment->payment_status == 'pending';
+                    } else {
+                        $payment->payment_status = 'paid';
+                    }
+
                     $payment->save();
 
                     Notification::make()
