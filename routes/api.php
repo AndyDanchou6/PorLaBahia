@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\PaymentConfimationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,3 +23,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('/amenities', [AmenityController::class, 'getAmenities']);
 Route::get('/accommodations', [AccommodationController::class, 'getAccommodations']);
+Route::get('/confirmPayment/{id}', [PaymentConfimationController::class, 'confirm']);
