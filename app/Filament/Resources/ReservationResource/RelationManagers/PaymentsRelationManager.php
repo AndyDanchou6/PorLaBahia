@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ReservationResource\RelationManagers;
 use App\Filament\Resources\ReservationResource;
 use App\Models\GuestInfo;
 use App\Models\Payment;
+use App\Models\Reservation;
 use Carbon\Carbon;
 use Closure;
 use Dotenv\Parser\Value;
@@ -89,14 +90,12 @@ class PaymentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Payment')
             ->columns([
-                // Tables\Columns\TextColumn::make('reservation_id'),
                 Tables\Columns\TextColumn::make('amount')
                     ->label('Amount')
                     ->prefix('₱'),
                 Tables\Columns\TextColumn::make('payment_method')
                     ->formatStateUsing(fn($state) => ucwords($state))
                     ->badge()
-                    // ->searchable()
                     ->color(fn(string $state): string => match ($state) {
                         'GCash' => 'success',
                         'cash' => 'info',
@@ -107,10 +106,9 @@ class PaymentsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('payment_status')
                     ->formatStateUsing(fn($state) => ucwords($state))
                     ->badge()
-                    // ->searchable()
                     ->color(fn(string $state): string => match ($state) {
                         'paid' => 'success',
-                        'unpaid' => 'danger',
+                        'pending' => 'info',
                         'void' => 'gray',
                     })
                     ->label('Payment Status'),
@@ -125,71 +123,69 @@ class PaymentsRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\ViewAction::make(),
 
-                Action::make('Paid')
-                    ->icon('heroicon-o-check-badge')
-                    ->requiresConfirmation()
-                    ->modalIcon('heroicon-o-check-circle')
-                    ->modalHeading('Confirm GCash Payment')
-                    ->modalDescription('Are you sure you want to mark this reservation as paid via GCash? This action cannot be undone.')
-                    ->modalSubmitActionLabel('Yes, Mark as Paid')
-                    ->action(function ($record) {
+                // Action::make('Paid')
+                //     ->icon('heroicon-o-check-badge')
+                //     ->requiresConfirmation()
+                //     ->modalIcon('heroicon-o-banknotes')
+                //     ->modalHeading('Confirm GCash Payment')
+                //     ->modalDescription('Are you sure you want to mark this reservation as paid via GCash? This action cannot be undone.')
+                //     ->modalSubmitActionLabel('Yes, Mark as Paid')
+                //     ->action(function ($record) {
 
-                        $record->payment_status = 'paid';
+                //         $record->payment_status = 'paid';
 
-                        $record->save();
+                //         $record->save();
 
-                        Notification::make()
-                            ->title('GCash Payment Successful')
-                            ->body('The reservation payment has been marked as successfully paid via GCash.')
-                            ->success()
-                            ->send();
+                //         Notification::make()
+                //             ->title('GCash Payment Successful')
+                //             ->body('The reservation payment has been marked as successfully paid via GCash.')
+                //             ->success()
+                //             ->send();
 
-                        $this->redirect(ReservationResource::getUrl('view', ['record' => $record->reservation_id]));
-                    })
-                    ->visible(function ($record) {
-                        if ($record->payment_status == 'paid' && $record->payment_status = 'void') {
-                            return false;
-                        }
+                //         $this->redirect(ReservationResource::getUrl('view', ['record' => $record->reservation_id]));
+                //     })
+                //     ->visible(function ($record) {
+                //         if ($record->payment_status == 'paid' && $record->payment_status == 'void') {
+                //             return false;
+                //         }
 
-                        if ($record->payment_method == 'GCash' && $record->payment_status == 'unpaid') {
-                            return true;
-                        }
+                //         if ($record->payment_method == 'GCash' && $record->payment_status == 'pending') {
+                //             return true;
+                //         }
 
-                        return;
-                    })
-                    ->color('success'),
+                //         return;
+                //     })
+                //     ->color('success'),
 
-                Action::make('void')
-                    ->color('warning')
-                    ->icon('heroicon-o-trash')
-                    ->action(function ($record) {
+                // Action::make('void')
+                //     ->color('warning')
+                //     ->icon('heroicon-o-trash')
+                //     ->action(function ($record) {
+                //         $record->payment_status = 'void';
+                //         $record->save();
 
-                        $record->payment_status = 'void';
+                //         Notification::make()
+                //             ->title('Payment Voided Successfully')
+                //             ->body('Payment record has been marked as void.')
+                //             ->success()
+                //             ->send();
 
-                        $record->save();
+                //         $this->redirect(ReservationResource::getUrl('view', ['record' => $record->reservation_id]));
+                //     })
+                //     ->hidden(function ($record) {
+                //         // $viewUrl = ReservationResource::getUrl('view', ['record' => $record->reservation_id]);
 
-                        Notification::make()
-                            ->title('Payment Voided Successfully')
-                            ->body('Payment record has been marked as void.')
-                            ->success()
-                            ->send();
+                //         if ($record->getOriginal('payment_status') == 'void') {
+                //             return true;
+                //         }
 
-                        $this->redirect(ReservationResource::getUrl('view', ['record' => $record->reservation_id]));
-                    })
-                    ->hidden(function ($record) {
-                        // $viewUrl = ReservationResource::getUrl('view', ['record' => $record->reservation_id]);
+                //         // if($viewUrl){
+                //         //     return true;
 
-                        if ($record->getOriginal('payment_status') == 'void') {
-                            return true;
-                        }
+                //         // }
 
-                        // if($viewUrl){
-                        //     return true;
-
-                        // }
-
-                        return false;
-                    })
+                //         return false;
+                //     })
 
 
             ])

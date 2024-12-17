@@ -115,9 +115,19 @@ class ReservationResource extends Resource
                     }),
 
                 Infolists\Components\TextEntry::make('on_hold_expiration_date')
-                    ->formatStateUsing(fn($record) => Carbon::parse($record->on_hold_expiration_date)->format('M d, Y h:i'))
-                    ->color('primary')
-                    ->visible(fn($record) => $record->on_hold_expiration_date && $record->booking_status !== 'active'),
+                    ->formatStateUsing(fn($record) => Carbon::parse($record->on_hold_expiration_date)->format('M d, Y h:i a'))
+                    ->color('danger')
+                    ->visible(fn($record) => $record->on_hold_expiration_date),
+
+                Infolists\Components\TextEntry::make('payment_type')
+                    ->formatStateUsing(function ($record) {
+                        return match ($record->payment_type) {
+                            'straight_payment' => 'Straight Payment',
+                            'split_payment' => 'Split Payment',
+                            default => 'Unknown',
+                        };
+                    })
+                    ->color('primary'),
             ]);
     }
 
@@ -160,8 +170,14 @@ class ReservationResource extends Resource
                                 case 'on_hold':
                                     return 'On Hold';
                                     break;
+                                case 'pending':
+                                    return 'Pending';
+                                    break;
                                 case 'expired':
                                     return 'Expired';
+                                    break;
+                                case 'finished':
+                                    return 'Finished';
                                     break;
                             }
                         }
@@ -240,6 +256,20 @@ class ReservationResource extends Resource
     {
         return Forms\Components\Section::make()
             ->schema([
+                Forms\Components\Select::make('guest')
+                    ->options(fn() => \App\Models\GuestInfo::all()->mapWithKeys(fn($guest) => [
+                        $guest->id => $guest->first_name . ' ' . $guest->last_name,
+                    ]))
+                    ->required(fn($operation) => $operation === 'create')
+                    ->afterStateUpdated(function ($state, $set) {
+                        $guest = GuestInfo::find($state);
+
+                        $set('guest_id', $state);
+                        $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
+                    })
+                    ->hidden(fn($operation) => $operation === 'edit')
+                    ->columnSpanFull(),
+
                 Forms\Components\DatePicker::make('check_in_date_picker')
                     ->label('Select check in date')
                     ->required(fn($operation) => $operation === 'create')
@@ -247,7 +277,13 @@ class ReservationResource extends Resource
                     ->minDate(today())
                     ->live(debounce: 100)
                     ->native(false)
-                    ->afterStateUpdated(fn($set) => $set('check_out_date_picker', null)),
+                    ->afterStateUpdated(function ($set, $get) {
+                        if ($get('check_out_date_picker')) {
+                            return $set('check_out_date_picker', null);
+                        }
+
+                        return;
+                    }),
 
                 Forms\Components\DatePicker::make('check_out_date_picker')
                     ->label('Select check out date')
@@ -264,19 +300,6 @@ class ReservationResource extends Resource
                     ->live(debounce: 100)
                     ->native(false)
                     ->visible(fn($get) => $get('check_in_date_picker')),
-
-                Forms\Components\Select::make('guest')
-                    ->options(fn() => \App\Models\GuestInfo::all()->mapWithKeys(fn($guest) => [
-                        $guest->id => $guest->first_name . ' ' . $guest->last_name,
-                    ]))
-                    ->required(fn($operation) => $operation === 'create')
-                    ->afterStateUpdated(function ($state, $set) {
-                        $guest = GuestInfo::find($state);
-
-                        $set('guest_id', $state);
-                        $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
-                    })
-                    ->disabled(fn($operation) => $operation === 'edit'),
             ])
             ->columns(2)
             ->columnSpan(2);
@@ -305,6 +328,22 @@ class ReservationResource extends Resource
             ->disableOptionWhen(fn($value) => $value == null)
             ->required(fn($operation) => $operation === 'create')
             ->columnSpan(1);
+    }
+
+    public static function getPaymentType()
+    {
+        return
+            Forms\Components\Section::make()
+            ->schema([
+                Forms\Components\ToggleButtons::make('payment_type')
+                    ->options([
+                        'straight_payment' => 'Straight Payment',
+                        'split_payment' => 'Split Payment',
+                    ])
+                    ->columnSpanFull()
+                    ->inline()
+                    ->required(fn($operation) => $operation === 'create'),
+            ]);
     }
 
     public static function getSummaryForm()
@@ -364,5 +403,16 @@ class ReservationResource extends Resource
                     ->readOnly()
                     ->required(),
             ])->columns(2);
+    }
+
+    public static function getHiddenField()
+    {
+        return [
+            Forms\Components\Hidden::make('booking_status')
+                ->default('on_hold'),
+
+            Forms\Components\Hidden::make('on_hold_expiration_date')
+                ->default(Carbon::now()->addHours(12)->startOfMinute()),
+        ];
     }
 }

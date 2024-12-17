@@ -22,18 +22,33 @@ class ListReservations extends ListRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make(),
+            'all' => Tab::make()
+                ->badge(\App\Models\Reservation::query()->count()),
             'active' => Tab::make()
-                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'active')),
+                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'active'))
+                ->badge(fn() => \App\Models\Reservation::query()->where('booking_status', 'active')->count() > 0 ?
+                    \App\Models\Reservation::query()->where('booking_status', 'active')->count() : null)
+                ->badgeColor('success'),
             'pending' => Tab::make()
-                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'pending')),
+                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'pending'))
+                ->badge(fn() => \App\Models\Reservation::query()->where('booking_status', 'pending')->count() > 0 ?
+                    \App\Models\Reservation::query()->where('booking_status', 'pending')->count() : null)
+                ->badgeColor('info'),
             'on_hold' => Tab::make()
-                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'on_hold')),
+                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'on_hold'))
+                ->badge(fn() => \App\Models\Reservation::query()->where('booking_status', 'on_hold')->count() > 0 ?
+                    \App\Models\Reservation::query()->where('booking_status', 'on_hold')->count() : null)
+                ->badgeColor('info'),
             'expired' => Tab::make()
-                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'expired')),
+                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'expired'))
+                ->badge(fn() => \App\Models\Reservation::query()->where('booking_status', 'expired')->count() > 0 ?
+                    \App\Models\Reservation::query()->where('booking_status', 'expired')->count() : null)
+                ->badgeColor('gray'),
             'cancelled' => Tab::make()
-                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'cancelled')),
-
+                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'cancelled'))
+                ->badge(fn() => \App\Models\Reservation::query()->where('booking_status', 'cancelled')->count() > 0 ?
+                    \App\Models\Reservation::query()->where('booking_status', 'cancelled')->count() : null)
+                ->badgeColor('danger'),
         ];
     }
 }

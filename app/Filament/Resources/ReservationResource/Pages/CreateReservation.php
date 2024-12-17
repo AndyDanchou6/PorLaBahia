@@ -20,16 +20,20 @@ class CreateReservation extends CreateRecord
                     \App\Filament\Resources\ReservationResource::getCheckAvailabilityForm(),
                     \App\Filament\Resources\ReservationResource::getAvailableDatesForm(),
                 ])->columns(3)
-                ->afterValidation(function ($get, $set) {
-                    $onHoldExpirationDate = \Illuminate\Support\Carbon::now()->addDays(12)->startOfMinute();
-
-                    $set('on_hold_expiration_date', $onHoldExpirationDate->format('M d, Y H:i'));
-                }),
+                ->icon('heroicon-o-magnifying-glass'),
 
             \Filament\Forms\Components\Wizard\Step::make('Summary')
                 ->schema([
                     \App\Filament\Resources\ReservationResource::getSummaryForm(),
-                ]),
+                    \App\Filament\Resources\ReservationResource::getHiddenField(),
+                ])
+                ->icon('heroicon-o-clipboard-document-list'),
+
+            \Filament\Forms\Components\Wizard\Step::make('Choose Payment')
+                ->schema([
+                    \App\Filament\Resources\ReservationResource::getPaymentType(),
+                ])
+                ->icon('heroicon-o-banknotes'),
         ];
     }
 }

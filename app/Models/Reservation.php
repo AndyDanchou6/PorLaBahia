@@ -54,53 +54,6 @@ class Reservation extends Model
         return $this->hasMany(Payment::class);
     }
 
-    protected static function booted()
-    {
-        // static::deleting(function ($reservation) {
-        //     $reservation->appliedDiscount()->update(['deleted_at' => now()]);
-        // });
-        static::updating(function ($reservation) {
-            $daysPrior = Carbon::today()->diffInDays($reservation->getOriginal('check_in_date'));
-            if ($reservation->isDirty('booking_status') && $reservation->booking_status === 'cancelled' && $daysPrior >= 10) {
-
-                $guestCredits = $reservation->guest->guestCredit->first();
-
-                if ($guestCredits) {
-                    $existingBookingIds = $guestCredits->booking_ids ?? [];
-
-                    if (!in_array($reservation->id, $existingBookingIds)) {
-
-                        $existingBookingIds[] = $reservation->id;
-                        $newAmount = $guestCredits->amount + $reservation->booking_fee;
-
-                        $guestCredits->update([
-                            'booking_ids' => $existingBookingIds,
-                            'amount' => $newAmount,
-                        ]);
-                    }
-                } else {
-                    GuestCredit::create([
-                        'guest_id' => $reservation->guest_id,
-                        'booking_ids' => [$reservation->id],
-                        'amount' => $reservation->booking_fee,
-                        'expiration_date' => Carbon::now()->addYear(),
-                        'status' => 'active',
-                    ]);
-                }
-            }
-        });
-
-        static::creating(function ($reservation) {
-            if (!$reservation->booking_status) {
-                $reservation->booking_status = 'on_hold';
-            }
-
-            if ($reservation->booking_status == 'on_hold') {
-                $reservation->on_hold_expiration_date = Carbon::now()->addHours(12)->startOfMinute();
-            }
-        });
-    }
-
     public function generateBookingReference(int $length = 4): string
     {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
