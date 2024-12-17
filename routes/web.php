@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\AccommodationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,4 +19,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/about', [AboutController::class, 'index']);
-
+Route::get('/accommodation', [AccommodationController::class, 'viewAccommodations']);
