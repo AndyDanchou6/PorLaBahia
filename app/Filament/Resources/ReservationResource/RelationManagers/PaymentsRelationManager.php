@@ -108,6 +108,7 @@ class PaymentsRelationManager extends RelationManager
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'paid' => 'success',
+                        'pending' => 'info',
                         'void' => 'gray',
                     })
                     ->label('Payment Status'),

@@ -115,9 +115,19 @@ class ReservationResource extends Resource
                     }),
 
                 Infolists\Components\TextEntry::make('on_hold_expiration_date')
-                    ->formatStateUsing(fn($record) => Carbon::parse($record->on_hold_expiration_date)->format('M d, Y h:i'))
-                    ->color('primary')
-                    ->visible(fn($record) => $record->on_hold_expiration_date && $record->booking_status !== 'active'),
+                    ->formatStateUsing(fn($record) => Carbon::parse($record->on_hold_expiration_date)->format('M d, Y h:i a'))
+                    ->color('danger')
+                    ->visible(fn($record) => $record->on_hold_expiration_date),
+
+                Infolists\Components\TextEntry::make('payment_type')
+                    ->formatStateUsing(function ($record) {
+                        return match ($record->payment_type) {
+                            'straight_payment' => 'Straight Payment',
+                            'split_payment' => 'Split Payment',
+                            default => 'Unknown',
+                        };
+                    })
+                    ->color('primary'),
             ]);
     }
 
@@ -159,6 +169,9 @@ class ReservationResource extends Resource
                                     break;
                                 case 'on_hold':
                                     return 'On Hold';
+                                    break;
+                                case 'pending':
+                                    return 'Pending';
                                     break;
                                 case 'expired':
                                     return 'Expired';
@@ -317,6 +330,22 @@ class ReservationResource extends Resource
             ->columnSpan(1);
     }
 
+    public static function getPaymentType()
+    {
+        return
+            Forms\Components\Section::make()
+            ->schema([
+                Forms\Components\ToggleButtons::make('payment_type')
+                    ->options([
+                        'straight_payment' => 'Straight Payment',
+                        'split_payment' => 'Split Payment',
+                    ])
+                    ->columnSpanFull()
+                    ->inline()
+                    ->required(fn($operation) => $operation === 'create'),
+            ]);
+    }
+
     public static function getSummaryForm()
     {
         return
@@ -374,5 +403,16 @@ class ReservationResource extends Resource
                     ->readOnly()
                     ->required(),
             ])->columns(2);
+    }
+
+    public static function getHiddenField()
+    {
+        return [
+            Forms\Components\Hidden::make('booking_status')
+                ->default('on_hold'),
+
+            Forms\Components\Hidden::make('on_hold_expiration_date')
+                ->default(Carbon::now()->addHours(12)->startOfMinute()),
+        ];
     }
 }

@@ -72,6 +72,22 @@ class EditReservation extends EditRecord
                     \App\Filament\Resources\ReservationResource::getSummaryForm(),
                 ])
                 ->icon('heroicon-o-clipboard-document-list'),
+            \Filament\Forms\Components\Wizard\Step::make('Choose Payment')
+                ->schema([
+                    \App\Filament\Resources\ReservationResource::getPaymentType(),
+                ])
+                ->icon('heroicon-o-banknotes')
+                ->visible(function ($record) {
+                    $hasPayment = Payment::where('reservation_id', $record->id)
+                    ->whereNotIn('payment_status', ['void'])
+                    ->get();
+
+                    if ($hasPayment->isEmpty()) {
+                        return true;
+                    }
+
+                    return false;
+                }),
         ];
     }
 
