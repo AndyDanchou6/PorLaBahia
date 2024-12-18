@@ -19,14 +19,26 @@ class GuestInfo extends Model
         'fb_name',
     ];
 
+    protected $appends = ['full_name'];
+
     public function getFullNameAttribute()
     {
         $full_name = $this->first_name . ' ' . $this->last_name;
         return $full_name;
     }
 
-    public function guestCredit() 
+    public function getFullNamesAttribute()
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function guestCredit()
     {
         return $this->hasMany(GuestCredit::class, 'guest_id');
+    }
+
+    public function testimonials()
+    {
+        return $this->hasMany(Testimonial::class);
     }
 }
