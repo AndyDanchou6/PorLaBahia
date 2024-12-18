@@ -21,6 +21,7 @@ class Reservation extends Model
         'booking_fee',
         'booking_status',
         'on_hold_expiration_date',
+        'payment_type',
     ];
 
     protected $casts = [

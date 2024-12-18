@@ -157,35 +157,35 @@ class PaymentsRelationManager extends RelationManager
                 //     })
                 //     ->color('success'),
 
-                // Action::make('void')
-                //     ->color('warning')
-                //     ->icon('heroicon-o-trash')
-                //     ->action(function ($record) {
-                //         $record->payment_status = 'void';
-                //         $record->save();
+                Action::make('void')
+                    ->color('warning')
+                    ->icon('heroicon-o-trash')
+                    ->action(function ($record) {
+                        $record->payment_status = 'void';
+                        $record->save();
 
-                //         Notification::make()
-                //             ->title('Payment Voided Successfully')
-                //             ->body('Payment record has been marked as void.')
-                //             ->success()
-                //             ->send();
+                        Notification::make()
+                            ->title('Payment Voided Successfully')
+                            ->body('Payment record has been marked as void.')
+                            ->success()
+                            ->send();
 
-                //         $this->redirect(ReservationResource::getUrl('view', ['record' => $record->reservation_id]));
-                //     })
-                //     ->hidden(function ($record) {
-                //         // $viewUrl = ReservationResource::getUrl('view', ['record' => $record->reservation_id]);
+                        $this->redirect(ReservationResource::getUrl('view', ['record' => $record->reservation_id]));
+                    })
+                    ->hidden(function ($record) {
+                        // $viewUrl = ReservationResource::getUrl('view', ['record' => $record->reservation_id]);
 
-                //         if ($record->getOriginal('payment_status') == 'void') {
-                //             return true;
-                //         }
+                        if ($record->getOriginal('payment_status') == 'void') {
+                            return true;
+                        }
 
-                //         // if($viewUrl){
-                //         //     return true;
+                        // if($viewUrl){
+                        //     return true;
 
-                //         // }
+                        // }
 
-                //         return false;
-                //     })
+                        return false;
+                    })
 
 
             ])

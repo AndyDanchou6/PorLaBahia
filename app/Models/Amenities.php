@@ -18,7 +18,7 @@ class Amenities extends Model
 
     public function galleries()
     {
-        return $this->morphMany(Galleries::class, 'gallery');
+        return $this->morphMany(Galleries::class, 'galleries');
     }
 
     public static function boot()

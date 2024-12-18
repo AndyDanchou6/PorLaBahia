@@ -698,7 +698,7 @@ video {
     width: 40px;
     height: auto;
     position: absolute;
-    top: 25%;
+    top: 30%;
     cursor: pointer;
 }
 .red-arrowLeft{
