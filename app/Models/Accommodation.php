@@ -38,7 +38,7 @@ class Accommodation extends Model
 
     public function Galleries()
     {
-        return $this->morphMany(Galleries::class, 'gallery');
+        return $this->morphMany(Galleries::class, 'galleries');
     }
 
     public function accommodation_promo()

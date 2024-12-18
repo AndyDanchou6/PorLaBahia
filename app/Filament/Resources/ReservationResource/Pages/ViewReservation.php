@@ -193,6 +193,7 @@ class ViewReservation extends ViewRecord
                                                     return false;
                                                 })
                                                 ->image()
+                                                ->downloadable()
                                                 ->reactive()
                                                 ->label('Gcash Screenshot'),
                                         ]),

@@ -12,8 +12,8 @@ class Galleries extends Model
 
     protected $fillable = [
         'image',
-        'gallery_type',
-        'gallery_id'
+        'galleries_type',
+        'galleries_id'
     ];
 
     protected $casts = [
