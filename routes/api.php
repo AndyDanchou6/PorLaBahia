@@ -24,3 +24,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/amenities', [AmenityController::class, 'getAmenities']);
 Route::get('/accommodations', [AccommodationController::class, 'getAccommodations']);
 Route::get('/confirmPayment/{id}', [PaymentConfimationController::class, 'confirm']);
+Route::get('/galleries', [GalleryController::class, 'getGalleries']);
