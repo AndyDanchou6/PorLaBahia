@@ -56,11 +56,12 @@ li a:hover {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: all 0.3s ease;
     font-family: "Poppins", sans-serif;
     display: flex;
-    justify-content: space-evenly;
-    align-content: center;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
     font-weight: 600;
     width: 120px;
 }

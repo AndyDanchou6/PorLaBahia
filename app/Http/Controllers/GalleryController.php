@@ -8,5 +8,9 @@ use Illuminate\Http\Request;
 
 class GalleryController extends Controller
 {
-    
+    public function getGalleries()
+    {
+        $galleries = Galleries::all();
+        return response()->json($galleries);
+    }
 }
