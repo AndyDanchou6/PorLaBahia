@@ -15,6 +15,7 @@ class Payment extends Model
         'reservation_id',
         'amount',
         'payment_method',
+        'payment_status',
         'gcash_reference_number',
         'gcash_screenshot'
     ];

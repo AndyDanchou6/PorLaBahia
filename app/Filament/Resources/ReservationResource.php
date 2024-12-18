@@ -407,12 +407,14 @@ class ReservationResource extends Resource
 
     public static function getHiddenField()
     {
-        return [
-            Forms\Components\Hidden::make('booking_status')
-                ->default('on_hold'),
+        return
+            \Filament\Forms\Components\Section::make()
+            ->schema([
+                Forms\Components\Hidden::make('booking_status')
+                    ->default('on_hold'),
 
-            Forms\Components\Hidden::make('on_hold_expiration_date')
-                ->default(Carbon::now()->addHours(12)->startOfMinute()),
-        ];
+                Forms\Components\Hidden::make('on_hold_expiration_date')
+                    ->default(Carbon::now()->addHours(12)->startOfMinute()),
+            ]);
     }
 }
