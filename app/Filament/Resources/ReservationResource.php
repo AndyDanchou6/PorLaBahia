@@ -260,6 +260,9 @@ class ReservationResource extends Resource
                     ->options(fn() => \App\Models\GuestInfo::all()->mapWithKeys(fn($guest) => [
                         $guest->id => $guest->first_name . ' ' . $guest->last_name,
                     ]))
+                    ->createOptionForm([
+                        \App\Filament\Resources\GuestInfoResource::getNewGuestForm(),
+                    ])
                     ->required(fn($operation) => $operation === 'create')
                     ->afterStateUpdated(function ($state, $set) {
                         $guest = GuestInfo::find($state);
