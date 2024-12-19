@@ -27,10 +27,10 @@ class GuestInfo extends Model
         return $full_name;
     }
 
-    public function getFullNamesAttribute()
-    {
-        return "{$this->first_name} {$this->last_name}";
-    }
+    // public function getFullNamesAttribute()
+    // {
+    //     return "{$this->first_name} {$this->last_name}";
+    // }
 
     public function guestCredit()
     {

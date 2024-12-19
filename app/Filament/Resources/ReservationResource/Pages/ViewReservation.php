@@ -301,7 +301,6 @@ class ViewReservation extends ViewRecord
                         }
 
                         $record->save();
-                        // dd($totalPaid);
                     } else {
                         $query = Payment::create([
                             'reservation_id' => $record->id,
@@ -376,6 +375,7 @@ class ViewReservation extends ViewRecord
                     return 'Pay Here';
                 })->slideOver(),
 
+            // Cancel Booking Button
             Action::make('Cancel Booking')
                 ->color('danger')
                 ->visible(fn($record) => $record->booking_status === 'active')
@@ -441,7 +441,7 @@ class ViewReservation extends ViewRecord
 
                         \Filament\Notifications\Notification::make()
                             ->title("Booking cancelled and credits been recorded")
-                            ->body("$guest cancelled their booking #$record->booking_reference_no and $totalCredits payment have been moved to guest credits.")
+                            ->body("$guest cancelled their booking #$record->booking_reference_no and Php $totalCredits payment have been moved to guest credits.")
                             ->info()
                             ->duration(5000)
                             ->send();
@@ -456,6 +456,7 @@ class ViewReservation extends ViewRecord
                     $this->redirect($this->getResource()::getUrl('view', ['record' => $record->id]));
                 }),
 
+            // EditAction Button
             Actions\EditAction::make()
                 ->color('warning')
                 ->visible(function ($record) {
@@ -464,6 +465,8 @@ class ViewReservation extends ViewRecord
                     }
                     return true;
                 }),
+
+            // Back Button
             Actions\Action::make('back')
                 ->url(ReservationResource::getUrl())
                 ->button()
