@@ -59,7 +59,7 @@ span {
 }
 .date-section {
     position: absolute;
-    top: 80%;
+    top: 84%;
     left: 7%;
     right: 7%;
     background-color: rgba(255, 245, 245, 0.5);
@@ -563,8 +563,7 @@ span {
 }
 .priceBookContainer{
     display: flex;
-    justify-content:space-around;
-    max-height: 30px;
+    justify-content:space-between;
     gap: 10px;
 }
 .book-this {
@@ -578,7 +577,7 @@ span {
     border-radius: 5px;
     cursor: pointer;
     font-family: "Poppins", sans-serif;
-    width: 55%;
+    width: 60%;
     justify-content: center;
     transition: all .7s ease;
 }
