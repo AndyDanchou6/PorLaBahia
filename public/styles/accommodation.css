@@ -90,7 +90,7 @@ span{
 .accommodation1Image{
     grid-column: 2/3;
     grid-row: 1/2;
-    padding: 30px;
+    padding: 15px;
 }
 .price-book1, .price-book2,.price-book3, .price-book4{
     display: flex;
@@ -188,7 +188,7 @@ span{
 .accommodation2Image{
     grid-column: 1/2;
     grid-row: 2/3;
-    padding: 30px;
+    padding: 15px;
     margin-left: 20px;
 }
 .accommodation2Details{
