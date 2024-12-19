@@ -117,7 +117,7 @@ class ReservationResource extends Resource
                 Infolists\Components\TextEntry::make('on_hold_expiration_date')
                     ->formatStateUsing(fn($record) => Carbon::parse($record->on_hold_expiration_date)->format('M d, Y h:i a'))
                     ->color('danger')
-                    ->visible(fn($record) => $record->on_hold_expiration_date),
+                    ->visible(fn($record) => $record->on_hold_expiration_date && $record->booking_status == 'on_hold' || $record->booking_status == 'pending'),
 
                 Infolists\Components\TextEntry::make('payment_type')
                     ->formatStateUsing(function ($record) {
@@ -202,6 +202,11 @@ class ReservationResource extends Resource
                                 fn(Builder $query, $date): Builder => $query->whereDate('check_out_date', '<=', $date),
                             );
                     }),
+                SelectFilter::make('payment_type')
+                    ->options([
+                        'straight_payment' => 'Straight Payment',
+                        'split_payment' => 'Split Payment',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -287,7 +292,7 @@ class ReservationResource extends Resource
                     // ->native(false)
                     ->visible(fn($get) => $get('check_in_date_picker')),
 
-                    Forms\Components\Select::make('guest')
+                Forms\Components\Select::make('guest')
                     ->options(fn() => \App\Models\GuestInfo::all()->mapWithKeys(fn($guest) => [
                         $guest->id => $guest->first_name . ' ' . $guest->last_name,
                     ]))
@@ -423,8 +428,7 @@ class ReservationResource extends Resource
                     ->numeric()
                     ->prefix('₱')
                     ->step(0.01)
-                    ->readOnly()
-                    ->required(),
+                    ->readOnly(),
             ])->columns(2);
     }
 

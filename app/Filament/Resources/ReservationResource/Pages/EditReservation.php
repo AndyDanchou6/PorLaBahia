@@ -28,23 +28,6 @@ class EditReservation extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('Cancel Booking')
-                ->color('danger')
-                ->visible(fn($record) => $record->booking_status === 'active')
-                ->requiresConfirmation()
-                ->modalDescription('Are you sure you\'d like to cancel this booking? This cannot be undone.')
-                ->action(function ($record) {
-                    $record->booking_status = 'cancelled';
-
-                    if ($record->save()) {
-                        return \Filament\Notifications\Notification::make()
-                            ->title($record->booking_reference_no . ' has been cancelled')
-                            ->danger()
-                            ->duration(5000)
-                            ->send();
-                    }
-                }),
-
             Actions\Action::make('back')
                 ->url(ReservationResource::getUrl())
                 ->button()

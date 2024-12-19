@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ReservationResource\Pages;
 
 use App\Filament\Resources\ReservationResource;
+use App\Models\GuestCredit;
 use App\Models\GuestInfo;
 use App\Models\Payment;
 use Closure;
@@ -15,7 +16,11 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\RawJs;
+ 
+use Illuminate\Support\Carbon;
+
 use Illuminate\Support\Facades\Http;
+
 
 class ViewReservation extends ViewRecord
 {
@@ -260,8 +265,20 @@ class ViewReservation extends ViewRecord
                 ])
                 ->action(function (array $data, $record): void {
                     if (isset($data['payment_form']) && is_array($data['payment_form'])) {
+                        $existingPayments = Payment::where('reservation_id', $record->id)
+                            ->whereNotIn('payment_status', ['void'])
+                            ->get();
+                        $totalPaid = 0;
+
+                        if (!$existingPayments->isEmpty()) {
+                            foreach ($existingPayments as $payment) {
+                                $totalPaid = $totalPaid + $payment->amount;
+                            }
+                        }
+
                         foreach ($data['payment_form'] as $dataArray) {
                             $gcashScreenshot = null;
+                            $totalPaid = $totalPaid + $dataArray['amount'];
 
                             if (!empty($dataArray['gcash_screenshot'])) {
                                 $gcashScreenshot = $dataArray['gcash_screenshot'];
@@ -276,6 +293,15 @@ class ViewReservation extends ViewRecord
                                 'gcash_screenshot' => $gcashScreenshot ?? null,
                             ]);
                         }
+
+                        if ($totalPaid == $record->getOriginal('booking_fee')) {
+                            $record->booking_status = 'active';
+                        } else {
+                            $record->booking_status = 'pending';
+                        }
+
+                        $record->save();
+                        // dd($totalPaid);
                     } else {
                         $query = Payment::create([
                             'reservation_id' => $record->id,
@@ -286,6 +312,8 @@ class ViewReservation extends ViewRecord
                             'gcash_screenshot' => $data['gcash_screenshot'] ?? null,
                         ]);
 
+                        $record->booking_status = 'active';
+                        $record->save();
                         $query->save();
                     }
 
@@ -330,6 +358,10 @@ class ViewReservation extends ViewRecord
                         return false;
                     }
 
+                    if ($record->booking_status == 'cancelled') {
+                        return false;
+                    }
+
                     return true;
                 })
                 ->color('success')
@@ -343,6 +375,86 @@ class ViewReservation extends ViewRecord
 
                     return 'Pay Here';
                 })->slideOver(),
+
+            Action::make('Cancel Booking')
+                ->color('danger')
+                ->visible(fn($record) => $record->booking_status === 'active')
+                ->requiresConfirmation()
+                ->modalDescription('Are you sure you\'d like to cancel this booking? This cannot be undone.')
+                ->action(function ($record) {
+                    $record->booking_status = 'cancelled';
+                    if (!$record->save()) {
+                        \Filament\Notifications\Notification::make()
+                            ->title("Booking status not updated")
+                            ->body("Error saving updating booking status from active to cancelled")
+                            ->danger()
+                            ->duration(5000)
+                            ->send();
+                    }
+
+                    $checkIn = Carbon::parse($record->check_in_date);
+                    $now = Carbon::now();
+                    $totalCredits = 0;
+                    $dayLimit = 10;
+                    $payments = Payment::where('reservation_id', $record->id)
+                        ->where('payment_status', 'paid')
+                        ->get();
+
+                    // if cancelled 10 days prior to reservation
+                    if ($now->diffInDays($checkIn) >= $dayLimit) {
+                        if (!$payments->isEmpty()) {
+                            foreach ($payments as $payment) {
+                                $totalCredits = $totalCredits + $payment->amount;
+                            }
+
+                            $payment->save();
+                        }
+
+                        $bookingSuffix = substr($record->booking_reference_no, 13);
+                        $expirationDate = Carbon::now()->addYear();
+                        $guestCredit = GuestCredit::create([
+                            'guest_id' => $record->guest_id,
+                            'coupon' => GuestCredit::generateCoupon($bookingSuffix),
+                            'amount' => $totalCredits,
+                            'expiration_date' => $expirationDate,
+                            'status' => 'active',
+                        ]);
+
+                        if (!$guestCredit->save()) {
+                            \Filament\Notifications\Notification::make()
+                                ->title("Credit not recorded")
+                                ->body("Error saving credit")
+                                ->danger()
+                                ->duration(5000)
+                                ->send();
+                        }
+                    }
+
+                    // void payments after cancellation
+                    foreach ($payments as $payment) {
+                        $payment->payment_status = 'void';
+                        $payment->save();
+                    }
+
+                    if ($totalCredits > 0) {
+                        $guest = $record->guest->fullname;
+
+                        \Filament\Notifications\Notification::make()
+                            ->title("Booking cancelled and credits been recorded")
+                            ->body("$guest cancelled their booking #$record->booking_reference_no and $totalCredits payment have been moved to guest credits.")
+                            ->info()
+                            ->duration(5000)
+                            ->send();
+                    } else {
+                        \Filament\Notifications\Notification::make()
+                            ->title($record->booking_reference_no . ' has been cancelled')
+                            ->danger()
+                            ->duration(5000)
+                            ->send();
+                    }
+
+                    $this->redirect($this->getResource()::getUrl('view', ['record' => $record->id]));
+                }),
 
             Actions\EditAction::make()
                 ->color('warning')
