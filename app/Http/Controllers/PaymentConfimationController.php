@@ -22,7 +22,7 @@ class PaymentConfimationController extends Controller
             // $params = [
             //     'apikey' => env('SMS_API_KEY'),
             //     'sender_name' => 'MLGDEV',
-            //     'message' => "Mabuhay! Welcome to Por La Bahia Resort! Thank you for booking with us. Your payment has been confirmed, and your booking reference number is #$bookingNumber. See you soon!",
+            //     'message' => "Mabuhay! Welcome to Por La Bahia Beach Resort! Thank you for booking with us. Your payment has been confirmed, and your booking reference number is #$bookingNumber. See you soon!",
             //     'number' => $contactNo,
             // ];
 
