@@ -39,12 +39,12 @@
                                 <div class="accommodationPrice1">₱ </div>
                                 <button class="accommodationBook1"> <img src="/images/Icon.svg" alt=""> Book This</button>
                             </div>
-                            <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow">
-                            <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow">
                             <div class="accommodationSlider">
+                            <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow">
                                 <div class="sliderImage"> <img src="/images/image1.jpg" alt=""> </div>
                                 <div class="sliderImage"> <img src="/images/image2.jpg" alt=""> </div>
                                 <div class="sliderImage"> <img src="/images/image3.jpg" alt=""> </div>
+                            <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow">
                             </div>
                         </div>
                         <div class="accommodation1Image">
@@ -63,12 +63,12 @@
                                 <div class="accommodationPrice2">₱ </div>
                                 <button class="accommodationBook2"> <img src="/images/Icon.svg" alt=""> Book This</button>
                             </div>
-                            <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow2">
-                            <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow2">
                             <div class="accommodationSlider2">
+                            <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow2">
                                 <div class="sliderImage2"> <img src="/images/porlabahia.jpg" alt=""> </div>
                                 <div class="sliderImage2"> <img src="/images/image2.jpg" alt=""> </div>
                                 <div class="sliderImage2"> <img src="/images/home-grid3.jpg" alt=""> </div>
+                            <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow2">
                             </div>   
                         </div> 
 
@@ -81,12 +81,12 @@
                                 <div class="accommodationPrice3">₱ </div>
                                 <button class="accommodationBook3"> <img src="/images/Icon.svg" alt=""> Book This</button>
                             </div>
-                            <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow3">
-                            <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow3">
                             <div class="accommodationSlider3">
+                            <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow3">
                                 <div class="sliderImage3"> <img src="/images/porlabahia.jpg" alt=""> </div>
                                 <div class="sliderImage3"> <img src="/images/image2.jpg" alt=""> </div>
                                 <div class="sliderImage3"> <img src="/images/home-grid3.jpg" alt=""> </div>
+                            <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow3">
                             </div>   
                         </div> 
                         <div class="accommodation3Image">
@@ -105,12 +105,12 @@
                                 <div class="accommodationPrice4">₱ </div>
                                 <button class="accommodationBook4"> <img src="/images/Icon.svg" alt=""> Book This</button>
                             </div>
-                            <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow4">
-                            <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow4">
                             <div class="accommodationSlider4">
+                            <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow4">
                                 <div class="sliderImage4"> <img src="/images/porlabahia.jpg" alt=""> </div>
                                 <div class="sliderImage4"> <img src="/images/image2.jpg" alt=""> </div>
                                 <div class="sliderImage4"> <img src="/images/home-grid3.jpg" alt=""> </div>
+                            <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow4">
                             </div>   
                         </div>
 
