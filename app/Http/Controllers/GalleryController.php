@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Amenities;
 use App\Models\Galleries;
 use Illuminate\Http\Request;
 
@@ -10,7 +9,7 @@ class GalleryController extends Controller
 {
     public function getGalleries()
     {
-        $galleries = Galleries::all();
+        $galleries = Galleries::where('galleries_type', 'App\Models\Accommodation')->get();
         return response()->json($galleries);
     }
 }

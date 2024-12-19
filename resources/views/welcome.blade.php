@@ -86,12 +86,7 @@
                     <img src="/images/lineRight.svg" alt="" class="lineRight">
                 </div>
                 <h3>OUR ACCOMMODATIONS</h3>
-                <p> Lorem Ipsum is simply dummy passages, and more recently with desktop publishing software like Aldus.
-                    Lorem Ipsum is simply dummy text and more recently with desktop publishing software like Aldus. Lorem Ipsum is simply dummy text and more recently with desktop publishing.
-                </p>
-                <p> Lorem Ipsum is simply dummy passages, and more recently with desktop publishing software like Aldus.
-                    Lorem Ipsum is simply dummy text and more recently with desktop publishing.
-                </p>
+                <p> Each accommodation package includes essential beddings and toiletries to ensure your comfort. For your convenience, we provide 2 bath towels, 1 roll of toilet paper, and 2 small body soaps with shampoo. Each bed comes with 1 bedsheet, 1 blanket, and 2 pillows for a restful stay.</p> <p> Please note that additional floor foam beddings are not included for free, but you have the option to rent them if needed.</p>
             </div>
             <div class="other-houses-container">
                 <div class="other-houses-arrows">
@@ -118,7 +113,7 @@
                 <h6> <i class="fa fa-bed"> </i> 2</h6>
                 <p> </p>
                 <hr>
-                <div class="buttons">
+                <div class="priceBookContainer">
                     <div class="price"> ₱</div>
                     <button class="book-this"><img src="/images/Icon.svg" alt="" class="bookImage"> Book This</button>
                 </div>
