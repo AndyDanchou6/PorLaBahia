@@ -16,7 +16,11 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\RawJs;
+ 
 use Illuminate\Support\Carbon;
+
+use Illuminate\Support\Facades\Http;
+
 
 class ViewReservation extends ViewRecord
 {
@@ -312,11 +316,33 @@ class ViewReservation extends ViewRecord
                         $query->save();
                     }
 
-                    Notification::make()
-                        ->success()
-                        ->title('Payment Success')
-                        ->body('Payment has been successfully recorded.')
-                        ->send();
+                    $getAmount = Payment::where('reservation_id', $record->id)
+                        ->where('payment_status', '!=', 'void')
+                        ->sum('amount');
+
+                    if ($getAmount == $record->booking_fee) {
+                        $response = Http::asForm()->post(route('payment.confirm', ['id' => $record->id]));
+
+                        if ($response->successful()) {
+                            Notification::make()
+                                ->success()
+                                ->title('Payment Success')
+                                ->body('Full payment has been successfully recorded and SMS sent.')
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->danger()
+                                ->title('Payment Error')
+                                ->body('Failed to confirm payment and send SMS.')
+                                ->send();
+                        }
+                    } else {
+                        Notification::make()
+                            ->success()
+                            ->title('Payment Success')
+                            ->body('Payment has been successfully recorded.')
+                            ->send();
+                    }
 
                     $this->redirect($this->getResource()::getUrl('view', ['record' => $record->id]));
                 })
