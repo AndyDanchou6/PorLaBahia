@@ -27,6 +27,8 @@ class ReservationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
+    protected static $dateFormat = 'M d, Y h:i a';
+
     public static function getNavigationBadge(): ?string
     {
         $count = Reservation::whereNull('deleted_at')
@@ -51,10 +53,10 @@ class ReservationResource extends Resource
             ->schema([
                 Infolists\Components\TextEntry::make('check_in_date')
                     ->color('primary')
-                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_in_date)->format('M d, Y')),
+                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_in_date)->addHours(11)->format(self::$dateFormat)),
                 Infolists\Components\TextEntry::make('check_out_date')
                     ->color('primary')
-                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_out_date)->format('M d, Y')),
+                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_out_date)->addHours(9)->format(self::$dateFormat)),
                 Infolists\Components\TextEntry::make('accommodation.room_name')
                     ->color('primary'),
                 Infolists\Components\TextEntry::make('guest.full_name')
@@ -115,7 +117,7 @@ class ReservationResource extends Resource
                     }),
 
                 Infolists\Components\TextEntry::make('on_hold_expiration_date')
-                    ->formatStateUsing(fn($record) => Carbon::parse($record->on_hold_expiration_date)->format('M d, Y h:i a'))
+                    ->formatStateUsing(fn($record) => Carbon::parse($record->on_hold_expiration_date)->format(self::$dateFormat))
                     ->color('danger')
                     ->visible(fn($record) => $record->on_hold_expiration_date && $record->booking_status == 'on_hold' || $record->booking_status == 'pending'),
 
@@ -146,14 +148,23 @@ class ReservationResource extends Resource
                 TextColumn::make('guest_id')
                     ->label('Guest Name')
                     ->formatStateUsing(function ($record) {
-                        return $record->guest->first_name . ' ' . $record->guest->last_name;
+                        return $record->guest->full_name;
+                    })
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('guest', function ($guestQuery) use ($search) {
+                            $guestQuery->where('first_name', 'like', '%' . $search . '%')
+                                ->orWhere('last_name', 'like', '%' . $search . '%');
+                        });
                     }),
+
                 TextColumn::make('check_in_date')
-                    ->date()
+                    ->dateTime()
+                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_in_date)->addHours(11)->format(self::$dateFormat))
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('check_out_date')
-                    ->date()
+                    ->dateTime()
+                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_out_date)->addHours(9)->format(self::$dateFormat))
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('booking_status')
@@ -195,11 +206,11 @@ class ReservationResource extends Resource
                         return $query
                             ->when(
                                 $data['checked_in'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('check_in_date', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('check_in_date', '>=', Carbon::parse($date)->toDateString()),
                             )
                             ->when(
                                 $data['checked_out'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('check_out_date', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('check_out_date', '<=', Carbon::parse($date)->toDateString()),
                             );
                     }),
                 SelectFilter::make('payment_type')
@@ -350,8 +361,11 @@ class ReservationResource extends Resource
                 $set('booking_fee', $bookingFee);
                 $set('accommodation_id', $bookingInfo[0]);
                 $set('accommodation_name', $accommodation->room_name);
-                $set('check_in_date', $checkInDate->format('M d, Y'));
-                $set('check_out_date', $checkOutDate->format('M d, Y'));
+                $set('check_in_date', $checkInDate);
+                $set('check_out_date', $checkOutDate);
+                $set('checkInDateDisplay', $checkInDate->format('M d, Y'));
+                $set('checkOutDateDisplay', $checkOutDate->format('M d, Y'));
+                // dd($checkInDate->diffInDays($checkOutDate));
             })
             ->disableOptionWhen(fn($value) => $value == null)
             ->required(fn($operation) => $operation === 'create')
@@ -379,23 +393,19 @@ class ReservationResource extends Resource
         return
             Forms\Components\Section::make()
             ->schema([
-                Forms\Components\TextInput::make('check_in_date')
-                    ->formatStateUsing(function ($record) {
-                        if ($record) {
-                            return Carbon::parse($record->check_in_date)->format('M d, Y');
-                        }
-                    })
-                    ->readOnly(),
-
-                Forms\Components\TextInput::make('check_out_date')
-                    ->formatStateUsing(function ($record) {
-                        if ($record) {
-                            return Carbon::parse($record->check_out_date)->format('M d, Y');
-                        }
-                    })
-                    ->readOnly(),
-
+                // Hidden fields
+                Forms\Components\Hidden::make('check_in_date'),
+                Forms\Components\Hidden::make('check_out_date'),
                 Forms\Components\Hidden::make('accommodation_id'),
+                Forms\Components\Hidden::make('guest_id'),
+
+                Forms\Components\TextInput::make('checkInDateDisplay')
+                    ->suffix('11 am')
+                    ->readOnly(),
+                Forms\Components\TextInput::make('checkOutDateDisplay')
+                    ->suffix('9 am')
+                    ->readOnly(),
+
                 Forms\Components\TextInput::make('accommodation_name')
                     ->label('Accommodation')
                     ->formatStateUsing(function ($get) {
@@ -407,7 +417,6 @@ class ReservationResource extends Resource
                     })
                     ->readOnly(),
 
-                Forms\Components\Hidden::make('guest_id'),
                 Forms\Components\TextInput::make('guest_name')
                     ->label('Guest')
                     ->formatStateUsing(function ($get) {
@@ -435,7 +444,7 @@ class ReservationResource extends Resource
     public static function getHiddenField()
     {
         return
-            \Filament\Forms\Components\Section::make()
+            \Filament\Forms\Components\Group::make()
             ->schema([
                 Forms\Components\Hidden::make('booking_status')
                     ->default('on_hold'),

@@ -25,8 +25,6 @@ class Reservation extends Model
     ];
 
     protected $casts = [
-        'check_in_date' => 'date',
-        'check_out_date' => 'date',
         'booking_fee' => 'decimal:2',
     ];
 
@@ -151,7 +149,7 @@ class Reservation extends Model
             ];
         }
 
-        // dd($availableAccommodation);
+        // dd($bookings);
         return $availableAccommodation;
     }
 }

@@ -3,13 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
@@ -46,13 +49,19 @@ class User extends Authenticatable
         'role' => 'integer'
     ];
 
-    public function isAdmin() {
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
+    }
+
+    public function isAdmin()
+    {
         return $this->role === 1;
     }
 
     public function roleLabel(): string
     {
-        switch($this->role) {
+        switch ($this->role) {
             case 1:
                 return 'Admin';
             case 0:
