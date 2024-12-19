@@ -256,27 +256,13 @@ class ReservationResource extends Resource
     {
         return Forms\Components\Section::make()
             ->schema([
-                Forms\Components\Select::make('guest')
-                    ->options(fn() => \App\Models\GuestInfo::all()->mapWithKeys(fn($guest) => [
-                        $guest->id => $guest->first_name . ' ' . $guest->last_name,
-                    ]))
-                    ->required(fn($operation) => $operation === 'create')
-                    ->afterStateUpdated(function ($state, $set) {
-                        $guest = GuestInfo::find($state);
-
-                        $set('guest_id', $state);
-                        $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
-                    })
-                    ->hidden(fn($operation) => $operation === 'edit')
-                    ->columnSpanFull(),
-
                 Forms\Components\DatePicker::make('check_in_date_picker')
                     ->label('Select check in date')
                     ->required(fn($operation) => $operation === 'create')
                     ->date()
                     ->minDate(today())
                     ->live(debounce: 100)
-                    ->native(false)
+                    // ->native(false)
                     ->afterStateUpdated(function ($set, $get) {
                         if ($get('check_out_date_picker')) {
                             return $set('check_out_date_picker', null);
@@ -298,8 +284,45 @@ class ReservationResource extends Resource
                         }
                     })
                     ->live(debounce: 100)
-                    ->native(false)
+                    // ->native(false)
                     ->visible(fn($get) => $get('check_in_date_picker')),
+
+                    Forms\Components\Select::make('guest')
+                    ->options(fn() => \App\Models\GuestInfo::all()->mapWithKeys(fn($guest) => [
+                        $guest->id => $guest->first_name . ' ' . $guest->last_name,
+                    ]))
+                    ->createOptionForm([
+                        \App\Filament\Resources\GuestInfoResource::getNewGuestForm(),
+                    ])
+                    ->createOptionUsing(function (array $data): int {
+                        $guestId = \App\Models\GuestInfo::create([
+                            'first_name' => $data['first_name'],
+                            'last_name' => $data['last_name'],
+                            'contact_no' => $data['contact_no'],
+                            'email' => $data['email'],
+                            'address' => $data['address'],
+                            'fb_name' => $data['fb_name'],
+                        ])
+                            ->getKey();
+
+                        \Filament\Notifications\Notification::make()
+                            ->success()
+                            ->title('New Guest Registered!')
+                            ->body($data['first_name'] . ' ' . $data['last_name'] . ' has registered')
+                            ->send();
+
+                        return $guestId;
+                    })
+                    ->required(fn($operation) => $operation === 'create')
+                    ->afterStateUpdated(function ($state, $set) {
+                        $guest = GuestInfo::find($state);
+
+                        $set('guest_id', $state);
+                        $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
+                    })
+                    ->hidden(fn($operation) => $operation === 'edit')
+                    ->visible(fn($get) => $get('check_in_date_picker') && $get('check_out_date_picker'))
+                    ->columnSpanFull(),
             ])
             ->columns(2)
             ->columnSpan(2);
