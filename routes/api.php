@@ -4,6 +4,7 @@ use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\PaymentConfimationController;
+use App\Http\Controllers\TestimonialController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,3 +26,4 @@ Route::get('/amenities', [AmenityController::class, 'getAmenities']);
 Route::get('/accommodations', [AccommodationController::class, 'getAccommodations']);
 Route::post('/confirmPayment/{id}', [PaymentConfimationController::class, 'confirm'])->name('payment.confirm');
 Route::get('/galleries', [GalleryController::class, 'getGalleries']);
+Route::get('/testimonials', [TestimonialController::class, 'getTestimonials']);
