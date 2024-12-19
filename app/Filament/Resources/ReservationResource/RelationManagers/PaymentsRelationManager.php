@@ -164,6 +164,18 @@ class PaymentsRelationManager extends RelationManager
                         $record->payment_status = 'void';
                         $record->save();
 
+                        $payments = Payment::where('payment_status', 'paid')
+                            ->where('reservation_id', $record->reservation_id)
+                            ->get();
+
+                        if ($payments->count() == 0) {
+                            $record->reservation->booking_status = 'on_hold';
+                        } else {
+                            $record->reservation->booking_status = 'pending';
+                        }
+
+                        $record->reservation->save();
+
                         Notification::make()
                             ->title('Payment Voided Successfully')
                             ->body('Payment record has been marked as void.')
