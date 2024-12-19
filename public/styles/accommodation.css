@@ -129,7 +129,6 @@ span{
     cursor: pointer;
 }
 .leftArrow, .rightArrow{
-    position: absolute;
     width: 30px;
     height: 30px;
     cursor: pointer;
@@ -208,7 +207,6 @@ span{
     border-radius: 20px;
 }
 .leftArrow2, .rightArrow2{
-    position: absolute;
     width: 30px;
     height: 30px;
     cursor: pointer;
@@ -227,8 +225,6 @@ span{
     margin-left: 50px;
 }
 .leftArrow3, .rightArrow3{
-    position: absolute;
-    top: 73%;
     width: 30px;
     height: 30px;
     cursor: pointer;
@@ -278,8 +274,6 @@ span{
     margin-right: 50px;
 }
 .leftArrow4, .rightArrow4{
-    position: absolute;
-    top: 93.5%;
     width: 30px;
     height: 30px;
     cursor: pointer;
