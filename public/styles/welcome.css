@@ -561,7 +561,7 @@ span {
     color: #ffffff;
     padding: 0;
 }
-.buttons{
+.priceBookContainer{
     display: flex;
     justify-content:space-around;
     max-height: 30px;

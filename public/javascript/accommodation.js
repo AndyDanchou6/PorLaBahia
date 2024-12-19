@@ -7,4 +7,21 @@ $(document).ready(function () {
             header.classList.remove('scrolled');
         }
     });
+    $.ajax({
+        url: 'api/accommodations',
+        method: 'GET',
+        success: function(accommodation){
+            if(accommodation.length > 0){
+                const firstAccommodation = accommodation[0];
+                const accommodationList = $('.accommodation1Image');
+                accommodationList.html('');
+                
+                    const accommodationOne = `
+                    <div class="accommodation1Image">
+                        <div class="imageContainer"><img src="/storage/${firstAccommodation.main_image}" alt=""></div>
+                    </div> `;
+                accommodationList.append(accommodationOne);
+            }
+        }
+    });
 });
