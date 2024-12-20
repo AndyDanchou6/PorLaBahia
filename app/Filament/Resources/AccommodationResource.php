@@ -106,7 +106,7 @@ class AccommodationResource extends Resource
         return $table
             ->columns([
                 ImageColumn::make('main_image')
-                ->square(),
+                    ->square(),
                 TextColumn::make('room_name')
                     ->sortable()
                     ->searchable(),
@@ -157,8 +157,8 @@ class AccommodationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\AccommodationPromoRelationManager::class,
             RelationManagers\GalleriesRelationManager::class,
+            RelationManagers\AccommodationPromoRelationManager::class,
         ];
     }
 

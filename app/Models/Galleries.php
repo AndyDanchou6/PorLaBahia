@@ -13,11 +13,12 @@ class Galleries extends Model
     protected $fillable = [
         'image',
         'galleries_type',
-        'galleries_id'
+        'galleries_id',
+        'is_featured'
     ];
 
     protected $casts = [
-        'image' => 'json'
+        'is_featured' => 'boolean',
     ];
 
     public function gallery()
@@ -58,5 +59,12 @@ class Galleries extends Model
         }
 
         return null;
+    }
+
+    public function setImagesAttribute($value)
+    {
+        $this->attributes['image'] = json_encode(
+            collect($value)->pluck('image')->toArray()
+        );
     }
 }
