@@ -26,6 +26,8 @@ class Reservation extends Model
 
     protected $casts = [
         'booking_fee' => 'decimal:2',
+        'check_in_date' => 'datetime',
+        'check_out_date' => 'datetime',
     ];
 
     public function getFullNameAttribute()
@@ -130,7 +132,14 @@ class Reservation extends Model
                 $bookedCheckOut = Carbon::parse($booked->check_out_date);
 
                 if ($record != null && $booked->id === $record) {
-                    $availableAccommodation[$accommodation->id . '/' . $nextCheckIn . '/' . $bookedCheckOut] = $accommodation->room_name . ' available on ' . $nextCheckIn->format($dateFormat) . ' to ' . $bookedCheckOut->format($dateFormat);
+                    if ($bookedCheckOut > $checkOut) {
+                        $availableAccommodation[$accommodation->id . '/' . $nextCheckIn . '/' . $checkOut] = $accommodation->room_name . ' available on ' . $nextCheckIn->format($dateFormat) . ' to ' . $checkOut->format($dateFormat);
+                        $nextCheckIn = $checkOut;
+
+                        continue;
+                    } else {
+                        $availableAccommodation[$accommodation->id . '/' . $nextCheckIn . '/' . $bookedCheckOut] = $accommodation->room_name . ' available on ' . $nextCheckIn->format($dateFormat) . ' to ' . $bookedCheckOut->format($dateFormat);
+                    }
                 } elseif ($nextCheckIn->lt($bookedCheckIn)) {
                     $availableAccommodation[$accommodation->id . '/' . $nextCheckIn . '/' . $bookedCheckIn] = $accommodation->room_name . ' available on ' . $nextCheckIn->format($dateFormat) . ' to ' . $bookedCheckIn->format($dateFormat);
                 }

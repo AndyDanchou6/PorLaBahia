@@ -329,13 +329,14 @@ class ReservationResource extends Resource
 
                         return $guestId;
                     })
-                    ->required(fn($operation) => $operation === 'create')
                     ->afterStateUpdated(function ($state, $set) {
                         $guest = GuestInfo::find($state);
 
                         $set('guest_id', $state);
                         $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
                     })
+                    ->required(fn($operation) => $operation === 'create')
+                    ->selectablePlaceholder(false)
                     ->hidden(fn($operation) => $operation === 'edit')
                     ->visible(fn($get) => $get('check_in_date_picker') && $get('check_out_date_picker'))
                     ->columnSpanFull(),
@@ -400,9 +401,11 @@ class ReservationResource extends Resource
                 Forms\Components\Hidden::make('guest_id'),
 
                 Forms\Components\TextInput::make('checkInDateDisplay')
+                    ->formatStateUsing(fn($record) => $record ? $record->check_in_date->format('M d, Y') : null)
                     ->suffix('11 am')
                     ->readOnly(),
                 Forms\Components\TextInput::make('checkOutDateDisplay')
+                    ->formatStateUsing(fn($record) => $record ? $record->check_out_date->format('M d, Y') : null)
                     ->suffix('9 am')
                     ->readOnly(),
 

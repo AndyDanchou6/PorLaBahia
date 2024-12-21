@@ -16,7 +16,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\RawJs;
- 
+
 use Illuminate\Support\Carbon;
 
 use Illuminate\Support\Facades\Http;
@@ -63,12 +63,10 @@ class ViewReservation extends ViewRecord
 
                                     $guest_id = $this->getRecord()->guest_id;
                                     $guest = GuestInfo::find($guest_id);
-                                    $credits = $guest->guestCredit->first();
+                                    $credits = $guest->guestCredit->sum('amount');
 
                                     if ($credits) {
-                                        $creditAmount = $credits->amount;
-
-                                        if ($creditAmount >= $get('amount')) {
+                                        if ($credits >= $get('amount')) {
                                             return [
                                                 'cash' => 'Cash',
                                                 'GCash' => 'GCash',
@@ -141,23 +139,15 @@ class ViewReservation extends ViewRecord
 
                                                     $guest_id = $this->getRecord()->guest_id;
                                                     $guest = GuestInfo::find($guest_id);
-                                                    $credits = $guest->guestCredit->first();
+                                                    $credits = $guest->guestCredit->sum('amount');
 
                                                     if ($credits) {
-                                                        $creditAmount = $credits->amount;
-
-                                                        if ($creditAmount >= $get('amount')) {
-                                                            return [
-                                                                'cash' => 'Cash',
-                                                                'GCash' => 'GCash',
-                                                                'credits' => 'Credits',
-                                                            ];
-                                                        } else {
-                                                            return [
-                                                                'cash' => 'Cash',
-                                                                'GCash' => 'GCash',
-                                                            ];
-                                                        }
+                                                        return [
+                                                            'cash' => 'Cash',
+                                                            'GCash' => 'GCash',
+                                                            'xendit' => 'Xendit',
+                                                            'credits' => 'Credits',
+                                                        ];
                                                     } else {
                                                         return [
                                                             'cash' => 'Cash',
@@ -314,6 +304,48 @@ class ViewReservation extends ViewRecord
                         $record->booking_status = 'active';
                         $record->save();
                         $query->save();
+
+                        // if ($data['payment_method'] == 'credits') {
+                        //     $guestCredits = GuestCredit::where('guest_id', $record->guest_id)
+                        //         ->where('is_redeemed', false)
+                        //         ->where('status', 'active')
+                        //         ->get();
+
+                        //     $payable = $data['amount'];
+
+                        //     foreach ($guestCredits as $credit) {
+                        //         $payable -= $credit->amount;
+
+                        //         $credit->update([
+                        //             'is_redeemed' => true,
+                        //             'date_redeemed' => Carbon::now(),
+                        //             'status' => 'inactive',
+                        //         ]);
+
+                        //         $credit->save();
+
+                        //         if ($payable == 0) {
+                        //             break;
+                        //         } elseif ($payable < 0) {
+                        //             $bookingSuffix = substr($record->booking_reference_no, 13);
+                        //             $payable = abs($payable);
+
+                        //             $newCredit = GuestCredit::create([
+                        //                 'guest_id' => $record->guest_id,
+                        //                 'coupon' => GuestCredit::generateCoupon($bookingSuffix),
+                        //                 'amount' => $payable,
+                        //                 'is_redeemed' => false,
+                        //                 'expiration_date' => Carbon::now()->addYear(),
+                        //                 'status' => 'active',
+                        //             ]);
+
+                        //             $newCredit->save();
+
+                        //             break;
+                        //         }
+                        //     }
+                        // dd($guestCredits[0]->amount - $data['amount']);
+                        // }
                     }
 
                     $getAmount = Payment::where('reservation_id', $record->id)
