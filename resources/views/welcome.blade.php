@@ -154,7 +154,7 @@
                 </div>
                 <div class="choose-container"> 
                     <h4>Ideal Location for Every Occasion</h4>
-                    <p>Whether it's a family getaway, a romantic escape, or a celebration, our resort offers the perfect backdrop for your special moments.</p>
+                    <p>Whether it's a family getaway or a celebration, we offers the perfect backdrop for your moments.</p>
                 </div>
                 <div class="choose-container"> 
                     <h4>Memories Made by the Waves</h4>
@@ -171,24 +171,10 @@
             <div class="testimonial">
                 <div class="testimonial-container">
                     <div class="profile-name">
-                        <img src="/images/image1.jpg" alt="">
-                        <h6 class="name">Tonet Pacumbaba</h6>
+                        <img src=" " alt="">
+                        <h6 class="name"> </h6>
                     </div>
-                    <p>Tonet ngaubs ingon anin taa Lorem Ipsum passages, and more recently with desktop publishing software Lorem Ipsum passages, a publishing software</p>
-                </div>
-                <div class="testimonial-container">
-                    <div class="profile-name">
-                        <img src="/images/image1.jpg" alt="">
-                        <h6 class="name">Rico Baroto</h6>
-                    </div>
-                    <p>Tonet ngaubs ingon anin taa Lorem Ipsum passages, and more recently with desktop publishing software Lorem Ipsum passages, a publishing software</p>
-                </div>
-                <div class="testimonial-container">
-                    <div class="profile-name">
-                        <img src="/images/image1.jpg" alt="">
-                        <h6 class="name">Malie Batang Bronze</h6>
-                    </div>
-                    <p>Tonet ngaubs ingon anin taa Lorem Ipsum passages, and more recently with desktop publishing software Lorem Ipsum passages, a publishing software</p>
+                    <p> </p>
                 </div>
             </div>
    </section>

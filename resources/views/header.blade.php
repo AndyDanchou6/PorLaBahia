@@ -16,12 +16,12 @@
             <img src="{{ asset('images/logo.png') }}" alt="Logo">
         </div>
     <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/about">About Us</a></li>
-        <li><a href="/accommodation">Accommodations</a></li>
-        <li><a href="">Amenities</a></li>
-        <li><a href="">Restaurant Menu</a></li>
-        <li><a href="">Contact Us</a></li>
+        <li><a href="/home" class="nav-link">Home</a></li>
+        <li><a href="/about" class="nav-link">About Us</a></li>
+        <li><a href="/accommodation" class="nav-link">Accommodations</a></li>
+        <li><a href="/amenities" class="nav-link">Amenities</a></li>
+        <li><a href="/restaurant" class="nav-link">Restaurant Menu</a></li>
+        <li><a href="/contact" class="nav-link">Contact Us</a></li>
     </ul>
     <button class="booknow"><img src="/images/Icon.svg" alt="" class="buttonImage"> Book Now</button>
 </header> 

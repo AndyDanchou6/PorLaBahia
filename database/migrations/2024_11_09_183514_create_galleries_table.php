@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('galleries', function (Blueprint $table) {
             $table->id();
-            $table->json('image');
+            $table->string('image');
             $table->morphs('galleries');
+            $table->boolean('is_featured')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

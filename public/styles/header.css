@@ -36,7 +36,7 @@ ul {
     margin: 0;
     padding: 0;
 }
-li a {
+.nav-link {
     text-decoration: none;
     padding: 8px;
     font-size: 0.8rem;
@@ -44,9 +44,13 @@ li a {
     margin: 15px;
     transition: color 0.3s ease;
 }
-li a:hover {
+.nav-link:hover {
     color: var(--primary-color);
     transition: .7s ease;
+}
+.nav-link.active{
+    color:var(--primary-color);
+    font-weight: 700;
 }
 .booknow {
     padding: 10px;
