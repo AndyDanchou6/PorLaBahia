@@ -31,51 +31,47 @@
 
                     <div class="accommodationLists">
                         <div class="accommodation1Details">
-                            <h1>Paulo House</h1>
+                            <h1> </h1>
                             <i class="fa fa-bed"> </i>
-                            <p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                            <p> </p>
                             <hr>
                             <div class="price-book1">
                                 <div class="accommodationPrice1">₱ </div>
-                                <button class="accommodationBook1"> <img src="/images/Icon.svg" alt=""> Book This</button>
+                                <button class="accommodationBook1"> <img src="/images/icon.svg" alt=""> Book This</button>
                             </div>
-                            <div class="accommodationSlider">
-                            <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow">
-                                <div class="sliderImage"> <img src="/images/image1.jpg" alt=""> </div>
-                                <div class="sliderImage"> <img src="/images/image2.jpg" alt=""> </div>
-                                <div class="sliderImage"> <img src="/images/image3.jpg" alt=""> </div>
-                            <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow">
+                            <div class="accommodationSlider1">
+                                <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow1">
+                                    <div class="sliderImage1"> <img src="" alt=""> </div>
+                                <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow1">
                             </div>
                         </div>
                         <div class="accommodation1Image">
-                            <div class="imageContainer"><img src="/images/porlabahia.jpg" alt=""></div>
+                            <div class="image1Container"><img src=" " alt=""></div>
                         </div>
 
                         <div class="accommodation2Image">
-                            <div class="image2Container"><img src="/images/home-grid2.jpg" alt=""></div>
+                            <div class="image2Container"><img src=" " alt=""></div>
                         </div>
                         <div class="accommodation2Details">
-                            <h1> Adrian House </h1>
+                            <h1> </h1>
                             <i class="fa fa-bed"> </i>
-                            <p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                            <p> </p>
                             <hr>
                             <div class="price-book2">
                                 <div class="accommodationPrice2">₱ </div>
-                                <button class="accommodationBook2"> <img src="/images/Icon.svg" alt=""> Book This</button>
+                                <button class="accommodationBook2"> <img src="/images/icon.svg" alt=""> Book This</button>
                             </div>
                             <div class="accommodationSlider2">
                             <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow2">
-                                <div class="sliderImage2"> <img src="/images/porlabahia.jpg" alt=""> </div>
-                                <div class="sliderImage2"> <img src="/images/image2.jpg" alt=""> </div>
-                                <div class="sliderImage2"> <img src="/images/home-grid3.jpg" alt=""> </div>
+                                <div class="sliderImage2"> <img src=" " alt=""> </div>
                             <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow2">
                             </div>   
-                        </div> 
+                        </div>  
 
                         <div class="accommodation3Details">
-                            <h1> Dominic House </h1>
+                            <h1> </h1>
                             <i class="fa fa-bed"> </i>
-                            <p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                            <p> </p>
                             <hr>
                             <div class="price-book3">
                                 <div class="accommodationPrice3">₱ </div>
@@ -83,39 +79,52 @@
                             </div>
                             <div class="accommodationSlider3">
                             <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow3">
-                                <div class="sliderImage3"> <img src="/images/porlabahia.jpg" alt=""> </div>
-                                <div class="sliderImage3"> <img src="/images/image2.jpg" alt=""> </div>
-                                <div class="sliderImage3"> <img src="/images/home-grid3.jpg" alt=""> </div>
+                                <div class="sliderImage3"> 
+                                    <img src="" alt=""> 
+                            
+                            </div>
                             <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow3">
                             </div>   
                         </div> 
                         <div class="accommodation3Image">
-                            <div class="image3Container"><img src="/images/home-grid3.jpg" alt=""></div>
+                            <div class="image3Container"><img src="" alt=""></div>
                         </div>
  
                         <div class="accommodation4Image">
                             <div class="image4Container"><img src="/images/image1.jpg" alt=""></div>
                         </div>
                         <div class="accommodation4Details">
-                            <h1> Paula Ella House </h1>
+                            <h1>  </h1>
                             <i class="fa fa-bed"> </i>
-                            <p>Lorem Ipsum has been the industry's standard dummy text ever since when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                            <p> </p>
                             <hr>
                             <div class="price-book4">
                                 <div class="accommodationPrice4">₱ </div>
                                 <button class="accommodationBook4"> <img src="/images/Icon.svg" alt=""> Book This</button>
-                            </div>
+                            </div> 
                             <div class="accommodationSlider4">
                             <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow4">
-                                <div class="sliderImage4"> <img src="/images/porlabahia.jpg" alt=""> </div>
-                                <div class="sliderImage4"> <img src="/images/image2.jpg" alt=""> </div>
-                                <div class="sliderImage4"> <img src="/images/home-grid3.jpg" alt=""> </div>
-                            <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow4">
+                                <div class="sliderImage4"> <img src="" alt=""> </div>
+                                <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow4">
                             </div>   
                         </div>
-
+                        <div class="accommodation5Details">
+                            <h1> </h1>
+                            <i class="fa fa-bed"> </i>
+                            <p> </p>
+                            <hr>
+                            <div class="price-book5">
+                                <div class="accommodationPrice5">₱ </div>
+                                <button class="accommodationBook5"> <img src="/images/Icon.svg" alt=""> Book This</button>
+                            </div> 
+                            <div class="accommodationSlider5">
+                            <img src="/images/circle-arrow-right-02.svg" alt="" class="leftArrow5">
+                                <div class="sliderImage5"> <img src="" alt=""> </div>
+                               <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow5">
+                            </div>   
+                        </div>
                     </div>
-                </div>
+                </div> 
             </main>
         </div>
     </div>

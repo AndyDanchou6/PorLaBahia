@@ -12,4 +12,9 @@ class AmenityController extends Controller
         $amenities = Amenities::all();
         return response()->json($amenities);
     }
+
+    public function viewAmenities()
+    {
+        return view('amenities');
+    }
 }

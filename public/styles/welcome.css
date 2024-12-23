@@ -25,6 +25,7 @@ main .title {
     font-size: 2rem;
     z-index: 2;
     font-weight: 500;
+    /* width:700px; */
 }
 .tagline {
     position: absolute;
@@ -86,8 +87,8 @@ span {
 .choose-date a{
     font-family: "Poppins", cursive;
     text-decoration: none;
-    font-size: .7rem;
-    color: rgb(0, 0, 0);
+    font-size: 1rem;
+    color: rgb(30, 30, 30);
 }
 .check-availability{
     display: flex;
@@ -119,6 +120,7 @@ span {
     height: 100vh;
     overflow: hidden;
     width: 600px;
+    margin: 30px;
 }
 .about-text h1 {
     font-size: 2.7rem;
@@ -252,7 +254,7 @@ span {
 .resort{
     position: relative;
     width: 90%;
-    box-shadow: #bfbfbf 2px 5px 30px;
+    box-shadow: #dfdfdf 2px 5px 30px;
     border-radius: 20px;
     margin: 0;
     padding: 30px;
@@ -290,24 +292,16 @@ span {
     font-weight: 300;
 }
 .arrowRight, .arrowLeft{
-    width: 30px;
-    height: auto;
+    width: 50px;
+    height: 50px; 
     position: absolute;
-    transform: translateY(-50%);
-    cursor: pointer;
-    top: 20%;
-    transition: .5s ease;
     cursor: pointer;
 }
 .arrowLeft{
-    right:10%;
-    width: 40px;
-    height: auto;
+    left: 85%;
 }
 .arrowRight{
     right: 6%;
-    width: 40px;
-    height: auto;
 }
 .amenities-boxes{
     display: flex;
@@ -319,7 +313,7 @@ span {
 .amenities-box{
     width:280px;
     height: 350px;
-    box-shadow: #c3c3c3 5px 5px 20px;
+    box-shadow: #e7e7e7 5px 5px 20px;
     padding: 20px;
     border-radius: 10px;
     margin: 20px;
@@ -334,9 +328,10 @@ span {
 .amenities-box h3{
     color: #3b3b3b;
     overflow: hidden;
+    font-size: 1.2em;
 }
 .amenities-box p{
-    font-size: .8rem;
+    font-size: 1em;
     text-align: justify;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -398,6 +393,7 @@ span {
     color: #5e5d5d;
     font-weight: 300;
     line-height: 20px;
+    font-size: 1rem;
 }
 .resort-houses-text h2{
     font-weight: 900;
@@ -418,14 +414,11 @@ span {
     justify-content: space-between;
     align-items: center;
 }
-.arrows{
-    margin: 5px;
-}
 .arrowL, .arrowR{
-    width: 25px;
-    height: auto;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
-}
+} 
 .other-houses-container h2{
     margin: 10px;
     font-size: 1.2rem;
@@ -440,14 +433,14 @@ span {
 .house1{
     width: 210px;
     height: 270px;
-    transition: all 0.6s ease;
+    transition: all 0.8s ease;
     cursor: pointer;
     padding: 10px;
     border-radius: 15px;
 }
 .house1 h4{
     margin: 0;
-    font-size: .8rem;
+    font-size: 1rem;
     font-weight: 600;
     color: #484848;
 }
@@ -456,7 +449,7 @@ span {
     font-size: .8rem;
 }
 .house1 p{
-    font-size: .7rem;
+    font-size: .9rem;
     text-align: justify;
     font-family: "Poppins", sans-serif;
     line-height: 1.1;
@@ -473,6 +466,19 @@ span {
 .house1:hover{
     background-color: var(--primary-color);
 }
+.house1.active{
+    background-color: var(--primary-color);
+}
+.house1.active h6{
+    color: var(--secondary-color);
+}
+.house1.active .fa-bed{
+    color: var(--secondary-color);
+}
+.house1.active .checkItButton{
+    background-color: var(--secondary-color);
+}
+
 .house1:hover h6{
     color: var(--secondary-color);
 }
@@ -535,7 +541,7 @@ span {
     margin: 0;
 }
 .resort-houses-image p {
-    font-size: .9rem;
+    font-size: 1rem;
     text-align: justify;
     width: 100%;
     line-height: 1.3;
@@ -654,118 +660,43 @@ video {
     background-color:rgb(56, 56, 15);
     border-radius: 50%;
 }
-.choose-us{
+.testimonials{
     position: absolute;
     top: 565%;
     right: 0;
-    height: 120vh;
+    height: 90vh;
     width: 100%;
-    background-repeat: no-repeat;
 }
-.choose-us-title{
+.testimonialsTitle{
     display: flex;
     justify-content: center;
-    align-content: center;
+    align-items: center;
     gap: 20px;
     margin: 20px;
 }
-.choose-us h1{
-    font-size: 2.8rem;
-    font-family: "Pacifico", cursive;
-    margin: 10px;
-    font-weight: 400;
-    text-shadow: #a5a5a5 2px 3px 4px;
-}
-.choose-us h3{
-    text-align: center;
-    color: #3b3b3b;
-    letter-spacing: 5px;
-    font-size: 1rem;
-    margin: 0;
-    text-shadow: #727272 4px 4px 10px;
-}
-.choose-slider{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content:center;
-    align-items: center;
-    width: 80%;
-    margin: auto;
-
-}
-.red-arrowLeft, .red-arrowRight{
-    width: 40px;
-    height: auto;
-    position: absolute;
-    top: 30%;
-    cursor: pointer;
-}
-.red-arrowLeft{
-    left: 7%;
-}
-.red-arrowRight{
-    right: 7%;
-}
-.choose-container{
-    width: 250px;
-    background-color: #eaeaea;
-    height: 150px;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 20px;
-}
-.choose-container h4{
-    font-size: .8rem;
+.testimonialsTitle h1{
+    font-size: 2rem;
     color: #323232;
-    font-weight: 900;
+    font-family: "Pacifico", cursive;
 }
-.choose-container p{
-    color: #565656;
-    font-size: .7rem;
-    line-height: 1.5;
-    font-weight: 600;
-}
-.choose-us h5{
-    font-size: 1rem;
-    letter-spacing: 7px;
-    text-align: center;
-    color: #2e2e2e;
-    font-weight: 900;
-    margin: 3%;
-}
-.testimonial{
+.testimonialSlider{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     gap: 15px;
-}
-.testimonial-bg{
-    position: absolute;
-    top:-20%;
-    width:100%;
-    height: 80%;
-    z-index: -1;
-    opacity: 0.1;
-}
-.choose-bg{
-    position: absolute;
-    width:500px;
-    height: 400px;
-    z-index: -1;
-    opacity: 0.1;
-}
-.coconut{
-    left: -10%;
-}
-.board{
-    right: -10%;
+    width: 80%;
+    height: 500px;
+    margin: auto;
 }
 .testimonial-container{
     width: 350px;
     border-radius: 15px;
-    box-shadow: #d4d4d4 2px 3px 10px;
-    height: 250px;
+    box-shadow: #efefef 2px 3px 10px;
+    height: 350px;
+    overflow: hidden;
+    margin: 0;
+    transition: all 0.7s ease;
 }
 .profile-name{
     display: flex;
@@ -773,35 +704,57 @@ video {
     align-items: center;
     height: 70px;
     margin: 20px;
+    gap: 20px;
+}
+.profileimgContainer{
+    width: 70px;
+    height: 70px;
 }
 .profile-name img{
-    width: 80px;
+    width: 70px;
     height: 70px;
+    object-fit: cover;
     border-radius: 50%;
-    margin: 5%;
 }
 .testimonial-container p{
     width: 80%;
-    font-size: .8rem;
+    font-size: 1rem;
     color: #323232;
     line-height: 1.2;
-    text-align: justify;
-    margin: 8%;
+    text-align: left;
+    margin: 30px;
+    display: -webkit-box;
+    -webkit-line-clamp: 10;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
 }
 .name{
-    font-size: 1rem;
+    font-size: 1.1rem;
+}
+.redArrowLeft, .redArrowRight{
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 55%;
+    cursor: pointer;
+}
+.redArrowLeft{
+    left: 5%;
+}
+.redArrowRight{
+    right: 5%;
 }
 .location{
     position: absolute;
-    top: 685%;
+    top: 655%;
     width: 100%;
     height: 100vh;
-}
-.location-image{
-    position: relative;
-    width: 100%;
-    height: 80%;
-    top: 10%;
+    background-color: #b4b4b4;
+    background-image: url('/images/locationImage.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 .location div img{
     width: 100%;
@@ -810,10 +763,10 @@ video {
 }
 .get-in-touch{
     position: absolute;
-    top: 0;
+    top: 5%;
     background-color: #efefef;
-    width: 40%;
-    height: 100%;
+    width: 500px;
+    height:550px ;
     transform: translateX(30%);
     border-radius: 20px;
     box-shadow: #b4b4b4 1px 1px 7px;
@@ -841,11 +794,11 @@ video {
 .get-in-touch h4{
     font-size: .7rem;
     letter-spacing: 3px;
-    color: #5b5b5b;
+    color: #868686;
     text-align: center;
 }
 form {
-    padding: 20px;
+    padding: 10px;
     margin: 10px;
     display: flex;
     flex-wrap: wrap;
@@ -855,9 +808,9 @@ form {
 }
 .input-container {
     background-color: #ffffff;
-    padding: 5px;
+    padding: 2px;
     border-radius: 8px;
-    width: 85%;
+    width: 400px;
     display: flex;
     align-items: center; 
     margin: 5px;
@@ -867,7 +820,7 @@ input{
     cursor: pointer;
 }
 .input-container.city, .input-container.zipcode {
-    width: 40%;
+    width: 194px;
 }
 .input-container i {
     padding: 8px;
@@ -925,7 +878,7 @@ textarea{
     width: 350px;
     height: 60px;
     position: absolute;
-    top: 8%;
+    top: 6%;
     left: 53%;
     background-color: var(--primary-color);
     display: flex;
@@ -963,13 +916,10 @@ textarea{
 }
 .vector{
     position: absolute !important;
-    top: 46%;
-    left: 61%;
+    top: 47.5%;
+    left: 64.5%;
     width: 60px !important;
     height: auto !important;
-}
-.slick-prev, .slick-next {
-    display: none !important;
 }
 .slick-dots {
     display: flex;
@@ -988,4 +938,15 @@ textarea{
 .slick-dots li.slick-active button {
     background-color: var(--primary-color); 
     width: 20px;
+}
+.response-message {
+    display: none;
+    color: rgb(5, 198, 5);
+    transition: all 0.7s ease;
+    font-size: .9rem;
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+}
+.response-message.error {
+    color: red; 
 }
