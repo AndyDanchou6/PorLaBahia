@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AccommodationController;
+use App\Http\Controllers\AmenityController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,3 +24,4 @@ Route::get('/home', function () {
 });
 Route::get('/about', [AboutController::class, 'index']);
 Route::get('/accommodation', [AccommodationController::class, 'viewAccommodations']);
+Route::get('/amenities', [AmenityController::class, 'viewAmenities']);

@@ -30,12 +30,20 @@ $(document).ready(function () {
                 slidesToScroll:1,
                 dots: true,
             });
+            if(accommodation.length <= 3){
+                $('.arrowLeft, .arrowRight').hide();
+            }else{
+                $('.arrowLeft, .arrowRight').show();
+            }
             $('.arrowLeft').click(function () {
                 amenitiesAbout.slick('slickPrev');
             });
             $('.arrowRight').click(function (){
                 amenitiesAbout.slick('slickNext');
             });
+            }else{
+                $('.about-image-slider').html('<i><p style="color:white">No amenities at the moment.</p></i>');     
+                $('.arrowLeft, .arrowRight').hide();
             }
         },
    });
