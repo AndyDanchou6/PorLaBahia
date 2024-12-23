@@ -46,7 +46,7 @@
                 <div> <img src="/images/home-09.svg" alt="" > Accommodations </div>
                 <div> <img src="/images/wifi-square.svg" alt="" > Enjoy Free Wifi</div>
                 <div> <img src="/images/car-parking-02.svg" alt="" > Parking Space </div>
-                <div> <img src="/images/pool.svg" alt="" > Relaxing Pool </div>
+                <div> <img src="/images/pool.svg" alt="" > Swimming Pool </div>
             </div>
             <button class="readmore"><img src="/images/book.svg" alt="" class="readmoreImage"> Read More</button>
         </div>
@@ -64,7 +64,6 @@
                 <h1>Resort Facilities</h1>
                 <img src="/images/lineRight.svg" alt="" class="lineRight">
             </div>
-
             <img src="/images/circle-arrow-right-02.svg" alt="" class="arrowLeft">
             <img src="/images/circle-arrow-right-01.svg" alt="" class="arrowRight">
             <h5>OUR AMENITIES</h5>
@@ -73,7 +72,7 @@
                     <img src=" " alt="">
                     <h3> </h3>
                     <p> </p>
-                    <button class="amenities-readmore"> Read More</button>
+                    <button class="amenities-readmore">Read More</button>
                 </div>
             </div>
         </div>
@@ -91,7 +90,7 @@
             </div>
             <div class="other-houses-container">
                 <div class="other-houses-arrows">
-                    <h2>OTHER HOUSES</h2>
+                    <h2> ACCOMMODATIONS</h2>
                     <div class="arrows">
                         <img src="/images/circle-arrow-right-02.svg" alt="" class="arrowL">
                         <img src="/images/circle-arrow-right-01.svg" alt="" class="arrowR">
@@ -134,55 +133,31 @@
         </div>
    </section>
 
-   <section class="choose-us"> 
-    <img src="/images/Rectangle 97.svg" alt="" class="testimonial-bg">
-    <img src="/images/10.svg" alt="" class="choose-bg coconut">
-    <img src="/images/11.svg" alt="" class="choose-bg board">
-        <div class="choose-us-title">
+   <section class="testimonials"> 
+        <div class="testimonialsTitle">
             <img src="/images/redLineLeft.svg" alt="" class="lineLeft">
-                <h1>Why Choose Us</h1>
+                <h1>OUR GUEST'S TESTIMONIALS</h1>
                 <img src="/images/redLineRight.svg" alt="" class="lineRight">
-            </div>
-            <h3>ESCAPE, RELAX AND REDISCOVER COMFORT.</h3>
-            <img src="/images/redArrowLeft.svg" alt="" class="red-arrowLeft">
-            <img src="/images/redArrowRight.svg" alt="" class="red-arrowRight">
+        </div>
             
-            <div class="choose-slider">
-                <div class="choose-container"> 
-                    <h4>Exclusive Amenities for Your Comfort</h4>
-                    <p>Enjoy access to private pools, videoke nights, and exceptional catering services.</p>
-                </div>
-                <div class="choose-container"> 
-                    <h4>Ideal Location for Every Occasion</h4>
-                    <p>Whether it's a family getaway or a celebration, we offers the perfect backdrop for your moments.</p>
-                </div>
-                <div class="choose-container"> 
-                    <h4>Memories Made by the Waves</h4>
-                    <p>Every stay is an opportunity to create cherished moments with loved ones.</p>
-                </div>
-                <div class="choose-container"> 
-                    <h4>A Getaway That Feels Like Home</h4>
-                    <p>
-                    Experience the warmth and comfort of home with the added luxury of breathtaking coastal views.</p>
-                </div>
-            </div>
-
-            <h5>OUR CLIENTS TESTIMONIALS</h5>
-            <div class="testimonial">
-                <div class="testimonial-container">
-                    <div class="profile-name">
+            <img src="/images/redArrowLeft.svg" alt="" class="redArrowLeft">
+            <img src="/images/redArrowRight.svg" alt="" class="redArrowRight">
+        <div class="testimonialSlider">
+            <div class="testimonial-container">
+                <div class="profile-name">
+                    <div class="profileimgContainer">
                         <img src=" " alt="">
-                        <h6 class="name"> </h6>
                     </div>
-                    <p> </p>
+                    <h6 class="name"> </h6>
                 </div>
+                <p> </p>
             </div>
+        </div>
    </section>
 
     <section class="location">
         <div class="location-image">
-            <img src="/images/Rectangle 98.svg" alt="">
-            <img src="/images/Vector.svg" alt="" class="vector">
+            <img src="/images/vector.svg" alt="" class="vector">
             <div class="location-box">
                 <img src="/images/maps-search.svg" alt="" class="map">
                 <div class="address">
@@ -199,38 +174,38 @@
             </div> 
             
         <h4>CONNECT TO US IF YOU HAVE PROBLEM</h4>
-            <form action="">
+            <form action="" id="form">
                 <div class="input-container">
                     <i class="fa fa-user"></i>
-                    <input type="text" id="contact_name" name="contact_name" placeholder="Contact Name">
+                    <input type="text" id="contact_name" name="contact_name" placeholder="Contact Name" required>
                 </div>
                 <div class="input-container">
                     <i class="fa fa-road"></i>
-                    <input type="text" id="street" name="street" placeholder="Street">
+                    <input type="text" id="street" name="street" placeholder="Street" required>
                 </div>
                 <div class="input-container city">
                     <i class="fa fa-institution"></i>
-                    <input type="text" id="city" name="city" placeholder="City">
+                    <input type="text" id="city" name="city" placeholder="City" required>
                 </div>
                 <div class="input-container zipcode">
                     <i class="fa fa-building"></i>
-                    <input type="number" id="zipcode" name="zipcode" placeholder="Zipcode">
+                    <input type="number" id="zip_code" name="zipcode" placeholder="Zipcode" required>
                 </div>
                 <div class="input-container">
                     <i class="fa fa-phone"></i>
-                    <input type="number" id="contact_number" name="contact_number" placeholder="Contact Number">
+                    <input type="number" id="contact_no" name="contact_number" placeholder="Contact Number" required>
                 </div>
                 <div class="input-container">
                     <i class="fa fa-envelope"></i>
-                    <input type="email" id="email" name="email" placeholder="Email">
+                    <input type="email" id="email" name="email" placeholder="Email" required>
                 </div>
                 <div class="input-container idea">
                     <i class="fa fa-commenting"></i>
-                    <textarea id="idea" name="idea" rows="3" cols="50" placeholder="What's on your mind?"></textarea>
+                    <textarea id="message" name="message" rows="2" cols="50" placeholder="What's on your mind?"></textarea required>
                 </div>
                 <button class="submit"><i class="fa fa-paper-plane"></i> SUBMIT</button>
+            <div id="responseMessage" class="response-message"></div>
             </form>
-
         </div>
    </section>
 </body>

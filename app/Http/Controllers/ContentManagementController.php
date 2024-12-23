@@ -17,5 +17,10 @@ class ContentManagementController extends Controller
             'data' => $getAboutPage,
             'message' => 'Fetched Success',
         ]);
+      
+    public function getFirstSection()
+    {
+        $home = ContentManagementSystem::all();
+        return response()->json($home);
     }
 }

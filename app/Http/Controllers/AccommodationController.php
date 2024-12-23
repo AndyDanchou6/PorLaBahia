@@ -13,7 +13,7 @@ class AccommodationController extends Controller
     }
     public function getAccommodations()
     {
-        $accommodations = Accommodation::all();
+        $accommodations = Accommodation::with('galleries')->get();
         return response()->json($accommodations);
     }
 }

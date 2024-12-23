@@ -23,7 +23,7 @@
         <li><a href="/restaurant" class="nav-link">Restaurant Menu</a></li>
         <li><a href="/contact" class="nav-link">Contact Us</a></li>
     </ul>
-    <button class="booknow"><img src="/images/Icon.svg" alt="" class="buttonImage"> Book Now</button>
+    <button class="booknow"><img src="{{asset('/images/icon.svg')}}" alt="" class="buttonImage"> Book Now</button>
 </header> 
 </body>
 </html>

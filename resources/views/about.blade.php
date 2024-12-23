@@ -48,15 +48,15 @@
                     <div class="flex-images">
                         <!-- <div><img src="/images/home-09.svg" alt="">
                             <h3>Accommodations</h3>
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into.</p>
+                            <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
                         </div>
                         <div><img src="/images/wifi-square.svg" alt="">
                             <h3>Enjoy Free WiFi</h3>
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into.</p>
+                            <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
                         </div>
                         <div><img src="/images/car-parking-02.svg" alt="">
                             <h3>Parking Space</h3>
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into.</p>
+                            <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
                         </div>
                         <div><img src="/images/pool.svg" alt="">
                             <h3>Relaxing Pool</h3>
@@ -68,6 +68,7 @@
                             <img src="/images/about-image.jpg" alt="">
                         </div>
                         <div class="history-porla">
+
                             <div class="section4data">
                                 <!-- <h1>History of Por La Bahia</h1>
                             <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>

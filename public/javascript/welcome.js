@@ -31,14 +31,22 @@ $(document).ready(function () {
                     slidesToShow:3,
                     slidesToScroll:1,
                     dots:true,
+                    arrows:false,
                 });
+                if (data.length <= 3) {
+                    $('.arrowLeft, .arrowRight').hide(); 
+                } else {
+                    $('.arrowLeft, .arrowRight').show();
+                }
                 $('.arrowLeft').click(function () {
                     amenitiesContainer.slick('slickPrev'); 
                 });
-
                 $('.arrowRight').click(function () {
                     amenitiesContainer.slick('slickNext');
                 });
+            }else{
+                $('.amenities-boxes').html('<p><i> No amenities at the moment.</i></p>');
+                $('.arrowLeft, .arrowRight').hide(); 
             }
         },
     });
@@ -72,7 +80,13 @@ $(document).ready(function () {
                     infinite: true,
                     slidesToScroll:1,
                     slidesToShow:3,
+                    arrows:false,
                 })
+                if(accommodation.length <= 3){
+                    $('.arrowL, .arrowR').hide();
+                }else{
+                    $('.arrowL, .arrowR').show();
+                }
                 $('.arrowL').click(function (){
                     accommodationContainer.slick('slickPrev');
                 });
@@ -96,32 +110,22 @@ $(document).ready(function () {
                     const newRoomName = clickedImage.data('room_name');
                     const newDescription = clickedImage.data('description');
                     const newPrice = clickedImage.data('weekday_price');
-    
+                    
                     largeImage.src = newImageSrc;
                     titleElement.textContent = newRoomName;
                     descriptionElement.textContent = newDescription;
                     priceElement.textContent = `₱ ${newPrice}`;
+                    
+                    $('.house1').removeClass('active');
+                        clickedImage.addClass('active');
                 });
             }else{
-                $('.other-houses').html('<i><p>Please add accommodation/s.</p></i>');
+                $('.other-houses').html('<i><p>No accommodation at the moment.</p></i>');
+                $('.resort-houses-image').html('<i><p>Once accommodation clicked, it will display here.</p></i>');
+                $('.arrowL, .arrowR').hide();
             }
         },
     });
-
-    $(document).ready(function(){
-        $('.choose-slider').slick({
-            infinite: true,
-            slidesToShow: 3,
-            slidesToScroll: 1,
-        });
-        $('.red-arrowLeft').click(function(){
-            $('.choose-slider').slick('slickPrev');
-        })
-        $('.red-arrowRight').click(function(){
-            $('.choose-slider').slick('slickNext');
-        })
-    });
-
     const video = document.getElementById('video');
     const playPauseBtn = document.getElementById('playPauseBtn');
 
@@ -132,4 +136,59 @@ $(document).ready(function () {
             video.pause();
         }
     });
+    $('.submit').on('click', function(event) {
+        event.preventDefault();
+        const contact_name = $('#contact_name').val();
+        const street = $('#street').val();
+        const city = $('#city').val();
+        const zip_code = $('#zip_code').val();
+        const contact_no = $('#contact_no').val();
+        const email = $('#email').val();
+        const message = $('#message').val();
+
+        $.ajax({
+            url: "api/submitForm",
+            type: "POST",
+            data: {
+                contact_name: contact_name,
+                street: street,
+                city: city,
+                zip_code: zip_code,
+                contact_no: contact_no,
+                email: email,
+                message: message
+            },
+            success: function (response) {
+                $('#responseMessage')
+                .removeClass('error') 
+                .html('Your message has been successfully sent!') 
+                .css('display', 'block'); 
+                $('#contact_name, #street, #city, #zip_code, #contact_no, #email, #message').val('');
+            },
+            error: function () {
+                $('#responseMessage')
+                    .addClass('error')
+                    .html('An error occured.')
+                    .css('display', 'block');
+            }
+        });
+    })
+    // $.ajax({
+    //     url:'api/getFirstSection',
+    //     method: 'GET',
+    //     success: function(title){
+    //         if(title.length > 0){
+    //             const getFirstSectionTitle = $('.title');
+    //             getFirstSectionTitle.html('');
+    //             const getFirstSectionTagline = $('.tagline');
+    //             getFirstSectionTagline.html('');
+
+    //             title.forEach(data => {
+    //                 getFirstSectionTitle.append(`<h2 class="title">${data.title}</h2>`);
+    //                 getFirstSectionTagline.append(`<h1 class="tagline">${data.value}</h1>`);
+                
+    //             });
+    //         }
+    //     }
+    // })
 });

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\ContentManagementController;
+use App\Http\Controllers\FormController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\PaymentConfimationController;
 use App\Http\Controllers\TestimonialController;
@@ -26,8 +27,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/amenities', [AmenityController::class, 'getAmenities']);
 Route::get('/accommodations', [AccommodationController::class, 'getAccommodations']);
 Route::post('/confirmPayment/{id}', [PaymentConfimationController::class, 'confirm'])->name('payment.confirm');
-Route::get('/galleries', [GalleryController::class, 'getGalleries']);
 Route::get('/testimonials', [TestimonialController::class, 'getTestimonials']);
+
 
 
 // Content Management API
@@ -35,3 +36,7 @@ Route::get('/testimonials', [TestimonialController::class, 'getTestimonials']);
 Route::prefix('cms')->group(function () {
     Route::get('/about', [ContentManagementController::class, 'getAbout']);
 });
+
+Route::post('/submitForm', [FormController::class, 'handleForm']);
+Route::get('/getFirstSection', [ContentManagementController::class, 'getFirstSection']);
+
