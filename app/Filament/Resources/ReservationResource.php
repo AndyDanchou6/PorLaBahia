@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ReservationResource\Pages;
 use App\Filament\Resources\ReservationResource\RelationManagers;
 use App\Models\Accommodation;
+use App\Models\GuestCredit;
 use App\Models\GuestInfo;
 use Illuminate\Support\Carbon;
 use App\Models\Reservation;
@@ -336,7 +337,7 @@ class ReservationResource extends Resource
                         $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
                     })
                     ->required(fn($operation) => $operation === 'create')
-                    ->selectablePlaceholder(false)
+                    // ->selectablePlaceholder(false)
                     ->hidden(fn($operation) => $operation === 'edit')
                     ->visible(fn($get) => $get('check_in_date_picker') && $get('check_out_date_picker'))
                     ->columnSpanFull(),
@@ -401,11 +402,11 @@ class ReservationResource extends Resource
                 Forms\Components\Hidden::make('guest_id'),
 
                 Forms\Components\TextInput::make('checkInDateDisplay')
-                    ->formatStateUsing(fn($record) => $record ? $record->check_in_date->format('M d, Y') : null)
+                    ->formatStateUsing(fn($record) => $record ? Carbon::parse($record->check_in_date)->format('M d, Y') : null)
                     ->suffix('11 am')
                     ->readOnly(),
                 Forms\Components\TextInput::make('checkOutDateDisplay')
-                    ->formatStateUsing(fn($record) => $record ? $record->check_out_date->format('M d, Y') : null)
+                    ->formatStateUsing(fn($record) => $record ? Carbon::parse($record->check_out_date)->format('M d, Y') : null)
                     ->suffix('9 am')
                     ->readOnly(),
 
@@ -455,5 +456,86 @@ class ReservationResource extends Resource
                 Forms\Components\Hidden::make('on_hold_expiration_date')
                     ->default(Carbon::now()->addHours(12)->startOfMinute()),
             ]);
+    }
+
+    public static function useCredits($record, $data)
+    {
+        if (isset($data['multiple'])) {
+            foreach ($data['multiple'] as $creditId => $payments) {
+                $credit = GuestCredit::find($creditId);
+                $remainingBalance = $credit->amount;
+
+                foreach ($payments as $payment) {
+                    $remainingBalance -= $payment['amount'];
+                }
+
+                if ($remainingBalance > 0) {
+                    $bookingSuffix = substr($record->booking_reference_no, 13);
+                    $remainingBalance = abs($remainingBalance);
+
+                    $newCredit = \App\Models\GuestCredit::create([
+                        'guest_id' => $record->guest_id,
+                        'coupon' => \App\Models\GuestCredit::generateCoupon($bookingSuffix),
+                        'amount' => $remainingBalance,
+                        'is_redeemed' => false,
+                        'expiration_date' => Carbon::now()->addYear(),
+                        'status' => 'active',
+                    ]);
+
+                    $newCredit->save();
+                }
+
+                $credit->update([
+                    'is_redeemed' => true,
+                    'date_redeemed' => Carbon::now(),
+                    'status' => 'inactive',
+                ]);
+
+                $credit->save();
+            }
+        } else {
+            $credit = GuestCredit::find($data['available_credits']);
+            $remainingBalance = $credit->amount - $data['amount'];
+
+            if ($remainingBalance > 0) {
+                $bookingSuffix = substr($record->booking_reference_no, 13);
+                $remainingBalance = abs($remainingBalance);
+
+                $newCredit = \App\Models\GuestCredit::create([
+                    'guest_id' => $record->guest_id,
+                    'coupon' => \App\Models\GuestCredit::generateCoupon($bookingSuffix),
+                    'amount' => $remainingBalance,
+                    'is_redeemed' => false,
+                    'expiration_date' => Carbon::now()->addYear(),
+                    'status' => 'active',
+                ]);
+
+                $newCredit->save();
+            }
+
+            $credit->update([
+                'is_redeemed' => true,
+                'date_redeemed' => Carbon::now(),
+                'status' => 'inactive',
+            ]);
+
+            $credit->save();
+        }
+    }
+
+    public static function getAvailableCredits($guestId, $bookingFee)
+    {
+        $credits = GuestCredit::where('guest_id', $guestId)
+            ->where('amount', '>=', $bookingFee)
+            ->where('is_redeemed', false)
+            ->where('status', 'active')
+            ->get();
+        $availableCredits = [];
+
+        foreach ($credits as $availableCredit) {
+            $availableCredits[$availableCredit->id] = $availableCredit->coupon;
+        }
+
+        return $availableCredits;
     }
 }

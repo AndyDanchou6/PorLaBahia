@@ -26,8 +26,6 @@ class Reservation extends Model
 
     protected $casts = [
         'booking_fee' => 'decimal:2',
-        'check_in_date' => 'datetime',
-        'check_out_date' => 'datetime',
     ];
 
     public function getFullNameAttribute()
