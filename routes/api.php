@@ -28,5 +28,15 @@ Route::get('/amenities', [AmenityController::class, 'getAmenities']);
 Route::get('/accommodations', [AccommodationController::class, 'getAccommodations']);
 Route::post('/confirmPayment/{id}', [PaymentConfimationController::class, 'confirm'])->name('payment.confirm');
 Route::get('/testimonials', [TestimonialController::class, 'getTestimonials']);
+
+
+
+// Content Management API
+
+Route::prefix('cms')->group(function () {
+    Route::get('/about', [ContentManagementController::class, 'getAbout']);
+});
+
 Route::post('/submitForm', [FormController::class, 'handleForm']);
 Route::get('/getFirstSection', [ContentManagementController::class, 'getFirstSection']);
+
