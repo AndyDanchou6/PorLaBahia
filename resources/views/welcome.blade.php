@@ -45,7 +45,7 @@
                 <div> <img src="/images/car-parking-02.svg" alt="" > Parking Space </div>
                 <div> <img src="/images/pool.svg" alt="" > Swimming Pool </div>
             </div>
-            <button class="readmore"><img src="/images/book.svg" alt="" class="readmoreImage"> Read More</button>
+            <button class="readmore"><img src="/images/book.svg" alt="" class="readmoreImage"> <a href="/about">Read More</a></button>
         </div>
         <div class="grid-images">
             <div class="item item1"><img src=" " alt=""></div>
@@ -55,18 +55,7 @@
                 <p class="extraCount">+</p>
             </div>
         </div>
-        <div class="lightbox" id="lightbox">
-            <div class="lightbox-content">
-                <img src="/images/circle-arrow-right-02.svg" alt="Previous" class="lightboxArrowL">
-                <img src="/images/circle-arrow-right-01.svg" alt="Next" class="lightboxArrowR">
-                <span class="close-btn" id="close-btn">&times;</span>
-                <div class="lightbox-slider-container">
-                    <div class="lightbox-img">
-                        <img src="" alt="">
-                    </div>
-                </div>
-            </div>
-        </div>
+
     </section>
 
     <section class="resort-facilities">
@@ -148,7 +137,7 @@
    <section class="testimonials"> 
         <div class="testimonialsTitle">
             <img src="/images/redLineLeft.svg" alt="" class="lineLeft">
-                <h1>OUR GUEST'S TESTIMONIALS</h1>
+                <h1>Our Guest's Testimonials</h1>
                 <img src="/images/redLineRight.svg" alt="" class="lineRight">
         </div>
             
