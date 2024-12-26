@@ -30,7 +30,7 @@
                     <h3>COMFORT, STYLE, AND SERENITY.</h3>
 
                     <div class="accommodationLists">
-                        <div class="accommodation1Details">
+                        <div class="accommodation accommodation1Details">
                             <h1> </h1>
                             <i class="fa fa-bed"> </i>
                             <p> </p>
@@ -45,14 +45,14 @@
                                 <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow1">
                             </div>
                         </div>
-                        <div class="accommodation1Image">
-                            <div class="image1Container"><img src=" " alt=""></div>
+                        <div class="accommodation accommodation1Image">
+                            <div class="image1Container"><img src=" " alt="" class="accImage"></div>
                         </div>
 
-                        <div class="accommodation2Image">
-                            <div class="image2Container"><img src=" " alt=""></div>
+                        <div class="accommodation accommodation2Image" >
+                            <div class="image2Container"><img src=" " alt="" class="accImage"></div>
                         </div>
-                        <div class="accommodation2Details">
+                        <div class="accommodation accommodation2Details">
                             <h1> </h1>
                             <i class="fa fa-bed"> </i>
                             <p> </p>
@@ -68,7 +68,7 @@
                             </div>   
                         </div>  
 
-                        <div class="accommodation3Details">
+                        <div class="accommodation accommodation3Details">
                             <h1> </h1>
                             <i class="fa fa-bed"> </i>
                             <p> </p>
@@ -86,14 +86,14 @@
                             <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow3">
                             </div>   
                         </div> 
-                        <div class="accommodation3Image">
-                            <div class="image3Container"><img src="" alt=""></div>
+                        <div class="accommodation accommodation3Image">
+                            <div class="image3Container"><img src="" alt="" class="accImage"></div>
                         </div>
  
-                        <div class="accommodation4Image">
-                            <div class="image4Container"><img src="/images/image1.jpg" alt=""></div>
+                        <div class="accommodation accommodation4Image">
+                            <div class="image4Container"><img src="" alt="" class="accImage"></div>
                         </div>
-                        <div class="accommodation4Details">
+                        <div class="accommodation accommodation4Details">
                             <h1>  </h1>
                             <i class="fa fa-bed"> </i>
                             <p> </p>
@@ -108,7 +108,7 @@
                                 <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow4">
                             </div>   
                         </div>
-                        <div class="accommodation5Details">
+                        <div class="accommodation accommodation5Details">
                             <h1> </h1>
                             <i class="fa fa-bed"> </i>
                             <p> </p>
@@ -122,6 +122,9 @@
                                 <div class="sliderImage5"> <img src="" alt=""> </div>
                                <img src="/images/circle-arrow-right-01.svg" alt="" class="rightArrow5">
                             </div>   
+                        </div>
+                        <div class="accommodation accommodation5Image">
+                            <div class="image4Container"><img src="" alt="" class="accImage"></div>
                         </div>
                     </div>
                 </div> 

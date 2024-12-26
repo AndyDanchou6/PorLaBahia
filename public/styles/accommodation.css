@@ -40,7 +40,7 @@ span{
 }
 .accommodationContainer{
     width: 1100px;
-    max-height: 450vh;
+    max-height: 700vh;
     background-color: #ffffff;
     margin: 70px 0;
     padding: 50px;
@@ -73,6 +73,9 @@ span{
     grid-auto-rows: minmax(400px, 700px);
     margin: 40px 0;
 }
+.accommodation, .accImage{
+    display: none;
+}
 .accommodation1Details{
     grid-column: 1/2;
     grid-row: 1/2;
@@ -95,11 +98,11 @@ span{
     justify-content: center;
     transition: all 0.8s ease;
 }
-.price-book1, .price-book2,.price-book3, .price-book4{
+.price-book1, .price-book2,.price-book3, .price-book4, .price-book5{
     display: flex;
     gap: 12px;
 }
-.accommodationPrice1, .accommodationPrice2, .accommodationPrice3, .accommodationPrice4{
+.accommodationPrice1, .accommodationPrice2, .accommodationPrice3, .accommodationPrice4, .accommodationPrice5{
     background-color:#bf4b37;
     width: 30%;
     color: #fff;
@@ -110,7 +113,7 @@ span{
     font-size: 12px;
     margin: 5px 0;
 }
-.accommodationBook1, .accommodationBook2, .accommodationBook3, .accommodationBook4{
+.accommodationBook1, .accommodationBook2, .accommodationBook3, .accommodationBook4, .accommodationBook5{
     background-color: var(--primary-color);
     width: 70%;
     color: #fff;
@@ -252,13 +255,13 @@ span{
     justify-content: center;
     transition: all 0.8s ease;
 }
-.image4Container{
+.image4Container, .image5Container{
     width: 430px;
     height: 400px;
     padding: 20px;
     margin-left: 40px;
 }
-.image4Container img{
+.image4Container img, .image5Container img{
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -268,4 +271,15 @@ span{
     padding: 20px;
     width: 450px;
     margin-right: 50px;
+}
+.accommodation5Details{
+    grid-column: 1/2;
+    grid-row: 5/6;
+    padding: 20px;
+    width: 450px;
+    margin-right: 50px;
+}
+.accommodation5Image{
+    grid-column: 2/3;
+    grid-row:5/6;
 }

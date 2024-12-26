@@ -55,6 +55,7 @@ span{
     gap: 25px;
 }
 .about-item{
+    display: none;
     width: 250px;
     height: 200px;
     border-radius: 10px;

@@ -6,46 +6,35 @@ $(document).ready(function () {
         } else {
             header.classList.remove("scrolled");
         }
-    });
-    $.ajax({
-        url: "/api/amenities",
-        method: "GET",
-        dataType: "json",
-        success: function (amenities) {
-            if (amenities.length > 0) {
-                const amenitiesAbout = $(".about-image-slider");
-                amenitiesAbout.html("");
+   });
+   $.ajax({
+    url: '/api/amenities',
+    method: 'GET',
+    dataType: 'json',
+    success: function (amenities) {
+        if(amenities.length > 0){
+            const amenitiesAbout = $('.about-image-slider');
+            amenitiesAbout.html('');
 
-                amenities.forEach(function (amenity) {
-                    const amenityAbout = `
-                <div class="about-item">
+            amenities.forEach(function (amenity) {
+                const amenityAbout = `
+                <div class="about-item" display="block">
                     <img src="/storage/${amenity.main_image}" alt="${amenity.amenity_name}">
                 </div>
                 `;
-                    amenitiesAbout.append(amenityAbout);
-                });
-                amenitiesAbout.slick({
-                    infinite: true,
-                    slidesToShow: 4,
-                    slidesToScroll: 1,
-                    dots: true,
-                });
-                if (accommodation.length <= 3) {
-                    $(".arrowLeft, .arrowRight").hide();
-                } else {
-                    $(".arrowLeft, .arrowRight").show();
-                }
-                $(".arrowLeft").click(function () {
-                    amenitiesAbout.slick("slickPrev");
-                });
-                $(".arrowRight").click(function () {
-                    amenitiesAbout.slick("slickNext");
-                });
-            } else {
-                $(".about-image-slider").html(
-                    '<i><p style="color:white">No amenities at the moment.</p></i>'
-                );
-                $(".arrowLeft, .arrowRight").hide();
+                amenitiesAbout.append(amenityAbout)
+            });
+            amenitiesAbout.slick({
+                infinite: true,
+                slidesToShow:4, 
+                slidesToScroll:1,
+                dots: true,
+            });
+            if(amenities.length <= 4){
+                $('.arrowLeft, .arrowRight').hide();
+            }else{
+                $('.arrowLeft, .arrowRight').show();
+
             }
         },
     });
@@ -129,6 +118,10 @@ $(document).ready(function () {
                     section5.append(section5Display);
                 }
             });
+            }else{
+                $('.arrowLeft, .arrowRight').hide();
+            }
+
         },
     });
 });

@@ -25,7 +25,6 @@ main .title {
     font-size: 2rem;
     z-index: 2;
     font-weight: 500;
-    /* width:700px; */
 }
 .tagline {
     position: absolute;
@@ -121,6 +120,7 @@ span {
     overflow: hidden;
     width: 600px;
     margin: 30px;
+    position: relative;
 }
 .about-text h1 {
     font-size: 2.7rem;
@@ -129,6 +129,7 @@ span {
     text-shadow: #9a9a9a 2px 3px 3px;
     font-weight: 300;
     color: #484848;
+    margin: 0;
 }
 .about-text h4 {
     margin: 0;
@@ -146,12 +147,13 @@ span {
     padding: 10px 0;
     margin: 0;
 }
-.small-nav {
+.icon-name {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px 0; 
+    margin-bottom: 20px;
 }
-.small-nav div {
+.icon-name div {
     display: flex;
     align-items: center;
     justify-content: start; 
@@ -163,7 +165,7 @@ span {
     gap: 15px;
     font-weight: 600;
 }
-.small-nav div img{
+.icon-name div img{
     width: 30px;
     height: 30px;
 }
@@ -182,6 +184,9 @@ span {
     align-items: center;
     width: 200px;
     margin-top: 10px;
+    position: absolute;
+    left: 0;
+    bottom: 80px;
 }
 .amenities-readmore{
     padding: 10px 20px;
@@ -222,6 +227,7 @@ span {
     height:100%;
     overflow: hidden;
     border-radius: 10px;
+    transition: all 0.8s ease;
 }
 .item1{
     grid-column: 1/3;
@@ -240,6 +246,73 @@ span {
     height: 100%;
     object-fit:cover;
     border-radius: 5px;
+    cursor: pointer;
+}
+.item:hover{
+    box-shadow: #616161 2px 3px 10px;
+}
+.extraCount{
+    color: white;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+}
+.extraImages{
+    background-color: rgba(101, 101, 101, 0.5);
+    cursor: pointer;
+}
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); 
+    display: none; 
+    justify-content: center;
+    align-items: center;
+}
+.lightbox-content {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+.lightbox-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover; 
+}
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 30px;
+    color: #fff;
+    cursor: pointer;
+    z-index: 10;
+}
+.lightboxArrowL, .lightboxArrowR {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    transform: translateY(-50%);
+}
+
+.lightboxArrowL {
+    left: 10px;
+}
+
+.lightboxArrowR {
+    right: 10px;
 }
 .resort-facilities{
     position: absolute;

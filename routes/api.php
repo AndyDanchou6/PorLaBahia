@@ -38,5 +38,6 @@ Route::prefix('cms')->group(function () {
 });
 
 Route::post('/submitForm', [FormController::class, 'handleForm']);
-Route::get('/getFirstSection', [ContentManagementController::class, 'getFirstSection']);
+Route::get('/getHomeContents', [ContentManagementController::class, 'getContents']);
+Route::get('/getFeaturedImages', [GalleryController::class, 'getFeaturedImages']);
 

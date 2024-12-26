@@ -37,12 +37,9 @@
     <section class="about-layout">
         <div class="about-text">
             <h1>Por La Bahia</h1>
-            <h4>ABOUT US</h4>
-            <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Why do we use it?
-                it look like readable English sometimes on purpose (injected humour and the like).</p>
-            <p> Lorem Ipsum is simply dummy text of Lorem Ipsum passages (injected humour and the like).</p>
-
-            <div class="small-nav">
+            <h4> </h4>
+            <p> </p>
+             <div class="icon-name">
                 <div> <img src="/images/home-09.svg" alt="" > Accommodations </div>
                 <div> <img src="/images/wifi-square.svg" alt="" > Enjoy Free Wifi</div>
                 <div> <img src="/images/car-parking-02.svg" alt="" > Parking Space </div>
@@ -51,9 +48,24 @@
             <button class="readmore"><img src="/images/book.svg" alt="" class="readmoreImage"> Read More</button>
         </div>
         <div class="grid-images">
-            <div class="item item1"><img src="{{asset("/images/edited.jpg")}}" alt=""></div>
-            <div class="item item2"><img src="{{asset("/images/home-grid4.jpg")}}" alt=""></div>
-            <div class="item item3"><img src="{{asset("/images/home-grid3.jpg")}}" alt=""></div>
+            <div class="item item1"><img src=" " alt=""></div>
+            <div class="item item2"><img src=" " alt=""></div>
+            <div class="item item3"><img src=" " alt=""></div>
+            <div class="item item3 extraImages">
+                <p class="extraCount">+</p>
+            </div>
+        </div>
+        <div class="lightbox" id="lightbox">
+            <div class="lightbox-content">
+                <img src="/images/circle-arrow-right-02.svg" alt="Previous" class="lightboxArrowL">
+                <img src="/images/circle-arrow-right-01.svg" alt="Next" class="lightboxArrowR">
+                <span class="close-btn" id="close-btn">&times;</span>
+                <div class="lightbox-slider-container">
+                    <div class="lightbox-img">
+                        <img src="" alt="">
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -79,14 +91,14 @@
     </section>
     <section class="resort-houses">
         <div class="resort-houses-text">
-            <div class="resort-houses-box">
+            <div class="resort-houses-box" id="accommodationSection">
                 <div class="resort-houses-title">
                     <img src="/images/lineLeft.svg" alt="" class="lineLeft">
                     <h1>Resort Houses</h1>
                     <img src="/images/lineRight.svg" alt="" class="lineRight">
                 </div>
                 <h3>OUR ACCOMMODATIONS</h3>
-                <p> Each accommodation package includes essential beddings and toiletries to ensure your comfort. For your convenience, we provide 2 bath towels, 1 roll of toilet paper, and 2 small body soaps with shampoo. Each bed comes with 1 bedsheet, 1 blanket, and 2 pillows for a restful stay.</p> <p> Please note that additional floor foam beddings are not included for free, but you have the option to rent them if needed.</p>
+                <p> </p>
             </div>
             <div class="other-houses-container">
                 <div class="other-houses-arrows">

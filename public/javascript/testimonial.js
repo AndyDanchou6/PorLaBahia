@@ -36,7 +36,12 @@ $(document).ready(function (){
                     clientTestimonials.slick('slickNext');
                 });
             }else{
-                $('.testimonialSlider').html('<i>No testimonials at the moment.</i>');
+                $('.testimonialSlider').html('<i>No testimonials at the moment.</i>').css({
+                    'display': 'flex',
+                    'justify-content': 'center',
+                    'align-items': 'start',
+                });
+                $('.redArrowLeft, .redArrowRight').hide();
             }
         }
     })
