@@ -32,6 +32,9 @@ class GuestCreditRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('guest_id')
             ->columns([
+                TextColumn::make('coupon')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('amount')
                     ->sortable()
                     ->searchable()

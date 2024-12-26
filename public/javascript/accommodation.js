@@ -1,10 +1,10 @@
 $(document).ready(function () {
-    const header = document.getElementById('header');
-    window.addEventListener('scroll', () => {
-        if(window.scrollY > 500){
-            header.classList.add('scrolled');
-        }else{
-            header.classList.remove('scrolled');
+    const header = document.getElementById("header");
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 500) {
+            header.classList.add("scrolled");
+        } else {
+            header.classList.remove("scrolled");
         }
     });
 
@@ -16,6 +16,7 @@ $(document).ready(function () {
                 accommodation.forEach((acc, index) => {
                     const accommodationText = $(`.accommodation${index + 1}Details`);
                     accommodationText.html('');
+
                     const accommodationDetails = `
                         <div class=" accommodation accommodation${index + 1}Details" style="display: block;">
                             <h1>${acc.room_name}</h1>
@@ -23,6 +24,7 @@ $(document).ready(function () {
                             <p>${acc.description}</p>
                             <hr>
                             <div class="price-book${index + 1}">
+
                                 <div class="accommodationPrice${index + 1}">₱ ${acc.weekday_price}</div>
                                 <button class="accommodationBook${index + 1}"><img src="/images/icon.svg" alt="">Book This</button>
                             </div>
@@ -37,16 +39,22 @@ $(document).ready(function () {
                     `;
                     accommodationText.append(accommodationDetails);
 
+
                     const sliderImagesContainer = $(`.accommodationSlider${index + 1}`); 
                         sliderImagesContainer.html(''); 
+
                         if (acc.galleries && acc.galleries.length > 0) {
-                            const matchingGalleries = acc.galleries.filter(gallery => gallery.galleries_id == acc.id);
+                            const matchingGalleries = acc.galleries.filter(
+                                (gallery) => gallery.galleries_id == acc.id
+                            );
                             if (matchingGalleries.length > 0) {
-                                matchingGalleries.forEach(gallery => {
+                                matchingGalleries.forEach((gallery) => {
                                     sliderImagesContainer.append(
+
                                         `<div class="sliderImage${index + 1}">
                                             <img src="/storage/${gallery.image}" alt="Accommodation Image">
                                         </div>`
+
                                     );
                                 }); 
                                 sliderImagesContainer.slick({
@@ -56,17 +64,20 @@ $(document).ready(function () {
                                     prevArrow: `<img src="/images/circle-arrow-right-02.svg" class="leftArrow${index + 1}" alt="Previous">`,
                                     nextArrow: `<img src="/images/circle-arrow-right-01.svg" class="rightArrow${index + 1}" alt="Next">`
                                 });
+
                                 if (sliderImagesContainer.find('.sliderImage' + (index + 1)).length < 3) {
                                     $(`.leftArrow${index + 1}, .rightArrow${index + 1}`).hide();
                                 } else {
                                     $(`.leftArrow${index + 1}, .rightArrow${index + 1}`).show();
                                 }
                             }
+
                         }
 
                     const accommodationList = $(`.accommodation${index + 1}Image`);
                     accommodationList.html('');
                     const accommodationImageHtml = `
+
                         <div class="accommodation accommodation${index + 1}Image" style="display: block;">
                             <div class="image${index + 1}Container"><img src="/storage/${acc.main_image}" alt=""></div>
                         </div>
@@ -86,8 +97,16 @@ $(document).ready(function () {
                 $('.accommodationLists').html('<i>No accommodation at the moment.</i>').css({
                     'display': 'flex',
                     'justify-content': 'center',
+
                 });
+            } else {
+                $(".accommodationLists")
+                    .html("<i>No accommodation at the moment.</i>")
+                    .css({
+                        display: "flex",
+                        "justify-content": "center",
+                    });
             }
-        }
+        },
     });
 });

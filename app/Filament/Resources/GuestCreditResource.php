@@ -28,6 +28,8 @@ class GuestCreditResource extends Resource
 
     protected static ?string $navigationGroup = 'Settings';
 
+    protected static ?string $recordTitleAttribute = 'full_name_with_credits';
+
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form

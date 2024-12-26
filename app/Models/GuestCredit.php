@@ -22,12 +22,19 @@ class GuestCredit extends Model
     ];
 
     protected $casts = [
-        'booking_ids' => 'array',
+        'is_redeemed' => 'boolean',
+        'date_redeemed' => 'datetime',
+        'expiration_date' => 'datetime',
     ];
 
     public function guest()
     {
         return $this->belongsTo(GuestInfo::class);
+    }
+
+    public function getFullNameWithCreditsAttribute()
+    {
+        return $this->full_name . 's credits';
     }
 
     public static function generateCoupon($bookingSuffix): string
