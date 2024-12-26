@@ -22,28 +22,30 @@ $(document).ready(function () {
                     <img src="/storage/${amenity.main_image}" alt="${amenity.amenity_name}">
                 </div>
                 `;
-                amenitiesAbout.append(amenityAbout)
-            });
-            amenitiesAbout.slick({
-                infinite: true,
-                slidesToShow:4, 
-                slidesToScroll:1,
-                dots: true,
-            });
-            if(accommodation.length <= 3){
-                $('.arrowLeft, .arrowRight').hide();
-            }else{
-                $('.arrowLeft, .arrowRight').show();
-            }
-            $('.arrowLeft').click(function () {
-                amenitiesAbout.slick('slickPrev');
-            });
-            $('.arrowRight').click(function (){
-                amenitiesAbout.slick('slickNext');
-            });
-            }else{
-                $('.about-image-slider').html('<i><p style="color:white">No amenities at the moment.</p></i>');     
-                $('.arrowLeft, .arrowRight').hide();
+                    amenitiesAbout.append(amenityAbout);
+                });
+                amenitiesAbout.slick({
+                    infinite: true,
+                    slidesToShow: 4,
+                    slidesToScroll: 1,
+                    dots: true,
+                });
+                if (accommodation.length <= 3) {
+                    $(".arrowLeft, .arrowRight").hide();
+                } else {
+                    $(".arrowLeft, .arrowRight").show();
+                }
+                $(".arrowLeft").click(function () {
+                    amenitiesAbout.slick("slickPrev");
+                });
+                $(".arrowRight").click(function () {
+                    amenitiesAbout.slick("slickNext");
+                });
+            } else {
+                $(".about-image-slider").html(
+                    '<i><p style="color:white">No amenities at the moment.</p></i>'
+                );
+                $(".arrowLeft, .arrowRight").hide();
             }
         },
     });
@@ -55,21 +57,25 @@ $(document).ready(function () {
         success: function (response) {
             // console.log(about.data);
             const getData = response.data;
+            let section1 = $(".section1");
+            let section2 = $(".know-more-text");
+            let section3 = $(".flex-images");
+            let section4 = $(".section4data");
+            let section5 = $(".history-operation");
 
             getData.forEach(function (item) {
                 if (item.section == 1) {
-                    let section1Welcome = $(".section1");
+                    section1.html("");
 
                     const section1Content = `
-                         <h2 class="about-title">${item.title}</h2>
-                         <h1 class="about-paragraph"><span>About Us: </span>${item.value}</h1>
+                        <h2 class="about-title">${item.title}</h2>
+                        <h1 class="about-paragraph"><span>About Us: </span>${item.value}</h1>
                     `;
 
-                    section1Welcome.append(section1Content);
+                    section1.append(section1Content);
                 }
-
-                if (item.section == 2) {
-                    const section2 = $(".know-more-text");
+                if (item.section == 2 && item.is_published == 1) {
+                    section2.html("");
 
                     const section2Content = `
                         <div>
@@ -82,8 +88,6 @@ $(document).ready(function () {
                 }
 
                 if (item.section == 3) {
-                    const section3 = $(".flex-images");
-
                     section3.html("");
 
                     const icons = item.icons;
@@ -101,7 +105,6 @@ $(document).ready(function () {
                 }
 
                 if (item.section == 4) {
-                    const section4 = $(".section4data");
                     section4.html("");
 
                     const section4Display = `
@@ -113,7 +116,6 @@ $(document).ready(function () {
                 }
 
                 if (item.section == 5) {
-                    const section5 = $(".history-operation");
                     section5.html("");
 
                     const section5Display = `

@@ -93,43 +93,72 @@ class AboutUsResource extends Resource
                             ->columnSpan('full')
                             ->hidden(fn($get) => !$get('section') || $get('section') == 3)
                             ->reactive(),
-                    ])->columns(1),
+                    ])->columnSpan([
+                        'md' => 2,
+                        'lg' => 2,
+                    ]),
 
 
+                \Filament\Forms\Components\Fieldset::make('Published?')
+                    ->schema([
+                        \Filament\Forms\Components\ToggleButtons::make('is_published')
+                            ->label('Status')
+                            ->boolean()
+                            ->grouped()
+                            ->rule(function ($state, $record) {
+                                return [
+                                    function (string $attribute, $value, \Closure $fail) use ($state, $record) {
+                                        if ($state) {
+                                            $existPublished = ContentManagementSystem::where('page', 'about')
+                                                ->where('is_published', 1)->where('section', $record->section)->where('id', '!=', $record->id)->exists();
+
+                                            if ($existPublished) {
+                                                $fail("Section '{$record->section}' is already published. Please unpublish the existing section before publishing this one.");
+                                            }
+                                        }
+                                    }
+                                ];
+                            })
+                            ->afterStateUpdated(function ($state, $record) {
+                                $existPublished = ContentManagementSystem::where('page', 'about')
+                                    ->where('is_published', 1)
+                                    ->where('section', $record->section)
+                                    ->where('id', '!=', $record->id)
+                                    ->exists();
+
+                                if ($state && $existPublished) {
+                                    $record->is_published = 0;
+                                    $record->save();
+                                } else {
+                                    $record->is_published = $state;
+                                    $record->save();
+                                }
+                            })
+
+                    ])->columnSpan([
+                        'md' => 1,
+                        'lg' => 1,
+                    ])->hidden(fn($operation) => $operation == 'create'),
+            ])->columns([
+                'md' => 3,
+                'lg' => 3,
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('page', 'about'))
             ->columns([
-                Tables\Columns\TextColumn::make('section')
-                    ->formatStateUsing(function ($record) {
-                        if ($record->section == 1) {
-                            return 'Welcome Section';
-                        } elseif ($record->section == 2) {
-                            return 'Introduction Section';
-                        } elseif ($record->section == 3) {
-                            return 'Features Section';
-                        } elseif ($record->section == 4) {
-                            return 'History Section';
-                        } elseif ($record->section == 5) {
-                            return 'Highlighted FAQ Section';
-                        }
-                    }),
+                Tables\Columns\TextColumn::make('section_name')
+                    ->label('Section Name')
+                    ->searchable(query: fn($query, string $search) => $query->searchBySectionName($search)),
 
-                Tables\Columns\ToggleColumn::make('is_published')
+                Tables\Columns\IconColumn::make('is_published')
                     ->label('Is Published?')
-                    ->onColor('success')
-                    ->offColor('danger')
-                    ->onIcon('heroicon-m-check')
-                    ->offIcon('heroicon-m-x-mark')
-                    ->beforeStateUpdated(function ($record, $state) {
-                        return $record->is_published = $state;
-                    })
-                    ->afterStateUpdated(function ($record, $state) {
-                        return $record->is_published = $state;
-                    })
+                    ->icon(fn($record) => $record->is_published == 1 ? 'heroicon-o-check-circle' : 'heroicon-o-x-circle')
+                    ->color(fn($record) => $record->is_published == 1 ? 'success' : 'danger'),
+
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -145,7 +174,7 @@ class AboutUsResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])->defaultSort('section', 'asc');
     }
 
     public static function getRelations(): array

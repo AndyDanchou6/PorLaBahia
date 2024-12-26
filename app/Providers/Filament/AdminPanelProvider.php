@@ -30,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => '#FFA500',
             ])
+            ->globalSearch(false)
             ->brandLogo(fn() => view('vendor.filament.components.logo'))
             ->brandLogoHeight('2rem')
             // ->brandName('Por La Bahia')

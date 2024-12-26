@@ -32,6 +32,11 @@ class GuestCredit extends Model
         return $this->belongsTo(GuestInfo::class);
     }
 
+    public function getFullNameWithCreditsAttribute()
+    {
+        return $this->full_name . 's credits';
+    }
+
     public static function generateCoupon($bookingSuffix): string
     {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';

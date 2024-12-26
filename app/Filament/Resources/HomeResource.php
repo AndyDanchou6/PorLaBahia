@@ -53,7 +53,6 @@ class HomeResource extends Resource
 
                         \Filament\Forms\Components\TextInput::make('title')
                             ->label('Title')
-                            ->columnSpan('full')
                             ->hidden(function ($get) {
                                 if (!$get('section')) {
                                     return true;
@@ -64,7 +63,8 @@ class HomeResource extends Resource
                                 }
 
                                 return false;
-                            }),
+                            })
+                            ->columnSpan('full'),
 
                         \Filament\Forms\Components\MarkdownEditor::make('value')
                             ->required()
@@ -90,43 +90,76 @@ class HomeResource extends Resource
                                     ->label('Name')
                                     ->placeholder('e.g Enjoy Free Wifi, Parking Space, Swimming Pool, etc.'),
                             ])
-                            ->grid(2)
                             ->label('Icons (Optional)')
                             ->visible(fn($get) => $get('section') == 2)
-                            ->addActionLabel('Add another Icon'),
-                    ])->columns(1)
+                            ->addActionLabel('Add another Icon')
+                            ->grid(2)
+                            ->columnSpan('full'),
+                    ])->columnSpan([
+                        'md' => 2,
+                        'lg' => 2,
+                    ]),
+
+                \Filament\Forms\Components\Fieldset::make('Published?')
+                    ->schema([
+                        \Filament\Forms\Components\ToggleButtons::make('is_published')
+                            ->label('Status')
+                            ->boolean()
+                            ->grouped()
+                            ->rule(function ($state, $record) {
+                                return [
+                                    function (string $attribute, $value, \Closure $fail) use ($state, $record) {
+                                        if ($state) {
+                                            $existPublished = ContentManagementSystem::where('page', 'home')
+                                                ->where('is_published', 1)->where('section', $record->section)->where('id', '!=', $record->id)->exists();
+
+                                            if ($existPublished) {
+                                                $fail("Section '{$record->section}' is already published. Please unpublish the existing section before publishing this one.");
+                                            }
+                                        }
+                                    }
+                                ];
+                            })
+                            ->afterStateUpdated(function ($state, $record) {
+                                $existPublished = ContentManagementSystem::where('page', 'home')
+                                    ->where('is_published', 1)
+                                    ->where('section', $record->section)
+                                    ->where('id', '!=', $record->id)
+                                    ->exists();
+
+                                if ($state && $existPublished) {
+                                    $record->is_published = 0;
+                                    $record->save();
+                                } else {
+                                    $record->is_published = $state;
+                                    $record->save();
+                                }
+                            })
+
+                    ])->columnSpan([
+                        'md' => 1,
+                        'lg' => 1,
+                    ])->visible(fn($get) => $get('section')),
+            ])->columns([
+                'md' => 3,
+                'lg' => 3,
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('page', 'home'))
             ->columns([
-                Tables\Columns\TextColumn::make('section')
-                    ->formatStateUsing(function ($record) {
-                        if ($record->section == 1) {
-                            return 'Welcome Section';
-                        } elseif ($record->section == 2) {
-                            return 'About Section';
-                        } elseif ($record->section == 3) {
-                            return 'Resort Houses Section';
-                        } elseif ($record->section == 4) {
-                            return 'Quick Video Section';
-                        }
-                    }),
+                Tables\Columns\TextColumn::make('section_name')
+                    ->label('Section Name')
+                    ->searchable(query: fn($query, string $search) => $query->searchBySectionName($search)),
 
-                Tables\Columns\ToggleColumn::make('is_published')
+                Tables\Columns\IconColumn::make('is_published')
                     ->label('Is Published?')
-                    ->onColor('success')
-                    ->offColor('danger')
-                    ->onIcon('heroicon-m-check')
-                    ->offIcon('heroicon-m-x-mark')
-                    ->beforeStateUpdated(function ($record, $state) {
-                        return $record->is_published = $state;
-                    })
-                    ->afterStateUpdated(function ($record, $state) {
-                        return $record->is_published = $state;
-                    })
+                    ->icon(fn($record) => $record->is_published == 1 ? 'heroicon-o-check-circle' : 'heroicon-o-x-circle')
+                    ->color(fn($record) => $record->is_published == 1 ? 'success' : 'danger'),
+
 
             ])
             ->filters([

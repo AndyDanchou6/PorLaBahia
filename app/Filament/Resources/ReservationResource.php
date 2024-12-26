@@ -10,9 +10,11 @@ use App\Models\GuestInfo;
 use Illuminate\Support\Carbon;
 use App\Models\Reservation;
 use Filament\Forms;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Infolists;
+use Filament\Infolists\Components\Fieldset as ComponentsFieldset;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -30,6 +32,8 @@ class ReservationResource extends Resource
 
     protected static $dateFormat = 'M d, Y h:i a';
 
+    protected static ?string $recordTitleAttribute = 'booking_reference_no';
+
     public static function getNavigationBadge(): ?string
     {
         $count = Reservation::whereNull('deleted_at')
@@ -42,6 +46,8 @@ class ReservationResource extends Resource
         return $count;
     }
 
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -52,85 +58,88 @@ class ReservationResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\TextEntry::make('check_in_date')
-                    ->color('primary')
-                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_in_date)->addHours(11)->format(self::$dateFormat)),
-                Infolists\Components\TextEntry::make('check_out_date')
-                    ->color('primary')
-                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_out_date)->addHours(9)->format(self::$dateFormat)),
-                Infolists\Components\TextEntry::make('accommodation.room_name')
-                    ->color('primary'),
-                Infolists\Components\TextEntry::make('guest.full_name')
-                    ->color('primary'),
-                Infolists\Components\TextEntry::make('booking_reference_no')
-                    ->color('primary'),
-                Infolists\Components\TextEntry::make('booking_fee')
-                    ->money('PHP')
-                    ->color('primary'),
-                Infolists\Components\TextEntry::make('booking_status')
-                    ->formatStateUsing(function ($record) {
-                        switch ($record->booking_status) {
-                            case 'active':
-                                return 'Active';
-                                break;
-                            case 'finished':
-                                return 'Finished';
-                                break;
-                            case 'on_hold':
-                                return 'On Hold';
-                                break;
-                            case 'expired':
-                                return 'Expired';
-                                break;
-                            case 'pending':
-                                return 'Pending';
-                                break;
-                            case 'cancelled':
-                                return 'Cancelled';
-                                break;
-                            case null:
-                                return 'Unknown Status';
-                                break;
-                        }
-                    })
-                    ->badge()
-                    ->color(function ($record) {
-                        switch ($record->booking_status) {
-                            case 'active':
-                                return 'success';
-                                break;
-                            case 'finished':
-                                return 'gray';
-                                break;
-                            case 'on_hold':
-                                return 'info';
-                                break;
-                            case 'expired':
-                                return 'danger';
-                                break;
-                            case 'pending':
-                                return 'info';
-                                break;
-                            case 'cancelled':
-                                return 'gray';
-                                break;
-                        }
-                    }),
+                Infolists\Components\Fieldset::make('Booking Details')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('check_in_date')
+                            ->color('primary')
+                            ->formatStateUsing(fn($record) => Carbon::parse($record->check_in_date)->addHours(11)->format(self::$dateFormat)),
+                        Infolists\Components\TextEntry::make('check_out_date')
+                            ->color('primary')
+                            ->formatStateUsing(fn($record) => Carbon::parse($record->check_out_date)->addHours(9)->format(self::$dateFormat)),
+                        Infolists\Components\TextEntry::make('accommodation.room_name')
+                            ->color('primary'),
+                        Infolists\Components\TextEntry::make('guest.full_name')
+                            ->color('primary'),
+                        Infolists\Components\TextEntry::make('booking_reference_no')
+                            ->color('primary'),
+                        Infolists\Components\TextEntry::make('booking_fee')
+                            ->money('PHP')
+                            ->color('primary'),
+                        Infolists\Components\TextEntry::make('booking_status')
+                            ->formatStateUsing(function ($record) {
+                                switch ($record->booking_status) {
+                                    case 'active':
+                                        return 'Active';
+                                        break;
+                                    case 'finished':
+                                        return 'Finished';
+                                        break;
+                                    case 'on_hold':
+                                        return 'On Hold';
+                                        break;
+                                    case 'expired':
+                                        return 'Expired';
+                                        break;
+                                    case 'pending':
+                                        return 'Pending';
+                                        break;
+                                    case 'cancelled':
+                                        return 'Cancelled';
+                                        break;
+                                    case null:
+                                        return 'Unknown Status';
+                                        break;
+                                }
+                            })
+                            ->badge()
+                            ->color(function ($record) {
+                                switch ($record->booking_status) {
+                                    case 'active':
+                                        return 'success';
+                                        break;
+                                    case 'finished':
+                                        return 'gray';
+                                        break;
+                                    case 'on_hold':
+                                        return 'info';
+                                        break;
+                                    case 'expired':
+                                        return 'danger';
+                                        break;
+                                    case 'pending':
+                                        return 'info';
+                                        break;
+                                    case 'cancelled':
+                                        return 'gray';
+                                        break;
+                                }
+                            }),
 
-                Infolists\Components\TextEntry::make('on_hold_expiration_date')
-                    ->formatStateUsing(fn($record) => Carbon::parse($record->on_hold_expiration_date)->format(self::$dateFormat))
-                    ->color('danger')
-                    ->visible(fn($record) => $record->on_hold_expiration_date && $record->booking_status == 'on_hold' || $record->booking_status == 'pending'),
+                        Infolists\Components\TextEntry::make('on_hold_expiration_date')
+                            ->formatStateUsing(fn($record) => Carbon::parse($record->on_hold_expiration_date)->format(self::$dateFormat))
+                            ->color('danger')
+                            ->visible(fn($record) => $record->on_hold_expiration_date && $record->booking_status == 'on_hold' || $record->booking_status == 'pending'),
 
-                Infolists\Components\TextEntry::make('payment_type')
-                    ->formatStateUsing(function ($record) {
-                        return match ($record->payment_type) {
-                            'straight_payment' => 'Straight Payment',
-                            'split_payment' => 'Split Payment',
-                            default => 'Unknown',
-                        };
-                    })
-                    ->color('primary'),
+                        Infolists\Components\TextEntry::make('payment_type')
+                            ->formatStateUsing(function ($record) {
+                                return match ($record->payment_type) {
+                                    'straight_payment' => 'Straight Payment',
+                                    'split_payment' => 'Split Payment',
+                                    default => 'Unknown',
+                                };
+                            })
+                            ->color('primary'),
+                    ])
             ]);
     }
 
