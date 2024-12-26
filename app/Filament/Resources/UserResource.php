@@ -17,6 +17,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Actions\DeleteAction;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ToggleColumn;
 
 class UserResource extends Resource
 {
@@ -25,6 +28,8 @@ class UserResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-user-plus';
 
     protected static ?string $navigationGroup = 'Settings';
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?int $navigationSort = 2;
 
@@ -69,9 +74,17 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->formatStateUsing(fn($record) => $record->roleLabel()),
+                IconColumn::make('status')
+                    ->label('Active Account')
+                    ->icon(fn($record) => $record->status == true ? 'heroicon-o-check-circle' : 'heroicon-o-minus-circle')
+                    ->color(fn($record) => $record->status == true ? 'success' : 'gray'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\TernaryFilter::make('suspended')
+                    ->placeholder('All users')
+                    ->trueLabel('Suspended users')
+                    ->falseLabel('Active users')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
@@ -79,10 +92,41 @@ class UserResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->color('warning')
                     ->visible(fn($record) => !$record->trashed()),
-                Tables\Actions\DeleteAction::make()
-                    ->visible(fn($record) => $record->role !== 1),
+                // Tables\Actions\DeleteAction::make()
+                //     ->visible(fn($record) => $record->role !== 1),
                 Tables\Actions\RestoreAction::make()
                     ->color('success'),
+                Action::make('suspend')
+                    ->label('Suspend')
+                    ->icon('heroicon-o-user-minus')
+                    ->color('danger')
+                    ->action(function ($record) {
+                        $record->status = false;
+                        $record->save();
+
+                        \Filament\Notifications\Notification::make()
+                            ->danger()
+                            ->title('User Suspended!')
+                            ->body("$record->name has been suspended")
+                            ->send();
+                    })
+                    ->visible(fn($record) => $record->roleLabel() !== 'Admin' && $record->status == true),
+
+                Action::make('activate')
+                    ->label('Activate')
+                    ->icon('heroicon-o-user-plus')
+                    ->color('success')
+                    ->action(function ($record) {
+                        $record->status = true;
+                        $record->save();
+
+                        \Filament\Notifications\Notification::make()
+                            ->success()
+                            ->title('User Activated!')
+                            ->body("$record->name has been activated")
+                            ->send();
+                    })
+                    ->visible(fn($record) => $record->roleLabel() !== 'Admin' && $record->status == false)
 
             ])
             ->bulkActions([

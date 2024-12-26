@@ -23,6 +23,8 @@ class AmenitiesResource extends Resource
 
     protected static ?string $navigationGroup = 'Data';
 
+    protected static ?string $recordTitleAttribute = 'amenity_name';
+
     public static function form(Form $form): Form
     {
         return $form

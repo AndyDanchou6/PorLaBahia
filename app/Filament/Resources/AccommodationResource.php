@@ -28,8 +28,9 @@ class AccommodationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-home-modern';
 
-    protected static ?string $navigationGroup = 'Data';
+    protected static ?string $recordTitleAttribute = 'room_name';
 
+    protected static ?string $navigationGroup = 'Data';
 
     public static function form(Form $form): Form
     {
