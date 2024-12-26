@@ -27,9 +27,6 @@
                     <h1 class="about-paragraph"><span>No welcome section</span> at the moment</h1>
 
                 </div>
-                <div class="error">
-
-                </div>
 
                 <img src="/images/circle-arrow-right-02.svg" alt="" class="arrowLeft">
                 <img src="/images/circle-arrow-right-01.svg" alt="" class="arrowRight">
@@ -38,7 +35,7 @@
                 </div>
                 <div class="history">
                     <div class="historydiv">
-                        <img src="/images/image1.jpg" alt="">
+                        <img src="/images/image1.jpg" alt="" id="section2Image">
                     </div>
                     <div class="know-more-text">
                         <div>
@@ -70,7 +67,7 @@
                     </div>
                     <div class="history-grid">
                         <div class="history-grid-image">
-                            <img src="/images/about-image.jpg" alt="">
+                            <img src="/images/about-image.jpg" alt="" id="section4Image">
                         </div>
                         <div class="history-porla">
 
