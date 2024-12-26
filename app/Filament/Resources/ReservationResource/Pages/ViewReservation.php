@@ -421,20 +421,23 @@ class ViewReservation extends ViewRecord
                                 ->success()
                                 ->title('Payment Success')
                                 ->body('Full payment has been successfully recorded and SMS sent.')
-                                ->send();
+                                ->sendToDatabase(auth()->user())
+                                ->broadcast(auth()->user());
                         } else {
                             Notification::make()
                                 ->danger()
                                 ->title('Payment Error')
                                 ->body('Failed to confirm payment and send SMS.')
-                                ->send();
+                                ->sendToDatabase(auth()->user())
+                                ->broadcast(auth()->user());
                         }
                     } else {
                         Notification::make()
                             ->success()
                             ->title('Payment Success')
                             ->body('Payment has been successfully recorded.')
-                            ->send();
+                            ->sendToDatabase(auth()->user())
+                            ->broadcast(auth()->user());
                     }
 
                     $this->redirect($this->getResource()::getUrl('view', ['record' => $record->id]));
@@ -482,7 +485,8 @@ class ViewReservation extends ViewRecord
                             ->body("Error saving updating booking status from active to cancelled")
                             ->danger()
                             ->duration(5000)
-                            ->send();
+                            ->sendToDatabase(auth()->user())
+                            ->broadcast(auth()->user());
                     }
 
                     $checkIn = Carbon::parse($record->check_in_date);
@@ -519,7 +523,8 @@ class ViewReservation extends ViewRecord
                                 ->body("Error saving credit")
                                 ->danger()
                                 ->duration(5000)
-                                ->send();
+                                ->sendToDatabase(auth()->user())
+                                ->broadcast(auth()->user());
                         }
                     }
 
@@ -537,13 +542,15 @@ class ViewReservation extends ViewRecord
                             ->body("$guest cancelled their booking #$record->booking_reference_no and Php $totalCredits payment have been moved to guest credits.")
                             ->info()
                             ->duration(5000)
-                            ->send();
+                            ->sendToDatabase(auth()->user())
+                            ->broadcast(auth()->user());
                     } else {
                         \Filament\Notifications\Notification::make()
                             ->title($record->booking_reference_no . ' has been cancelled')
                             ->danger()
                             ->duration(5000)
-                            ->send();
+                            ->sendToDatabase(auth()->user())
+                            ->broadcast(auth()->user());
                     }
 
                     $this->redirect($this->getResource()::getUrl('view', ['record' => $record->id]));
