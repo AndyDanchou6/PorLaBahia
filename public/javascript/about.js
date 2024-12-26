@@ -18,7 +18,7 @@ $(document).ready(function () {
 
             amenities.forEach(function (amenity) {
                 const amenityAbout = `
-                <div class="about-item">
+                <div class="about-item" display="block">
                     <img src="/storage/${amenity.main_image}" alt="${amenity.amenity_name}">
                 </div>
                 `;
@@ -30,7 +30,7 @@ $(document).ready(function () {
                 slidesToScroll:1,
                 dots: true,
             });
-            if(accommodation.length <= 3){
+            if(amenities.length <= 4){
                 $('.arrowLeft, .arrowRight').hide();
             }else{
                 $('.arrowLeft, .arrowRight').show();
@@ -42,7 +42,6 @@ $(document).ready(function () {
                 amenitiesAbout.slick('slickNext');
             });
             }else{
-                $('.about-image-slider').html('<i><p style="color:white">No amenities at the moment.</p></i>');     
                 $('.arrowLeft, .arrowRight').hide();
             }
         },

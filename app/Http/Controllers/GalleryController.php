@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 class GalleryController extends Controller
 {
-    // public function getGalleries()
-    // {
-    //     $galleries = Galleries::where('galleries_type', 'App\Models\Amenities')->get();
-    //     return response()->json($galleries);
-    // }
+    public function getFeaturedImages()
+    {
+        $featuredImages = Galleries::where('is_featured',true)->get();
+        return response()->json($featuredImages);
+    }
 }

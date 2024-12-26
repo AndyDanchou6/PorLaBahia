@@ -103,6 +103,7 @@ $(document).ready(function () {
                 titleElement.textContent = firstHouse.room_name;
                 descriptionElement.textContent = firstHouse.description;
                 priceElement.textContent = `₱ ${firstHouse.weekday_price}`;
+                $('.house1:first').addClass('active');
 
                 $('.other-houses').on('click', '.house1', function() {
                     const clickedImage = $(this);
@@ -121,7 +122,7 @@ $(document).ready(function () {
                 });
             }else{
                 $('.other-houses').html('<i><p>No accommodation at the moment.</p></i>');
-                $('.resort-houses-image').html('<i><p>Once accommodation clicked, it will display here.</p></i>');
+                $('.resort-houses-image').html('<i>Once accommodation clicked, it will display here.</i>');
                 $('.arrowL, .arrowR').hide();
             }
         },
@@ -173,22 +174,136 @@ $(document).ready(function () {
             }
         });
     })
-    // $.ajax({
-    //     url:'api/getFirstSection',
-    //     method: 'GET',
-    //     success: function(title){
-    //         if(title.length > 0){
-    //             const getFirstSectionTitle = $('.title');
-    //             getFirstSectionTitle.html('');
-    //             const getFirstSectionTagline = $('.tagline');
-    //             getFirstSectionTagline.html('');
 
-    //             title.forEach(data => {
-    //                 getFirstSectionTitle.append(`<h2 class="title">${data.title}</h2>`);
-    //                 getFirstSectionTagline.append(`<h1 class="tagline">${data.value}</h1>`);
-                
-    //             });
-    //         }
-    //     }
-    // })
+    function updateAboutSection() {
+    $.ajax({
+        url: 'api/getHomeContents', 
+        method: 'GET',
+        dataType: 'json',
+        success: function (data) {
+
+        const aboutSection = data.find(item => item.section == 2);
+        if (aboutSection) {
+            let aboutHTML = `
+                <h1>Por La Bahia</h1>
+                <h4>${aboutSection.title.toUpperCase()}</h4>
+                <p>${aboutSection.value}</p>
+                <div class="icon-name">
+            `;
+        
+            if (aboutSection.icons && aboutSection.icons.length > 0) {
+                aboutSection.icons.forEach(function(icon) {
+                    aboutHTML += `
+                        <div>
+                            <img src="/storage/${icon.image}" alt="${icon.icon_name}">
+                            ${icon.icon_name}
+                        </div>
+                    `;
+                });
+            }
+            aboutHTML += `
+                <button class="readmore">
+                    <img src="/images/book.svg" alt="Read More" class="readmoreImage"> Read More
+                </button>
+            `;
+            const aboutTextDiv = $(".about-text");
+            if (aboutTextDiv.length) {
+                aboutTextDiv.html(aboutHTML);
+            }
+        }else{
+            $(".about-text").html('<i> No About Us section at the moment.</i>').css({
+                'display': 'flex',
+                'justify-content': 'center',
+                'align-items': 'center',
+            });
+            }
+
+        const getAccommodation = data.find(context => context.section == 3);
+        if (getAccommodation) {
+            let accommodationContent = `
+                <div class="resort-houses-box">
+                    <div class="resort-houses-title">
+                        <img src="/images/lineLeft.svg" alt="" class="lineLeft">
+                        <h1>Resort Houses</h1>
+                        <img src="/images/lineRight.svg" alt="" class="lineRight">
+                    </div>
+                    <h3>OUR ACCOMMODATIONS</h3>
+                    <p>${getAccommodation.value}</p>
+                </div>
+            `;
+            const accommodationSection = $('#accommodationSection');
+            if (accommodationSection) {
+                accommodationSection.html(accommodationContent);
+            }
+        }},
+    });
+    }
+    updateAboutSection();
+
+    $.ajax({
+        url: '/api/getFeaturedImages',
+        method: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            const gridContainer = $('.grid-images');
+            gridContainer.html(''); 
+    
+            if (data.length > 0) {
+                data.forEach(function (image, index) {
+                    if (index < 3) {
+                        let itemClass = 'item';
+                        if (index == 0) itemClass += ' item1';
+                        else if (index == 1) itemClass += ' item2';
+                        else if (index == 2) itemClass += ' item3';
+    
+                        const imageHtml = `
+                            <div class="${itemClass}">
+                                <img src="/storage/${image.image}" alt="">
+                            </div>
+                        `;
+                        gridContainer.append(imageHtml);
+                    } else {
+                        const extraCount = data.length - 3;
+                        const extraHtml = `
+                            <div class="item item3 extraImages">
+                                <p class="extraCount">+${extraCount}</p>
+                            </div>
+                        `;
+                        gridContainer.append(extraHtml);
+                    }
+                });
+    
+                // $('.item').click(function() {
+                //     $('#lightbox').fadeIn();
+                //     const lightboxContainer = $('.lightbox-slider-container')
+                //     data.forEach(function(item){
+                //         const lightboxSlider = ` 
+                //        <div class="lightbox-slider-container">
+                //             <div class="lightbox-img">
+                //                 <img src="/storage/${item.image}" alt="">
+                //             </div>
+                //         </div> `;
+                //         lightboxContainer.append(lightboxSlider);
+                //     });
+                //     $('.lightbox-slider').slick({
+                //         infinite: true,
+                //         arrows: true,
+                //         prevArrow: $('.lightboxArrowL'),
+                //         nextArrow: $('.lightboxArrowR'),
+                //     });
+                // });
+            } else {
+                gridContainer.html('<i>No featured images at the moment.</i>').css({
+                    'display': 'flex',
+                    'justify-content': 'center',
+                    'align-items': 'center',
+                });
+            }
+        }
+    });
+    
+    $('#close-btn').click(function() {
+        $('#lightbox').fadeOut();
+        $('.lightbox-slider').slick('unslick');
+    }); 
 });

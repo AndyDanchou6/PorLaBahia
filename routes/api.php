@@ -29,4 +29,5 @@ Route::get('/accommodations', [AccommodationController::class, 'getAccommodation
 Route::post('/confirmPayment/{id}', [PaymentConfimationController::class, 'confirm'])->name('payment.confirm');
 Route::get('/testimonials', [TestimonialController::class, 'getTestimonials']);
 Route::post('/submitForm', [FormController::class, 'handleForm']);
-Route::get('/getFirstSection', [ContentManagementController::class, 'getFirstSection']);
+Route::get('/getHomeContents', [ContentManagementController::class, 'getContents']);
+Route::get('/getFeaturedImages', [GalleryController::class, 'getFeaturedImages']);
