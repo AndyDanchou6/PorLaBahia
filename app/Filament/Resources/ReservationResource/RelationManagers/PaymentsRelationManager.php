@@ -180,7 +180,8 @@ class PaymentsRelationManager extends RelationManager
                             ->title('Payment Voided Successfully')
                             ->body('Payment record has been marked as void.')
                             ->success()
-                            ->send();
+                            ->sendToDatabase(auth()->user())
+                            ->broadcast(auth()->user());
 
                         $this->redirect(ReservationResource::getUrl('view', ['record' => $record->reservation_id]));
                     })

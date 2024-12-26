@@ -17,7 +17,7 @@ class AccommodationPageResource extends Resource
 {
     protected static ?string $model = ContentManagementSystem::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-home';
+    protected static ?string $navigationIcon = 'heroicon-o-home-modern';
 
     protected static ?string $modelLabel = 'Accommodation Page';
 

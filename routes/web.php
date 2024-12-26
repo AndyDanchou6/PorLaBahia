@@ -3,6 +3,7 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\AmenityController;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,3 +26,15 @@ Route::get('/home', function () {
 Route::get('/about', [AboutController::class, 'index']);
 Route::get('/accommodation', [AccommodationController::class, 'viewAccommodations']);
 Route::get('/amenities', [AmenityController::class, 'viewAmenities']);
+
+// Route::get('/test', function () {
+//     $recipient = auth()->user();
+
+//     \Filament\Notifications\Notification::make()
+//         ->title('Test Notification')
+//         ->sendToDatabase($recipient)
+//         ->broadcast($recipient);
+
+//     // event(new \App\Events\NotificationEvent($recipient));
+//     dd(env('PUSHER_APP_KEY'));
+// });

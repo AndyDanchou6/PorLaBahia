@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\HomeResource\Pages;
 use App\Filament\Resources\HomeResource\RelationManagers;
 use App\Models\ContentManagementSystem;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
@@ -33,6 +34,8 @@ class HomeResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $maxLength = 50;
+
         return $form
             ->schema([
                 \Filament\Forms\Components\Hidden::make('page')
@@ -52,7 +55,9 @@ class HomeResource extends Resource
                             ->columnSpan('full'),
 
                         \Filament\Forms\Components\TextInput::make('title')
-                            ->label('Title')
+                            ->label(function ($get) {
+                                return $get('section') == 1 ? 'Tagline' : 'Title';
+                            })
                             ->hidden(function ($get) {
                                 if (!$get('section')) {
                                     return true;
@@ -64,7 +69,16 @@ class HomeResource extends Resource
 
                                 return false;
                             })
-                            ->columnSpan('full'),
+                            ->columnSpan('full')
+                            ->hint(
+                                function ($get) use ($maxLength) {
+                                    $remainingLength = $maxLength - strlen($get('title'));
+                                    return $remainingLength > 0
+                                        ? "Remaining characters: {$remainingLength} characters"
+                                        : "Maximum length reached";
+                                }
+                            ),
+
 
                         \Filament\Forms\Components\MarkdownEditor::make('value')
                             ->required()
@@ -77,7 +91,7 @@ class HomeResource extends Resource
                             })
                             ->placeholder('Enter the content for this section (e.g. About us information, Resort information, Video URL)')
                             ->columnSpan('full')
-                            ->hidden(fn($get) => !$get('section'))
+                            ->hidden(fn($get) => !$get('section') || $get('section') == 1)
                             ->reactive(),
 
                         \Filament\Forms\Components\Repeater::make('icons')
@@ -94,52 +108,72 @@ class HomeResource extends Resource
                             ->visible(fn($get) => $get('section') == 2)
                             ->addActionLabel('Add another Icon')
                             ->grid(2)
+                            ->maxItems(4)
+                            ->collapsible()
                             ->columnSpan('full'),
                     ])->columnSpan([
                         'md' => 2,
                         'lg' => 2,
                     ]),
 
-                \Filament\Forms\Components\Fieldset::make('Published?')
+                \Filament\Forms\Components\Group::make()
                     ->schema([
-                        \Filament\Forms\Components\ToggleButtons::make('is_published')
-                            ->label('Status')
-                            ->boolean()
-                            ->grouped()
-                            ->rule(function ($state, $record) {
-                                return [
-                                    function (string $attribute, $value, \Closure $fail) use ($state, $record) {
-                                        if ($state) {
-                                            $existPublished = ContentManagementSystem::where('page', 'home')
-                                                ->where('is_published', 1)->where('section', $record->section)->where('id', '!=', $record->id)->exists();
+                        \Filament\Forms\Components\Fieldset::make('Background Image')
+                            ->schema([
+                                \Filament\Forms\Components\FileUpload::make('background_image')
+                                    ->label('')
+                                    ->placeholder('Must be high quality image (PNG, JPG, SVG)')
+                                    ->columnSpan('full'),
 
-                                            if ($existPublished) {
-                                                $fail("Section '{$record->section}' is already published. Please unpublish the existing section before publishing this one.");
+                            ])
+                            ->columnSpan([
+                                'md' => 1,
+                                'lg' => 1,
+                            ])->visible(fn($get) => $get('section') == 1),
+
+                        \Filament\Forms\Components\Fieldset::make('Published?')
+                            ->schema([
+                                \Filament\Forms\Components\ToggleButtons::make('is_published')
+                                    ->label('Status')
+                                    ->boolean()
+                                    ->grouped()
+                                    ->rule(function ($state, $record) {
+                                        return [
+                                            function (string $attribute, $value, \Closure $fail) use ($state, $record) {
+                                                if ($state) {
+                                                    $existPublished = ContentManagementSystem::where('page', 'home')
+                                                        ->where('is_published', 1)->where('section', $record->section)->where('id', '!=', $record->id)->exists();
+
+                                                    if ($existPublished) {
+                                                        $fail("Section '{$record->section}' is already published. Please unpublish the existing section before publishing this one.");
+                                                    }
+                                                }
                                             }
+                                        ];
+                                    })
+                                    ->afterStateUpdated(function ($state, $record) {
+                                        $existPublished = ContentManagementSystem::where('page', 'home')
+                                            ->where('is_published', 1)
+                                            ->where('section', $record->section)
+                                            ->where('id', '!=', $record->id)
+                                            ->exists();
+
+                                        if ($state && $existPublished) {
+                                            $record->is_published = 0;
+                                            $record->save();
+                                        } else {
+                                            $record->is_published = $state;
+                                            $record->save();
                                         }
-                                    }
-                                ];
-                            })
-                            ->afterStateUpdated(function ($state, $record) {
-                                $existPublished = ContentManagementSystem::where('page', 'home')
-                                    ->where('is_published', 1)
-                                    ->where('section', $record->section)
-                                    ->where('id', '!=', $record->id)
-                                    ->exists();
+                                    })
+                                    ->columnSpan('full'),
 
-                                if ($state && $existPublished) {
-                                    $record->is_published = 0;
-                                    $record->save();
-                                } else {
-                                    $record->is_published = $state;
-                                    $record->save();
-                                }
-                            })
+                            ])->columnSpan([
+                                'md' => 1,
+                                'lg' => 1,
+                            ])->hidden(fn($operation) => $operation == 'create'),
+                    ])
 
-                    ])->columnSpan([
-                        'md' => 1,
-                        'lg' => 1,
-                    ])->visible(fn($get) => $get('section')),
             ])->columns([
                 'md' => 3,
                 'lg' => 3,
@@ -160,6 +194,16 @@ class HomeResource extends Resource
                     ->icon(fn($record) => $record->is_published == 1 ? 'heroicon-o-check-circle' : 'heroicon-o-x-circle')
                     ->color(fn($record) => $record->is_published == 1 ? 'success' : 'danger'),
 
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Published Date')
+                    ->getStateUsing(function ($record) {
+                        if ($record->is_published) {
+                            $datePublished = Carbon::parse($record->updated_at);
+                            return $datePublished ? $datePublished->format('M d, Y h:i A') : 'No Date Available';
+                        }
+
+                        return 'Not Published Yet';
+                    })
 
             ])
             ->filters([
@@ -176,7 +220,9 @@ class HomeResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('section', 'asc')
+            ->defaultSort('is_published', 'desc');
     }
 
     public static function getRelations(): array

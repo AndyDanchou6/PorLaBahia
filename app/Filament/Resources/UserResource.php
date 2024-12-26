@@ -87,31 +87,6 @@ class UserResource extends Resource
                     ->falseLabel('Active users')
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->visible(fn($record) => !$record->trashed()),
-                Tables\Actions\EditAction::make()
-                    ->color('warning')
-                    ->visible(fn($record) => !$record->trashed()),
-                // Tables\Actions\DeleteAction::make()
-                //     ->visible(fn($record) => $record->role !== 1),
-                Tables\Actions\RestoreAction::make()
-                    ->color('success'),
-                Action::make('suspend')
-                    ->label('Suspend')
-                    ->icon('heroicon-o-user-minus')
-                    ->color('danger')
-                    ->action(function ($record) {
-                        $record->status = false;
-                        $record->save();
-
-                        \Filament\Notifications\Notification::make()
-                            ->danger()
-                            ->title('User Suspended!')
-                            ->body("$record->name has been suspended")
-                            ->send();
-                    })
-                    ->visible(fn($record) => $record->roleLabel() !== 'Admin' && $record->status == true),
-
                 Action::make('activate')
                     ->label('Activate')
                     ->icon('heroicon-o-user-plus')
@@ -124,9 +99,40 @@ class UserResource extends Resource
                             ->success()
                             ->title('User Activated!')
                             ->body("$record->name has been activated")
-                            ->send();
+                            ->duration(3000)
+                            ->sendToDatabase(auth()->user())
+                            ->broadcast(auth()->user());
                     })
-                    ->visible(fn($record) => $record->roleLabel() !== 'Admin' && $record->status == false)
+                    ->visible(fn($record) => $record->roleLabel() !== 'Admin' && $record->status == false),
+
+                Action::make('suspend')
+                    ->label('Suspend')
+                    ->icon('heroicon-o-user-minus')
+                    ->color('danger')
+                    ->action(function ($record) {
+                        $record->status = false;
+                        $record->save();
+
+                        \Filament\Notifications\Notification::make()
+                            ->danger()
+                            ->title('User Suspended!')
+                            ->body("$record->name has been suspended")
+                            ->duration(3000)
+                            ->sendToDatabase(auth()->user())
+                            ->broadcast(auth()->user());
+                    })
+                    ->visible(fn($record) => $record->roleLabel() !== 'Admin' && $record->status == true),
+
+                Tables\Actions\ViewAction::make()
+                    ->visible(fn($record) => !$record->trashed()),
+
+                Tables\Actions\EditAction::make()
+                    ->color('warning')
+                    ->visible(fn($record) => !$record->trashed()),
+                // Tables\Actions\DeleteAction::make()
+                //     ->visible(fn($record) => $record->role !== 1),
+                // Tables\Actions\RestoreAction::make()
+                //     ->color('success'),
 
             ])
             ->bulkActions([
