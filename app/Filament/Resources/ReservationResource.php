@@ -326,7 +326,8 @@ class ReservationResource extends Resource
                             ->success()
                             ->title('New Guest Registered!')
                             ->body($data['first_name'] . ' ' . $data['last_name'] . ' has registered')
-                            ->send();
+                            ->sendToDatabase(auth()->user())
+                            ->broadcast(auth()->user());
 
                         return $guestId;
                     })
