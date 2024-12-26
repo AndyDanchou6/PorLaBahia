@@ -17,7 +17,7 @@ class AmenitiesPageResource extends Resource
 {
     protected static ?string $model = ContentManagementSystem::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-sparkles';
+    protected static ?string $navigationIcon = 'heroicon-o-lifebuoy';
 
     protected static ?string $modelLabel = 'Amenities Page';
 

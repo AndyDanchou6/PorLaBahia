@@ -23,7 +23,7 @@ class RestaurantMenuResource extends Resource
 {
     protected static ?string $model = RestaurantMenu::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard';
+    protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
     protected static ?string $navigationGroup = 'Data';
 

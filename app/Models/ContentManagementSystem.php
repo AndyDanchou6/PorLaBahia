@@ -15,6 +15,7 @@ class ContentManagementSystem extends Model
         'page',
         'title',
         'section',
+        'background_image',
         'value',
         'icons',
     ];

@@ -68,12 +68,20 @@ $(document).ready(function () {
                     section1.html("");
 
                     const section1Content = `
-                        <h2 class="about-title">${item.title}</h2>
-                        <h1 class="about-paragraph"><span>About Us: </span>${item.value}</h1>
+                        <h2 class="about-title">Welcome to Por La Bahia</h2>
+                        <h1 class="about-paragraph"><span>About Us: </span>${item.title}</h1>
                     `;
 
                     section1.append(section1Content);
+
+                    if (item.background_image) {
+                        $(".background").css(
+                            "background-image",
+                            `url('${item.background_image}')`
+                        );
+                    }
                 }
+
                 if (item.section == 2 && item.is_published == 1) {
                     section2.html("");
 
@@ -85,6 +93,10 @@ $(document).ready(function () {
                     `;
 
                     section2.append(section2Content);
+
+                    if (item.background_image) {
+                        $("#section2Image").attr("src", item.background_image);
+                    }
                 }
 
                 if (item.section == 3) {
@@ -113,6 +125,10 @@ $(document).ready(function () {
                     `;
 
                     section4.append(section4Display);
+
+                    if (item.background_image) {
+                        $("#section4Image").attr("src", item.background_image);
+                    }
                 }
 
                 if (item.section == 5) {
