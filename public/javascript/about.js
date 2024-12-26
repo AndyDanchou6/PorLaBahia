@@ -36,8 +36,11 @@ $(document).ready(function () {
                 $('.arrowLeft, .arrowRight').show();
 
             }
-        },
-    });
+        }else{
+            $('.arrowLeft, .arrowRight').hide();
+        }
+    }
+});
 
     $.ajax({
         url: "/api/cms/about",
@@ -134,10 +137,6 @@ $(document).ready(function () {
                     section5.append(section5Display);
                 }
             });
-            }else{
-                $('.arrowLeft, .arrowRight').hide();
-            }
-
-        },
-    });
+        }
+    })
 });

@@ -29,6 +29,12 @@ $(document).ready(function (){
                     slidesToShow:3,
                     arrows: false,
                 })
+                if(testimonials.length <= 3){
+                    $('.redArrowLeft, .redArrowRight').hide();
+                }else{
+                    $('.redArrowLeft, .redArrowRight').show();
+    
+                }
                 $('.redArrowLeft').click(function (){
                     clientTestimonials.slick('slickPrev');
                 });
