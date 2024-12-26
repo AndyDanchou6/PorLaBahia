@@ -47,7 +47,6 @@ $(document).ready(function () {
         method: "GET",
         dataType: "json",
         success: function (response) {
-            // console.log(about.data);
             const getData = response.data;
             let section1 = $(".section1");
             let section2 = $(".know-more-text");
@@ -56,6 +55,7 @@ $(document).ready(function () {
             let section5 = $(".history-operation");
 
             getData.forEach(function (item) {
+                console.log(item);
                 if (item.section == 1) {
                     section1.html("");
 
@@ -119,7 +119,7 @@ $(document).ready(function () {
                     `;
 
                     section5.append(section5Display);
-                }
+            }
             });
         }
     })

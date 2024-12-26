@@ -22,10 +22,8 @@
             @include('header')
             <main>
                 <div class="section1">
-                    <!-- <h2 class="about-title">Welcome to Por La Bahia</h2>
-                    <!-- <h1 class="about-paragraph"><span>About Us:</span> Get to <br>Know the Heart<br>Behind What We Do.</h1> --> -->
-                    <h1 class="about-paragraph"><span>No welcome section</span> at the moment</h1>
-
+                    <h2 class="about-title">Welcome to Por La Bahia</h2>
+                     <h1 class="about-paragraph"><span>About Us:</span> Get to <br>Know the Heart<br>Behind What We Do.</h1> 
                 </div>
                 <div class="error">
 
@@ -38,14 +36,11 @@
                 </div>
                 <div class="history">
                     <div class="historydiv">
-                        <img src="/images/image1.jpg" alt="">
+                        <img src=" " alt="">
                     </div>
                     <div class="know-more-text">
                         <div>
-                            <p>No introduction at the moment</p>
-                            <!-- <h1 class="know-more-title">Know More About Us</h1>
-                            <p>Lorem Ipsum is simply dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged
-                                looking at its layout. <br><br> The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p> -->
+                            <p> <i>No introduction at the moment.</i></p>
                         </div>
                     </div>
                     <div class="flex-images">
@@ -70,7 +65,7 @@
                     </div>
                     <div class="history-grid">
                         <div class="history-grid-image">
-                            <img src="/images/about-image.jpg" alt="">
+                            <img src=" " alt="">
                         </div>
                         <div class="history-porla">
 
