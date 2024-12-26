@@ -99,13 +99,6 @@ $(document).ready(function () {
                     'justify-content': 'center',
 
                 });
-            } else {
-                $(".accommodationLists")
-                    .html("<i>No accommodation at the moment.</i>")
-                    .css({
-                        display: "flex",
-                        "justify-content": "center",
-                    });
             }
         },
     });
