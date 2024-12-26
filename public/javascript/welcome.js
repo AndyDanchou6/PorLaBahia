@@ -21,7 +21,7 @@ $(document).ready(function () {
                             <img src="/storage/${amenity.main_image}" alt="${amenity.amenity_name}">
                             <h3>${amenity.amenity_name}</h3>
                             <p>${amenity.description}</p>
-                            <button class="amenities-readmore"> Read More</button>
+                            <button class="amenities-readmore" > Read More</button>
                         </div>
                    `;
                     amenitiesContainer.append(amenityBox);
@@ -127,14 +127,17 @@ $(document).ready(function () {
             }
         },
     });
+    
     const video = document.getElementById('video');
     const playPauseBtn = document.getElementById('playPauseBtn');
-
     playPauseBtn.addEventListener('click', () => {
+        const icon = playPauseBtn.querySelector('.fa-youtube-play');
         if (video.paused) {
             video.play();
+            icon.style.display = 'none';
         } else {
             video.pause();
+            icon.style.display = 'inline';
         }
     });
     $('.submit').on('click', function(event) {
@@ -195,15 +198,17 @@ $(document).ready(function () {
                 aboutSection.icons.forEach(function(icon) {
                     aboutHTML += `
                         <div>
-                            <img src="/storage/${icon.image}" alt="${icon.icon_name}">
+                            <img src="/storage/${icon.image}" alt="">
                             ${icon.icon_name}
                         </div>
                     `;
                 });
+            }else{
+                aboutSection.icon('');
             }
             aboutHTML += `
                 <button class="readmore">
-                    <img src="/images/book.svg" alt="Read More" class="readmoreImage"> Read More
+                    <img src="/images/book.svg" alt="Read More" class="readmoreImage"> <a href="/about">Read More</a>
                 </button>
             `;
             const aboutTextDiv = $(".about-text");
@@ -272,26 +277,7 @@ $(document).ready(function () {
                         gridContainer.append(extraHtml);
                     }
                 });
-    
-                // $('.item').click(function() {
-                //     $('#lightbox').fadeIn();
-                //     const lightboxContainer = $('.lightbox-slider-container')
-                //     data.forEach(function(item){
-                //         const lightboxSlider = ` 
-                //        <div class="lightbox-slider-container">
-                //             <div class="lightbox-img">
-                //                 <img src="/storage/${item.image}" alt="">
-                //             </div>
-                //         </div> `;
-                //         lightboxContainer.append(lightboxSlider);
-                //     });
-                //     $('.lightbox-slider').slick({
-                //         infinite: true,
-                //         arrows: true,
-                //         prevArrow: $('.lightboxArrowL'),
-                //         nextArrow: $('.lightboxArrowR'),
-                //     });
-                // });
+                
             } else {
                 gridContainer.html('<i>No featured images at the moment.</i>').css({
                     'display': 'flex',
@@ -301,9 +287,4 @@ $(document).ready(function () {
             }
         }
     });
-    
-    $('#close-btn').click(function() {
-        $('#lightbox').fadeOut();
-        $('.lightbox-slider').slick('unslick');
-    }); 
 });

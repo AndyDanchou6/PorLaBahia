@@ -18,7 +18,7 @@
         <li><a href="/home" class="nav-link">Home</a></li>
         <li><a href="/about" class="nav-link">About Us</a></li>
         <li><a href="/accommodation" class="nav-link">Accommodations</a></li>
-        <li><a href="#" class="nav-link">Amenities</a></li>
+        <li><a href="/amenities" class="nav-link">Amenities</a></li>
         <li><a href="#" class="nav-link">Restaurant Menu</a></li>
         <li><a href="#" class="nav-link">Contact Us</a></li>
     </ul>
