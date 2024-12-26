@@ -36,9 +36,10 @@ class ViewReservation extends ViewRecord
                     \Filament\Forms\Components\Fieldset::make()
                         ->schema([
                             \Filament\Forms\Components\TextInput::make('amount')
+                                ->numeric()
                                 ->default(fn($record) => $record->booking_fee)
-                                ->mask(RawJs::make('$money($input)'))
-                                ->stripCharacters(',')
+                                // ->mask(RawJs::make('$money($input)'))
+                                // ->stripCharacters(',')
                                 ->prefix('₱')
                                 ->hint(
                                     function ($record) {
@@ -59,38 +60,64 @@ class ViewReservation extends ViewRecord
                                 ->readOnly(),
 
                             \Filament\Forms\Components\Select::make('payment_method')
-                                ->options(function ($get) {
+                                ->options(function ($record) {
 
                                     $guest_id = $this->getRecord()->guest_id;
                                     $guest = GuestInfo::find($guest_id);
-                                    $credits = $guest->guestCredit->first();
+                                    $credits = $guest->guestCredit
+                                        ->where('status', 'active')
+                                        ->where('is_redeemed', false)
+                                        ->sum('amount');
 
-                                    if ($credits) {
-                                        $creditAmount = $credits->amount;
-
-                                        if ($creditAmount >= $get('amount')) {
-                                            return [
-                                                'cash' => 'Cash',
-                                                'GCash' => 'GCash',
-                                                'credits' => 'Credits',
-                                            ];
-                                        } else {
-                                            return [
-                                                'cash' => 'Cash',
-                                                'GCash' => 'GCash',
-                                            ];
-                                        }
+                                    if ($credits >= $record->getOriginal('booking_fee')) {
+                                        return [
+                                            'cash' => 'Cash',
+                                            'GCash' => 'GCash',
+                                            'credits' => 'Credits',
+                                        ];
                                     } else {
                                         return [
                                             'cash' => 'Cash',
                                             'GCash' => 'GCash',
-                                            'xendit' => 'Xendit'
                                         ];
+                                    }
+
+                                    return [
+                                        'cash' => 'Cash',
+                                        'GCash' => 'GCash',
+                                        'xendit' => 'Xendit'
+                                    ];
+                                    // dd($credits);
+                                })
+                                ->helperText(function ($record) {
+                                    $guest_id = $this->getRecord()->guest_id;
+                                    $guest = GuestInfo::find($guest_id);
+                                    $credits = $guest->guestCredit
+                                        ->where('status', 'active')
+                                        ->where('is_redeemed', false)
+                                        ->sum('amount');
+
+                                    if ($credits < $record->booking_fee) {
+                                        return "Credits too low. Can be used in split payment.";
                                     }
                                 })
                                 ->label('Payment Method')
                                 ->required()
                                 ->reactive(),
+
+                            \Filament\Forms\Components\Select::make('available_credits')
+                                ->required()
+                                ->options(fn($record) => ReservationResource::getAvailableCredits($record->guest_id, $record->booking_fee))
+                                ->hint(function ($get, $state) {
+                                    if ($state) {
+                                        $credit = GuestCredit::find($state);
+
+                                        return "Amount: ₱ $credit->amount";
+                                    }
+                                })
+                                ->hintColor('success')
+                                ->reactive()
+                                ->visible(fn($get) => $get('payment_method') == 'credits'),
 
                             \Filament\Forms\Components\TextInput::make('gcash_reference_number')
                                 ->visible(function ($get) {
@@ -123,7 +150,6 @@ class ViewReservation extends ViewRecord
                                 ->columnSpan('full'),
                         ])->visible(fn($record) => $record->payment_type == 'straight_payment'),
 
-
                     // Split Payment Form
                     \Filament\Forms\Components\Fieldset::make()
                         ->schema([
@@ -132,6 +158,7 @@ class ViewReservation extends ViewRecord
                                     \Filament\Forms\Components\Grid::make(2)
                                         ->schema([
                                             \Filament\Forms\Components\TextInput::make('amount')
+                                                ->numeric()
                                                 ->prefix('₱')
                                                 ->required()
                                                 ->reactive(),
@@ -141,23 +168,18 @@ class ViewReservation extends ViewRecord
 
                                                     $guest_id = $this->getRecord()->guest_id;
                                                     $guest = GuestInfo::find($guest_id);
-                                                    $credits = $guest->guestCredit->first();
+                                                    $credits = $guest->guestCredit
+                                                        ->where('status', 'active')
+                                                        ->where('is_redeemed', false)
+                                                        ->sum('amount');
 
                                                     if ($credits) {
-                                                        $creditAmount = $credits->amount;
-
-                                                        if ($creditAmount >= $get('amount')) {
-                                                            return [
-                                                                'cash' => 'Cash',
-                                                                'GCash' => 'GCash',
-                                                                'credits' => 'Credits',
-                                                            ];
-                                                        } else {
-                                                            return [
-                                                                'cash' => 'Cash',
-                                                                'GCash' => 'GCash',
-                                                            ];
-                                                        }
+                                                        return [
+                                                            'cash' => 'Cash',
+                                                            'GCash' => 'GCash',
+                                                            'xendit' => 'Xendit',
+                                                            'credits' => 'Credits',
+                                                        ];
                                                     } else {
                                                         return [
                                                             'cash' => 'Cash',
@@ -166,9 +188,45 @@ class ViewReservation extends ViewRecord
                                                         ];
                                                     }
                                                 })
+                                                ->helperText(function ($record) {
+                                                    $guest_id = $this->getRecord()->guest_id;
+                                                    $guest = GuestInfo::find($guest_id);
+                                                    $credits = $guest->guestCredit
+                                                        ->where('status', 'active')
+                                                        ->where('is_redeemed', false)
+                                                        ->sum('amount');
+
+                                                    if ($credits < $record->booking_fee && $credits != 0) {
+                                                        return "You have $credits available credits";
+                                                    }
+
+                                                    return null;
+                                                })
                                                 ->label('Payment Method')
                                                 ->required()
                                                 ->reactive(),
+
+                                            \Filament\Forms\Components\Select::make('available_credits')
+                                                ->required()
+                                                ->reactive()
+                                                ->options(fn($record, $get) => ReservationResource::getAvailableCredits($record->guest_id, $get('amount')))
+                                                ->visible(fn($get) => $get('payment_method') == 'credits')
+                                                ->hint(function ($get, $state) {
+                                                    if ($state) {
+                                                        $payments = $get('../../payment_form');
+                                                        $credit = GuestCredit::find($state);
+                                                        $remainingCredit = $credit->amount;
+
+                                                        foreach ($payments as $payment) {
+                                                            if ($payment['payment_method'] == 'credits' && $state == $payment['available_credits']) {
+                                                                $remainingCredit -= $payment['amount'] ?? 0;
+                                                                // dd($payment['amount']);
+                                                            }
+                                                        }
+
+                                                        return "₱ $remainingCredit";
+                                                    }
+                                                })
 
                                         ]),
 
@@ -208,6 +266,12 @@ class ViewReservation extends ViewRecord
                                     return [
                                         function (string $attribute, $value, \Closure $fail) use ($get, $record) {
                                             $paymentFormData = $get('payment_form');
+                                            $guest_id = $this->getRecord()->guest_id;
+                                            $guest = GuestInfo::find($guest_id);
+                                            $credits = $guest->guestCredit
+                                                ->where('status', 'active')
+                                                ->where('is_redeemed', false)
+                                                ->sum('amount');
 
                                             if (is_array($paymentFormData)) {
                                                 $totalAmount = 0;
@@ -224,6 +288,12 @@ class ViewReservation extends ViewRecord
 
                                                 if ($remainingBalance < 0) {
                                                     $fail("The total amount entered exceeds the remaining payable by ₱" . abs($remainingBalance) . ".00. Please enter a valid amount.");
+                                                }
+
+                                                $exceedAmount = $data['amount'] - $credits;
+
+                                                if ($data['payment_method'] == 'credits' && $data['amount'] > $credits) {
+                                                    $fail("The amount entered exceeds the remaining credits by ₱" . abs($exceedAmount) . ".00.");
                                                 }
                                             }
                                         },
@@ -264,7 +334,24 @@ class ViewReservation extends ViewRecord
 
                 ])
                 ->action(function (array $data, $record): void {
+                    // split payment
                     if (isset($data['payment_form']) && is_array($data['payment_form'])) {
+                        // process credits
+                        $payment_methods = array_column($data['payment_form'], 'payment_method');
+                        $usedCredits = [];
+
+                        if (in_array('credits', $payment_methods)) {
+                            foreach ($data['payment_form'] as $payment) {
+                                if ($payment['payment_method'] === 'credits') {
+                                    $usedCredits['multiple'][$payment['available_credits']][] = $payment;
+                                }
+                            }
+                        }
+
+                        if (!empty($usedCredits)) {
+                            ReservationResource::useCredits($record, $usedCredits);
+                        }
+
                         $existingPayments = Payment::where('reservation_id', $record->id)
                             ->whereNotIn('payment_status', ['void'])
                             ->get();
@@ -301,7 +388,13 @@ class ViewReservation extends ViewRecord
                         }
 
                         $record->save();
-                    } else {
+                    }
+                    // full payment
+                    else {
+                        if ($data['payment_method'] == 'credits') {
+                            ReservationResource::useCredits($record, $data);
+                        }
+
                         $query = Payment::create([
                             'reservation_id' => $record->id,
                             'amount' => $data['amount'],
@@ -393,7 +486,7 @@ class ViewReservation extends ViewRecord
                     }
 
                     $checkIn = Carbon::parse($record->check_in_date);
-                    $now = Carbon::now();
+                    $now = Carbon::now()->startOfDay();
                     $totalCredits = 0;
                     $dayLimit = 10;
                     $payments = Payment::where('reservation_id', $record->id)

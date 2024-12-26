@@ -22,7 +22,9 @@ class GuestCredit extends Model
     ];
 
     protected $casts = [
-        'booking_ids' => 'array',
+        'is_redeemed' => 'boolean',
+        'date_redeemed' => 'datetime',
+        'expiration_date' => 'datetime',
     ];
 
     public function guest()

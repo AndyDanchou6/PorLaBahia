@@ -26,6 +26,7 @@ class User extends Authenticatable implements FilamentUser
         'email',
         'password',
         'role',
+        'status'
     ];
 
     /**
@@ -46,7 +47,8 @@ class User extends Authenticatable implements FilamentUser
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'role' => 'integer'
+        'role' => 'integer',
+        'status' => 'boolean',
     ];
 
     public function isAdmin()
@@ -66,6 +68,6 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return auth()->user()->status == true;
     }
 }
