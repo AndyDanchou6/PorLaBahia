@@ -19,7 +19,7 @@ class ContentManagementController extends Controller
         ]);
     }
 
-    public function getFirstSection()
+    public function getContents()
 
     {
         $home = ContentManagementSystem::all();
