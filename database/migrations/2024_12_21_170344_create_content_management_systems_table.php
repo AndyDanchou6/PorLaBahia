@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('title')->nullable();
             $table->longText('value')->nullable();
             $table->json('icons')->nullable();
-            $table->boolean('is_published')->nullable();
+            $table->boolean('is_published')->nullable()->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

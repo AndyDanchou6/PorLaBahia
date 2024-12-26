@@ -30,6 +30,8 @@ class GuestInfoResource extends Resource
 
     protected static ?string $modelLabel = 'Guest Information';
 
+    protected static ?string $recordTitleAttribute = 'full_name';
+
     public static function form(Form $form): Form
     {
         return $form
