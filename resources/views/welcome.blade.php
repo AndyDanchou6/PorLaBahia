@@ -55,6 +55,11 @@
                 <p class="extraCount">+</p>
             </div>
         </div>
+        <div class="lightboxContainer">
+            <div class="lightbox">
+                <img src="" alt="">
+            </div>
+        </div>
 
     </section>
 
@@ -176,7 +181,7 @@
             
         <h4>CONNECT TO US IF YOU HAVE PROBLEM</h4>
             <form action="" id="form">
-                <div class="input-container">
+                <div class="input-container" id="input_name">
                     <i class="fa fa-user"></i>
                     <input type="text" id="contact_name" name="contact_name" placeholder="Contact Name" required>
                 </div>

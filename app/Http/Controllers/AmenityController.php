@@ -9,7 +9,7 @@ class AmenityController extends Controller
 {
     public function getAmenities()
     {
-        $amenities = Amenities::all();
+        $amenities = Amenities::with('galleries')->get();
         return response()->json($amenities);
     }
 
