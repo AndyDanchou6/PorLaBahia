@@ -143,13 +143,16 @@ $(document).ready(function () {
     $('.submit').on('click', function(event) {
         event.preventDefault();
         const contact_name = $('#contact_name').val();
+        // if(contact_name == ''){
+        //     $('#input_name').html('Please enter your name.').addClass('error').css({'display':'block', ''});
+        // }
         const street = $('#street').val();
         const city = $('#city').val();
         const zip_code = $('#zip_code').val();
         const contact_no = $('#contact_no').val();
         const email = $('#email').val();
         const message = $('#message').val();
-
+        
         $.ajax({
             url: "api/submitForm",
             type: "POST",
@@ -163,6 +166,7 @@ $(document).ready(function () {
                 message: message
             },
             success: function (response) {
+                console.log(response);
                 $('#responseMessage')
                 .removeClass('error') 
                 .html('Your message has been successfully sent!') 
@@ -172,7 +176,7 @@ $(document).ready(function () {
             error: function () {
                 $('#responseMessage')
                     .addClass('error')
-                    .html('An error occured.')
+                    .html('Please fill out the form first.')
                     .css('display', 'block');
             }
         });
@@ -185,7 +189,8 @@ $(document).ready(function () {
         dataType: 'json',
         success: function (data) {
 
-        const aboutSection = data.find(item => item.section == 2);
+        const aboutSection = data.find(item => item.page == "home");
+        // console.log(data);
         if (aboutSection) {
             let aboutHTML = `
                 <h1>Por La Bahia</h1>
@@ -195,26 +200,30 @@ $(document).ready(function () {
             `;
         
             if (aboutSection.icons && aboutSection.icons.length > 0) {
-                aboutSection.icons.forEach(function(icon) {
-                    aboutHTML += `
-                        <div>
-                            <img src="/storage/${icon.image}" alt="">
-                            ${icon.icon_name}
-                        </div>
-                    `;
+                aboutSection.icons.forEach(function (icon) {
+                    if (icon.image && icon.icon_name) {
+                        aboutHTML += `
+                            <div>
+                                <img src="/storage/${icon.image}" alt="${icon.icon_name}">
+                                ${icon.icon_name}
+                            </div>
+                        `;
+                    }
                 });
-            }else{
-                aboutSection.icon('');
             }
             aboutHTML += `
+                </div>
                 <button class="readmore">
-                    <img src="/images/book.svg" alt="Read More" class="readmoreImage"> <a href="/about">Read More</a>
+                    <img src="/images/book.svg" alt="Read More" class="readmoreImage"> 
+                    <a href="/about">Read More</a>
                 </button>
             `;
+        
             const aboutTextDiv = $(".about-text");
             if (aboutTextDiv.length) {
                 aboutTextDiv.html(aboutHTML);
-            }
+            }       
+            
         }else{
             $(".about-text").html('<i> No About Us section at the moment.</i>').css({
                 'display': 'flex',
@@ -223,10 +232,10 @@ $(document).ready(function () {
             });
             }
 
-        const getAccommodation = data.find(context => context.section == 3);
+        const getAccommodation = data.find(context => context.page == "home" && context.section == 3);
         if (getAccommodation) {
+            // console.log(getAccommodation);
             let accommodationContent = `
-                <div class="resort-houses-box">
                     <div class="resort-houses-title">
                         <img src="/images/lineLeft.svg" alt="" class="lineLeft">
                         <h1>Resort Houses</h1>
@@ -276,6 +285,12 @@ $(document).ready(function () {
                         `;
                         gridContainer.append(extraHtml);
                     }
+                // $('.item').on('click', function(){
+                //     $('.lightboxContainer').show();
+                //     const clickedItemImage = $(this);
+                //     console.log(clickedItemImage);
+
+                // })
                 });
                 
             } else {

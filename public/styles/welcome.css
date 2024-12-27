@@ -264,6 +264,15 @@ span {
     background-color: rgba(101, 101, 101, 0.5);
     cursor: pointer;
 }
+.lightboxContainer{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+}
 .resort-facilities{
     position: absolute;
     top: 220%;
@@ -972,6 +981,6 @@ textarea{
     font-family: "Poppins", sans-serif;
     margin: 0;
 }
-.response-message.error {
+.response-message.error, .input-container.error {
     color: red; 
 }
