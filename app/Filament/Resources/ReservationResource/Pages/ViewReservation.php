@@ -35,30 +35,6 @@ class ViewReservation extends ViewRecord
                     // Full Payment Form
                     \Filament\Forms\Components\Fieldset::make()
                         ->schema([
-                            \Filament\Forms\Components\TextInput::make('amount')
-                                ->numeric()
-                                ->default(fn($record) => $record->booking_fee)
-                                // ->mask(RawJs::make('$money($input)'))
-                                // ->stripCharacters(',')
-                                ->prefix('₱')
-                                ->hint(
-                                    function ($record) {
-                                        $record = $this->getRecord();
-
-                                        $getBalance = Payment::where('reservation_id', $record->id)->whereNotIn('payment_status', ['void', 'unpaid'])->sum('amount');
-
-                                        $remainingBalance = $record->booking_fee - $getBalance;
-
-                                        if ($remainingBalance) {
-                                            return "Payable: ₱{$remainingBalance}.00";
-                                        }
-
-                                        return false;
-                                    }
-                                )
-                                ->hintColor('success')
-                                ->readOnly(),
-
                             \Filament\Forms\Components\Select::make('payment_method')
                                 ->options(function ($record) {
 
@@ -97,7 +73,7 @@ class ViewReservation extends ViewRecord
                                         ->where('is_redeemed', false)
                                         ->sum('amount');
 
-                                    if ($credits < $record->booking_fee) {
+                                    if ($credits < $record->booking_fee && $credits != 0) {
                                         return "Credits too low. Can be used in split payment.";
                                     }
                                 })
@@ -118,6 +94,30 @@ class ViewReservation extends ViewRecord
                                 ->hintColor('success')
                                 ->reactive()
                                 ->visible(fn($get) => $get('payment_method') == 'credits'),
+
+                            \Filament\Forms\Components\TextInput::make('amount')
+                                ->numeric()
+                                ->default(fn($record) => $record->booking_fee)
+                                // ->mask(RawJs::make('$money($input)'))
+                                // ->stripCharacters(',')
+                                ->prefix('₱')
+                                ->hint(
+                                    function ($record) {
+                                        $record = $this->getRecord();
+
+                                        $getBalance = Payment::where('reservation_id', $record->id)->whereNotIn('payment_status', ['void', 'unpaid'])->sum('amount');
+
+                                        $remainingBalance = $record->booking_fee - $getBalance;
+
+                                        if ($remainingBalance) {
+                                            return "Payable: ₱{$remainingBalance}.00";
+                                        }
+
+                                        return false;
+                                    }
+                                )
+                                ->hintColor('success')
+                                ->readOnly(),
 
                             \Filament\Forms\Components\TextInput::make('gcash_reference_number')
                                 ->visible(function ($get) {
@@ -157,11 +157,6 @@ class ViewReservation extends ViewRecord
                                 ->schema([
                                     \Filament\Forms\Components\Grid::make(2)
                                         ->schema([
-                                            \Filament\Forms\Components\TextInput::make('amount')
-                                                ->numeric()
-                                                ->prefix('₱')
-                                                ->required()
-                                                ->reactive(),
 
                                             \Filament\Forms\Components\Select::make('payment_method')
                                                 ->options(function ($get) {
@@ -209,7 +204,7 @@ class ViewReservation extends ViewRecord
                                             \Filament\Forms\Components\Select::make('available_credits')
                                                 ->required()
                                                 ->reactive()
-                                                ->options(fn($record, $get) => ReservationResource::getAvailableCredits($record->guest_id, $get('amount')))
+                                                ->options(fn($record, $get) => ReservationResource::getAvailableCredits($record->guest_id))
                                                 ->visible(fn($get) => $get('payment_method') == 'credits')
                                                 ->hint(function ($get, $state) {
                                                     if ($state) {
@@ -226,7 +221,13 @@ class ViewReservation extends ViewRecord
 
                                                         return "₱ $remainingCredit";
                                                     }
-                                                })
+                                                }),
+
+                                            \Filament\Forms\Components\TextInput::make('amount')
+                                                ->numeric()
+                                                ->prefix('₱')
+                                                ->required()
+                                                ->reactive(),
 
                                         ]),
 

@@ -533,13 +533,23 @@ class ReservationResource extends Resource
         }
     }
 
-    public static function getAvailableCredits($guestId, $bookingFee)
+    public static function getAvailableCredits($guestId, $limit = 0)
     {
-        $credits = GuestCredit::where('guest_id', $guestId)
-            ->where('amount', '>=', $bookingFee)
-            ->where('is_redeemed', false)
-            ->where('status', 'active')
-            ->get();
+        $credits = '';
+
+        if ($limit > 0) {
+            $credits = GuestCredit::where('guest_id', $guestId)
+                ->where('amount', '>=', $limit)
+                ->where('is_redeemed', false)
+                ->where('status', 'active')
+                ->get();
+        } elseif ($limit == 0) {
+            $credits = GuestCredit::where('guest_id', $guestId)
+                ->where('is_redeemed', false)
+                ->where('status', 'active')
+                ->get();
+        }
+
         $availableCredits = [];
 
         foreach ($credits as $availableCredit) {
