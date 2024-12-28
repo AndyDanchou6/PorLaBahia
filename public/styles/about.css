@@ -109,13 +109,13 @@ span{
     top: 93%;
     left: 10%;
     width: 80%;
-    height: 230vh;
+    max-height: 300vh;
     background-color: rgb(255, 255, 255);
     border-radius: 15px;
     box-shadow: rgb(187, 187, 187) 3px 2px 20px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 400px 500px 550px;
+    grid-template-rows: 400px 500px 650px;
     padding: 20px;
 }
 .historyText{
@@ -137,7 +137,7 @@ span{
     object-fit: cover; 
     border-radius: 15px; 
 }
- .know-more-title{
+ .know-more-title h1{
     color: #000;
     font-family: "Pacifico", cursive;
     font-size: 2rem;
@@ -147,8 +147,13 @@ span{
 .know-more-title p{
     text-align: left;
     text-shadow: rgb(170, 170, 170) 2px 2px 5px;
-    line-height: 1.1;
+    line-height: 1.2;
     color: rgb(112, 112, 112);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 15;
+    -webkit-box-orient: vertical;
 }
 .flex-images{
     grid-column: 1/3;
@@ -190,25 +195,23 @@ span{
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 13;
+    -webkit-line-clamp: 10;
     -webkit-box-orient: vertical;
 }
 .history-grid{
     grid-column: 1/3;
     grid-row: 3/4;
-    display: grid;
-    grid-template-columns: 500px 650px;
-    grid-template-rows: 500px;
+    display: flex;
     position: relative;
 }
 .history-grid-image{
-    margin: 30px;
+    margin: 20px;
     width: 450px;
-    height: 500px;
+    height: 600px;
 }
 .history-grid-image img{
     width: 450px;
-    height: 450px;
+    height: 100%;
     object-fit: cover;
     border-radius: 20px;
 }
@@ -228,8 +231,14 @@ span{
 .history-porla p{
     color: rgb(112, 112, 112);
     text-align: left;
-    line-height: 1.1;
+    line-height: 1.2;
     font-size: 1rem;
+    width: 500px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 15;
+    -webkit-box-orient: vertical;
 }
 .history-operation{
     width: 500px;
@@ -237,22 +246,19 @@ span{
     background-color: var(--primary-color);
     border-radius: 10px;
     padding: 10px;
-    position: absolute;
-    bottom: 70px;
-    right: 50px;
 }
 .history-operation-title{
     display: flex;
     gap: 10px;
     align-items: center;
-    margin: 10px;
 }
-.history-operation h6{
+.history-operation-title h6{
     color: #ffff;
     font-weight: 700;
     text-align: center;
-    font-size: 1rem; 
+    font-size: 1.2rem; 
     margin: 0;
+    text-shadow: #878787 2px 3px 5px;
 }
 .history-operation p{
     color: #fff;
@@ -260,4 +266,10 @@ span{
     font-size: 1rem;
     text-align: left; 
     line-height: 1.4;
+    width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
 }
