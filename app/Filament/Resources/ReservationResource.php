@@ -343,11 +343,12 @@ class ReservationResource extends Resource
                     ->afterStateUpdated(function ($state, $set) {
                         $guest = GuestInfo::find($state);
 
-                        $set('guest_id', $state);
-                        $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
+                        if ($state) {
+                            $set('guest_id', $state);
+                            $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
+                        }
                     })
                     ->required(fn($operation) => $operation === 'create')
-                    // ->selectablePlaceholder(false)
                     ->hidden(fn($operation) => $operation === 'edit')
                     ->visible(fn($get) => $get('check_in_date_picker') && $get('check_out_date_picker'))
                     ->columnSpanFull(),
@@ -556,6 +557,7 @@ class ReservationResource extends Resource
             $availableCredits[$availableCredit->id] = $availableCredit->coupon;
         }
 
+        // dd($availableCredits);
         return $availableCredits;
     }
 }
