@@ -24,5 +24,9 @@
     </ul>
     <button class="booknow"><img src="{{asset('/images/icon.svg')}}" alt="" class="buttonImage"> Book Now</button>
 </header> 
+<div id="preloader">
+    <img src="/images/logo.png" alt="">
+    <p>Loading..</p>
+</div>
 </body>
 </html>
