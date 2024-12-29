@@ -343,11 +343,12 @@ class ReservationResource extends Resource
                     ->afterStateUpdated(function ($state, $set) {
                         $guest = GuestInfo::find($state);
 
-                        $set('guest_id', $state);
-                        $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
+                        if ($state) {
+                            $set('guest_id', $state);
+                            $set('guest_name', $guest->first_name . ' ' . $guest->last_name);
+                        }
                     })
                     ->required(fn($operation) => $operation === 'create')
-                    // ->selectablePlaceholder(false)
                     ->hidden(fn($operation) => $operation === 'edit')
                     ->visible(fn($get) => $get('check_in_date_picker') && $get('check_out_date_picker'))
                     ->columnSpanFull(),
@@ -533,19 +534,30 @@ class ReservationResource extends Resource
         }
     }
 
-    public static function getAvailableCredits($guestId, $bookingFee)
+    public static function getAvailableCredits($guestId, $limit = 0)
     {
-        $credits = GuestCredit::where('guest_id', $guestId)
-            ->where('amount', '>=', $bookingFee)
-            ->where('is_redeemed', false)
-            ->where('status', 'active')
-            ->get();
+        $credits = '';
+
+        if ($limit > 0) {
+            $credits = GuestCredit::where('guest_id', $guestId)
+                ->where('amount', '>=', $limit)
+                ->where('is_redeemed', false)
+                ->where('status', 'active')
+                ->get();
+        } elseif ($limit == 0) {
+            $credits = GuestCredit::where('guest_id', $guestId)
+                ->where('is_redeemed', false)
+                ->where('status', 'active')
+                ->get();
+        }
+
         $availableCredits = [];
 
         foreach ($credits as $availableCredit) {
             $availableCredits[$availableCredit->id] = $availableCredit->coupon;
         }
 
+        // dd($availableCredits);
         return $availableCredits;
     }
 }
