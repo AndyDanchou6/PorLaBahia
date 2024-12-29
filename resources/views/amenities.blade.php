@@ -11,7 +11,7 @@
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
         crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-    <script src="/javascript/amenities.js"></script>
+    
 </head>
 <body>
     <div class="background">
@@ -21,11 +21,11 @@
                 <h2 class="amenity-title">Welcome to Por La Bahia</h2>
                 <h1 class="amenity-subtitle"><span>Our Amenities:</span><br>Designed for your comfort<br>and enjoyment.</h1>
 
-                <div class="firstAmenity">
-                    <div class="firstAmenityImage">
-                        <img src="/images/home-grid2.jpg" alt="">
+                <div class="firstAcc">
+                    <div class="firstAccImage">
+                        <img src="" alt="">
                     </div>
-                    <div class="firstAmenityDetails">
+                    <div class="firstAccDetails">
                         <h1>Accommodations</h1>
                         <i class="fa fa-bed"></i>
                         <p>Each accommodation package includes essential beddings and toiletries to ensure your comfort. For your convenience, we provide 2 bath towels, 1 roll of toilet paper, and 2 small body soaps with shampoo. Each bed comes with 1 bedsheet, 1 blanket, and 2 pillows for a restful stay.</p><p> Please note that additional floor foam beddings are not included for free, but you have the option to rent them if needed.</p>
@@ -36,10 +36,10 @@
                 </div>
                 <div class="otherAmenity">
                     <div class="otherAmenityContainer">
-                        <div class="amenityMainImage"><img src="/images/home-grid2.jpg" alt=""></div>
+                        <div class="amenityMainImage"><img src="/images/home-grid1.jpg" alt=""></div>
                         <div class="amenityGalleries">
-                            <div class="amenityGrid gridImage1"><img src="/images/home-grid2.jpg" alt=""></div>
-                            <div class="amenityGrid gridImage2"><img src="/images/home-grid2.jpg" alt=""></div>
+                            <div class="amenityGrid gridImage1"><img src="/" alt=""></div>
+                            <div class="amenityGrid gridImage2"><img src="/" alt=""></div>
                         </div>
                     </div>
                     <div class="otherAmenityDetails">
@@ -54,5 +54,6 @@
             </main>
         </div>
     </div>
+    <script src="/javascript/amenities.js"></script>
 </body>
 </html>

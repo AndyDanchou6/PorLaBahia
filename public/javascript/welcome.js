@@ -143,9 +143,6 @@ $(document).ready(function () {
     $('.submit').on('click', function(event) {
         event.preventDefault();
         const contact_name = $('#contact_name').val();
-        // if(contact_name == ''){
-        //     $('#input_name').html('Please enter your name.').addClass('error').css({'display':'block', ''});
-        // }
         const street = $('#street').val();
         const city = $('#city').val();
         const zip_code = $('#zip_code').val();
@@ -285,12 +282,6 @@ $(document).ready(function () {
                         `;
                         gridContainer.append(extraHtml);
                     }
-                // $('.item').on('click', function(){
-                //     $('.lightboxContainer').show();
-                //     const clickedItemImage = $(this);
-                //     console.log(clickedItemImage);
-
-                // })
                 });
                 
             } else {

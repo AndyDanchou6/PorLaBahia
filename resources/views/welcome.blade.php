@@ -12,8 +12,7 @@
                 integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
                 crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-        <script src="/javascript/welcome.js"></script>
-        <script src="/javascript/testimonial.js"></script>
+        
     </head>
 <body>
     <div class="background">
@@ -214,6 +213,7 @@
             </form>
         </div>
    </section>
+    <script src="/javascript/welcome.js"></script>
+    <script src="/javascript/testimonial.js"></script>
 </body>
-
 </html>

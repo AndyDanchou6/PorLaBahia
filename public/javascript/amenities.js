@@ -7,73 +7,92 @@ $(document).ready(function () {
             header.classList.remove("scrolled");
         }
     })
+
+    $.ajax({
+        url: 'api/accommodations',
+        method: 'GET',
+        success: function(data){
+            const accommodation = data[0];
+            // console.log(accommodation);
+            let firstAccommodation = $('.firstAccImage');
+            let firstAccDetails = $('.firstAccDetails');
+            firstAccommodation.html('');
+            firstAccDetails.html('');
+
+            const accImage =`
+            <img src="/storage/${accommodation.main_image}" alt="">
+            `;
+            firstAccommodation.append(accImage);
+
+            const accDetails =`
+            <h1>${accommodation.room_name}</h1>
+            <i class="fa fa-bed"></i>
+            <p>${accommodation.description}</p>
+            <div class="container">
+                <button class="goToAccommodation"> <a href="/accommodation">Go to Accommodations</a></button>
+            </div>`;
+            firstAccDetails.append(accDetails);
+        }
+    })
+
     $.ajax({
         url: 'api/amenities',
         method: 'GET',
         success: function(response){
-            if(response.length > 0){
-                const data = response[0];
-                    const firstAmenity = $('.firstAmenity');
-                    firstAmenity.html('');
+            response.forEach((amenity) => {
+                const amenityDiv = `
+                <div class="otherAmenityContainer">
+                <div class="amenityMainImage"><img src="/storage/${amenity.main_image}" alt=""></div>
+                </div>`;
+                console.log(amenity);
+            })
 
-                    const firstAmenityHTML = `
-                    <div class="firstAmenityImage">
-                        <img src="/storage/${data.main_image}" alt="">
-                    </div>
-                    <div class="firstAmenityDetails">
-                        <h1>${data.amenity_name}</h1>
-                        <i class="fa fa-bed"></i>
-                        <p>${data.description} </p>
-                        <div class="container">
-                            <button class="goToAccommodation" ><a href="/accommodation">Go to Accommodations</a></button>
-                        </div>                    
-                        </div>
-                    `;
-                firstAmenity.append(firstAmenityHTML);
 
-                const otherAmenity = $('.otherAmenity');
-                otherAmenity.html('');
+            // let amenityContainer = $('.otherAmenity');
+            // let amenityDetails = $('.otherAmenityDetails');
+            // amenityContainer.html('');
+            // amenityDetails.html('');
 
-                response.slice(1).forEach((amenity) => {
-                    let galleryHTML = '';
+            // response.forEach((amenity) => {
+            //     console.log(amenity);
+                // const amenityDiv = `
+                //         <div class="amenityMainImage"><img src="/storage/${amenity.main_image}" alt=""></div>
+                //         <div class="amenityGalleries">
+                //             <div class="amenityGrid gridImage1"><img src="/" alt=""></div>
+                //             <div class="amenityGrid gridImage2"><img src="/" alt=""></div>
+                //         </div>
+                // `;
+            //     amenityContainer.append(amenityDiv);
+                
+                // const amenityDetailsContainer =`
+                //     <h1>${amenity.amenity_name}</h1>
+                //         <div class="icons"> 
+                //         <i class="fa fa-table"> </i>
+                //         <i class="fa fa-decoration"> </i>
+                //     </div>
+                //     <p>${amenity.description}</p>
+                //     `;
+                // amenityDetails.append(amenityDetailsContainer);
 
-                    if (amenity.galleries && amenity.galleries.length > 0) {
-                        amenity.galleries.forEach((image)=>{
-                            galleryHTML += `
-                                <div class="amenityGrid">
-                                    <img src="/storage/${image.image}" alt="Gallery Image">
-                                </div>
-                            `;
-                            console.log(image.image);
-                        });
-                        $('.amenityGalleries').append(galleryHTML);
-                    } else {
-                        galleryHTML = '<p>No additional images available.</p>';
-                    }
+                // const galleriesAmenity = amenity.galleries;
+                // if(galleriesAmenity.length > 0){
+                //     galleriesAmenity.forEach((images, index)=>{
+                //         if(index > 2){
+                //             let itemClass = 'amenityGrid';
+                //             if(index == 0) itemClass += 'gridImage1';
+                //             if(index == 1) itemClass += 'gridImage2';
 
-                    const otherAmenitiesHTML = `
-                        <div class="otherAmenity">
-                            <div class="otherAmenityContainer">
-                                <div class="amenityMainImage">
-                                    <img src="/storage/${amenity.main_image}" alt="">
-                                </div>
-                                <div class="amenityGalleries">
-                                    ${galleryHTML} <!-- Insert gallery dynamically -->
-                                </div>
-                            </div>
-                            <div class="otherAmenityDetails">
-                                <h1>${amenity.amenity_name}</h1>
-                                <p>${amenity.description}</p>
-                            </div>
-                        </div>
-                    `;
-
-                    otherAmenity.append(otherAmenitiesHTML);
-                });
-            }else{
-                firstAmenity.html('<i> No amenities at the moment. </i>');
-                otherAmenity.html('<i> No additional amenities at the moment. </i>');
-            }
+                //             const imageGalleryContainer =`
+                //             <div class="${itemClass} ">
+                //                 <img src="/storage/${images.image}" alt="">
+                //             </div>
+                //             `;
+                //             amenityGallery.append(imageGalleries);
+                //         }
+                //         console.log(galleriesAmenity);
+                //     })
+                // }
+    //     });
         }
     })
 })
