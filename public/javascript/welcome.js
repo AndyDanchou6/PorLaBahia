@@ -1,4 +1,11 @@
 $(document).ready(function () {
+
+    $(document).ajaxStart(function(){
+        $('#preloader').fadeIn();
+    });
+    $(document).ajaxStop(function(){
+        $('#preloader').fadeOut();
+    });
     const header = document.getElementById('header');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 600) {
@@ -283,7 +290,7 @@ $(document).ready(function () {
                         gridContainer.append(extraHtml);
                     }
                 });
-                
+                // console.log(data);
             } else {
                 gridContainer.html('<i>No featured images at the moment.</i>').css({
                     'display': 'flex',

@@ -460,15 +460,16 @@ span {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 10px;
+    /* gap: 20px; */
 }
 .house1{
-    width: 210px;
+    width: 205px;
     height: 270px;
     transition: all 0.8s ease;
     cursor: pointer;
     padding: 10px;
     border-radius: 15px;
+    margin: 5px;
 }
 .house1 h4{
     margin: 0;

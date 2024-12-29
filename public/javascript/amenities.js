@@ -1,4 +1,10 @@
 $(document).ready(function () {
+    $(document).ajaxStart(function(){
+        $('#preloader').fadeIn();
+    });
+    $(document).ajaxStop(function(){
+        $('#preloader').fadeOut();
+    });
     const header = document.getElementById('header');
     window.addEventListener("scroll", () => {
         if(window.scrollY > 500) {
