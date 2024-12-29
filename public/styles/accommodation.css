@@ -40,7 +40,7 @@ span{
 }
 .accommodationContainer{
     width: 1100px;
-    max-height: 700vh;
+    max-height: 2000vh;
     background-color: #ffffff;
     margin: 70px 0;
     padding: 50px;
@@ -68,54 +68,99 @@ span{
     color: #444444;
 }
 .accommodationLists{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: minmax(400px, 700px);
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
     margin: 40px 0;
 }
-.accommodation, .accImage{
-    display: none;
+.accWrapper{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2rem;
 }
-.accommodation1Details{
-    grid-column: 1/2;
-    grid-row: 1/2;
-    padding-left: 20px;
-    width: 480px;
+.icon{
+    display: flex;
+    font-weight: 600;
+    gap: 10px;
 }
-.accommodation1Details h1, .accommodation2Details h1, .accommodation3Details h1, .accommodation4Details h1{
+.accommodationDetails, .accommodationImage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.accWrapper:nth-child(odd) .accommodationImage {
+    order: 2;
+}
+.accWrapper:nth-child(odd) .accommodationDetails {
+    order: 1;
+}
+.accWrapper:nth-child(even) .accommodationImage {
+    order: 1;
+}
+.accWrapper:nth-child(even) .accommodationDetails {
+    order: 2;
+}
+.accommodationDetails h1{
     margin: 0;
     font-size: 1.5rem;
 }
-.accommodation1Details p, .accommodation2Details p, .accommodation3Details p, .accommodation4Details p{
+.accommodationDetails p{
     text-align: left;
     font-size: 1rem;
     line-height: 1.3;
+    margin: 0;
 }
-.accommodation1Image{
-    grid-column: 2/3;
-    grid-row: 1/2;
-    display: flex;
+.accommodationImage{
     justify-content: center;
+    align-items: center;
     transition: all 0.8s ease;
 }
-.price-book1, .price-book2,.price-book3, .price-book4, .price-book5{
+.accImage{
+    object-fit: cover;
+    width:480px;
+    height: 480px;
+    border-radius: 20px;
+    margin: 0;
+}
+.price-book{
     display: flex;
     gap: 12px;
+    justify-content: space-between;
 }
-.accommodationPrice1, .accommodationPrice2, .accommodationPrice3, .accommodationPrice4, .accommodationPrice5{
-    background-color:#bf4b37;
-    width: 30%;
-    color: #fff;
+.accommodationPrice{
+    width: 380px;
+    color: #2a2a2a;
     border-radius: 7px;
-    padding: 10px;
-    display: flex;
     justify-content: center;
     font-size: 12px;
-    margin: 5px 0;
+    gap: 1rem;
+    margin: 0;
+    /* display: flex; */
 }
-.accommodationBook1, .accommodationBook2, .accommodationBook3, .accommodationBook4, .accommodationBook5{
+.accommodationPrice div{
+    display: flex;
+    align-items: center;
+    padding: 3px;
+    margin: 0;
+}
+.accommodationPrice h5, .accommodationPrice p{
+    color: #2b2b2b;
+}
+.accommodationPrice h5{
+    font-weight: 600;
+    font-size: .9rem;
+    margin: 0;
+}
+.accommodationPrice p{
+    font-weight: 600;
+    color: var(--secondary-color);
+    font-size: 1rem;
+    margin-left: 5px;
+}
+.accommodationBook{
     background-color: var(--primary-color);
-    width: 70%;
+    width: 150px;
     color: #fff;
     font-family: Poppins;
     border: none;
@@ -126,160 +171,65 @@ span{
     justify-content: center;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
+    font-size: 1rem;
     margin: 5px 0;
+    font-weight: 600;
 }
-.accommodationBook1 img, .accommodationBook2 img, .accommodationBook3 img, .accommodationBook4 img{
-    width: 15px;
+.accommodationBook img{
+    width: 1.2rem;
     height: auto;
     cursor: pointer;
 }
-.leftArrow1, .leftArrow2, .leftArrow3, .leftArrow4 {
+.leftArrow, .rightArrow{
     position: absolute;
-    top: 50%;
-    left: -40px; 
-    transform: translateY(-50%);
-    z-index: 10;
+    top: 40px;
     width: 30px; 
     height: auto;
     cursor: pointer;
+    z-index: 100;
 }
-.rightArrow1, .rightArrow2, .rightArrow3, .rightArrow4 {
-    position: absolute;
-    top: 50%; 
-    right: -40px; 
-    transform: translateY(-50%);
-    z-index: 10;
-    width: 30px; 
-    height: auto;
-    cursor: pointer;
+.leftArrow {
+    left: -30px; 
 }
-.accommodationSlider1, .accommodationSlider2, .accommodationSlider3, .accommodationSlider4{
+
+.rightArrow {
+    right: -30px; 
+}
+.accommodationSlider{
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
     margin: 10px 0;
     position: relative;
+    width: 550px;
 }
-.sliderImage1, .sliderImage2, .sliderImage3, .sliderImage4{
+.sliderImage{
     padding: 3px;
-    width: 120px;
+    width: 100px;
     height: 90px;
     border-radius: 10px;
     transition: all .7s ease;
+    margin:5px;
 }
-.sliderImage1 img.active, .sliderImage2 img.active, .sliderImage3 img.active, .sliderImage4 img.active {
+.image{
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: all .7s ease;
+}
+.sliderImage img.active{
     border: 3px solid var(--primary-color); 
     width: 97%;
 }
-.sliderImage1 img, .sliderImage2 img, .sliderImage3 img, .sliderImage4 img{
+.sliderImage img{
     width: 100%;
     height: 90px;
     object-fit: cover;
     border-radius: 10px;
     cursor: pointer;
 }
-.sliderImage1:hover{
+.sliderImage:hover{
     background-color: var(--primary-color);
-}
-.sliderImage2:hover{
-    background-color: var(--primary-color);
-}
-.sliderImage3:hover{
-    background-color: var(--primary-color);
-}
-.sliderImage4:hover{
-    background-color: var(--primary-color);
-}
-.image1Container{
-    width: 470px;
-    height: 500px;
-}
-.image1Container img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 20px;
-}
-.accommodation2Image{
-    grid-column: 1/2;
-    grid-row: 2/3;
-    display: flex;
-    justify-content: center;
-    transition: all 0.7s ease;
-}
-.accommodation2Details{
-    width: 500px;
-    margin: 20px;
-}
-.image2Container{
-    width: 470px;
-    height: 500px;
-    margin: 30px;
-}
-.image2Container img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 20px;
-}
-.accommodation3Details{
-    grid-column: 1/2;
-    grid-row: 3/4;
-    padding: 20px;
-    width: 500px;
-}
-.accommodation3Image{
-    grid-column: 2/3;
-    grid-row: 3/4;
-    display: flex;
-    justify-content: center;
-    transition: all 0.8s ease;
-}
-.image3Container{
-    width: 470px;
-    height: 500px;
-    margin: 30px;
-}
-.image3Container img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 20px;
-}
-.accommodation4Image{
-    grid-column: 1/2;
-    grid-row: 4/5;
-    display: flex;
-    justify-content: center;
-    transition: all 0.8s ease;
-}
-.image4Container, .image5Container{
-    width: 430px;
-    height: 400px;
-    padding: 20px;
-    margin-left: 40px;
-}
-.image4Container img, .image5Container img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 20px;
-}
-.accommodation4Details{
-    padding: 20px;
-    width: 450px;
-    margin-right: 50px;
-}
-.accommodation5Details{
-    grid-column: 1/2;
-    grid-row: 5/6;
-    padding: 20px;
-    width: 450px;
-    margin-right: 50px;
-}
-.accommodation5Image{
-    grid-column: 2/3;
-    grid-row:5/6;
 }
