@@ -40,6 +40,7 @@ class TestimonialResource extends Resource
                                     ->required()
                                     ->columnSpan('2'),
                                 Forms\Components\MarkdownEditor::make('comment')
+                                    ->required()
                                     ->toolbarButtons([
                                         'blockquote',
                                         'bold',
@@ -61,14 +62,12 @@ class TestimonialResource extends Resource
                         'lg' => 2,
                     ])->columns(2),
 
-                \Filament\Forms\Components\Section::make()
+                \Filament\Forms\Components\Fieldset::make('Guest Image')
                     ->schema([
-                        \Filament\Forms\Components\Group::make()
-                            ->schema([
-                                Forms\Components\FileUpload::make('profile_image')
-                                    ->image()
-                                    ->required(),
-                            ]),
+                        Forms\Components\FileUpload::make('profile_image')
+                            ->label('')
+                            ->image()
+                            ->columnSpan('full')
                     ])->columnSpan([
                         'md' => 1,
                         'lg' => 1,

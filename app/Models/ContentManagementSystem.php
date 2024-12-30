@@ -13,8 +13,9 @@ class ContentManagementSystem extends Model
 
     protected $fillable = [
         'page',
-        'title',
         'section',
+        'title_name',
+        'subtitle',
         'background_image',
         'value',
         'icons',
@@ -26,34 +27,6 @@ class ContentManagementSystem extends Model
 
     public function getSectionNameAttribute()
     {
-        // if ($this->page == 'home') {
-        //     if ($this->section == 1) {
-        //         return 'Welcome Section';
-        //     } elseif ($this->section == 2) {
-        //         return 'About Section';
-        //     } elseif ($this->section == 3) {
-        //         return 'Resort Houses Section';
-        //     } elseif ($this->section == 4) {
-        //         return 'Quick Video Section';
-        //     }
-        // } elseif ($this->page == 'about') {
-        //     if ($this->section == 1) {
-        //         return 'Welcome Section';
-        //     } elseif ($this->section == 2) {
-        //         return 'Introduction Section';
-        //     } elseif ($this->section == 3) {
-        //         return 'Features Section';
-        //     } elseif ($this->section == 4) {
-        //         return 'History Section';
-        //     } elseif ($this->section == 5) {
-        //         return 'Highlighted FAQ Section';
-        //     }
-        // } elseif ($this->page == 'accommodation') {
-        // } elseif ($this->page == 'amenities') {
-        // } elseif ($this->page == 'restaurant_menu') {
-        // } elseif ($this->page == 'contact_us') {
-        // }
-
         $sectionNames = [
             'home' => [
                 1 => 'Welcome Section',
@@ -67,6 +40,12 @@ class ContentManagementSystem extends Model
                 3 => 'Features Section',
                 4 => 'History Section',
                 5 => 'Highlighted FAQ Section',
+            ],
+            'accommodation' => [
+                1 => 'Welcome Section'
+            ],
+            'amenities' => [
+                1 => 'Welcome Section'
             ],
         ];
 
