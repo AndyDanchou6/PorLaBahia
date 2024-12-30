@@ -542,10 +542,9 @@ class ViewReservation extends ViewRecord
             Actions\EditAction::make()
                 ->color('warning')
                 ->visible(function ($record) {
-                    if ($record->booking_status === 'cancelled' || $record->booking_status === 'expired' || $record->booking_status === 'finished') {
-                        return false;
-                    }
-                    return true;
+                    $hideIn = ['finished', 'cancelled', 'expired'];
+
+                    return !in_array($record->booking_status, $hideIn);
                 }),
 
             // Back Button

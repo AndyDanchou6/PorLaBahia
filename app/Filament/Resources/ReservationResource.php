@@ -169,12 +169,12 @@ class ReservationResource extends Resource
 
                 TextColumn::make('check_in_date')
                     ->dateTime()
-                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_in_date)->addHours(11)->format(self::$dateFormat))
+                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_in_date)->format('M d, Y'))
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('check_out_date')
                     ->dateTime()
-                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_out_date)->addHours(9)->format(self::$dateFormat))
+                    ->formatStateUsing(fn($record) => Carbon::parse($record->check_out_date)->format('M d, Y'))
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('booking_status')
@@ -243,6 +243,14 @@ class ReservationResource extends Resource
                             return true;
                         })
                         ->color('warning'),
+
+                    Tables\Actions\DeleteAction::make()
+                        ->visible(function ($record) {
+                            $hideIn = ['finished', 'cancelled', 'expired'];
+
+                            return in_array($record->booking_status, $hideIn);
+                        }),
+
                     Tables\Actions\RestoreAction::make()
                         ->visible(function ($record) {
                             return auth()->check() && auth()->user()->role === 1 && $record->trashed();
@@ -252,11 +260,11 @@ class ReservationResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
-                    // Tables\Actions\RestoreBulkAction::make()
-                    //     ->visible(function () {
-                    //         return auth()->check() && auth()->user()->role === 1;
-                    //     }),
+                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make()
+                        ->visible(function () {
+                            return auth()->check() && auth()->user()->role === 1;
+                        }),
                 ]),
             ]);
     }
@@ -456,19 +464,6 @@ class ReservationResource extends Resource
             ])->columns(2);
     }
 
-    public static function getHiddenField()
-    {
-        return
-            \Filament\Forms\Components\Group::make()
-            ->schema([
-                Forms\Components\Hidden::make('booking_status')
-                    ->default('on_hold'),
-
-                Forms\Components\Hidden::make('on_hold_expiration_date')
-                    ->default(Carbon::now()->addHours(12)->startOfMinute()),
-            ]);
-    }
-
     public static function useCredits($record, $data)
     {
         if (isset($data['multiple'])) {
@@ -557,7 +552,6 @@ class ReservationResource extends Resource
             $availableCredits[$availableCredit->id] = $availableCredit->coupon;
         }
 
-        // dd($availableCredits);
         return $availableCredits;
     }
 }

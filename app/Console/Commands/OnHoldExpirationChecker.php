@@ -21,7 +21,7 @@ class OnHoldExpirationChecker extends Command
      *
      * @var string
      */
-    protected $description = 'Changing status to expired for on hold bookings after 12 hours';
+    protected $description = 'Changing status to expired for on hold bookings';
 
     /**
      * Execute the console command.
@@ -31,17 +31,16 @@ class OnHoldExpirationChecker extends Command
         $now = Carbon::now()->startOfMinute();
 
         $expiredReservations = Reservation::where('on_hold_expiration_date', $now)
+            ->where('booking_status', 'on_hold')
             ->get();
 
         if (!$expiredReservations->isEmpty()) {
             foreach ($expiredReservations as $expired) {
                 $expired->booking_status = 'expired';
-                $expired->save(); 
+                $expired->save();
 
                 Log::info("Expired reservation updated: ID {$expired->id}, Status: {$expired->booking_status}");
             }
-        } else {
-            Log::info("No expired reservations found as of {$now}.");
         }
     }
 }

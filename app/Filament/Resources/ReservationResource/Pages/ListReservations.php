@@ -39,11 +39,16 @@ class ListReservations extends ListRecords
                 ->badge(fn() => \App\Models\Reservation::query()->where('booking_status', 'on_hold')->count() > 0 ?
                     \App\Models\Reservation::query()->where('booking_status', 'on_hold')->count() : null)
                 ->badgeColor('info'),
+            'finished' => Tab::make()
+                ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'finished'))
+                ->badge(fn() => \App\Models\Reservation::query()->where('booking_status', 'finished')->count() > 0 ?
+                    \App\Models\Reservation::query()->where('booking_status', 'finished')->count() : null)
+                ->badgeColor('gray'),
             'expired' => Tab::make()
                 ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'expired'))
                 ->badge(fn() => \App\Models\Reservation::query()->where('booking_status', 'expired')->count() > 0 ?
                     \App\Models\Reservation::query()->where('booking_status', 'expired')->count() : null)
-                ->badgeColor('gray'),
+                ->badgeColor('danger'),
             'cancelled' => Tab::make()
                 ->modifyQueryUsing(fn($query) => $query->where('booking_status', 'cancelled'))
                 ->badge(fn() => \App\Models\Reservation::query()->where('booking_status', 'cancelled')->count() > 0 ?
