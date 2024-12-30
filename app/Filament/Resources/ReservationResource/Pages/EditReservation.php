@@ -28,11 +28,30 @@ class EditReservation extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\DeleteAction::make()
+                ->visible(function ($record) {
+                    $hideIn = ['finished', 'cancelled', 'expired'];
+
+                    return in_array($record->booking_status, $hideIn);
+                }),
+
             Actions\Action::make('back')
                 ->url(ReservationResource::getUrl())
                 ->button()
                 ->color('gray'),
         ];
+    }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        $bookingReferenceNo = $this->record->booking_reference_no;
+        $guest = $this->record->guest->full_name;
+
+        return Notification::make()
+            ->success()
+            ->title('Booking has been updated')
+            ->body("$guest updated his booking $bookingReferenceNo")
+            ->sendToDatabase(auth()->user());
     }
 
     public function getStartStep(): int
@@ -62,8 +81,8 @@ class EditReservation extends EditRecord
                 ->icon('heroicon-o-banknotes')
                 ->visible(function ($record) {
                     $hasPayment = Payment::where('reservation_id', $record->id)
-                    ->whereNotIn('payment_status', ['void'])
-                    ->get();
+                        ->whereNotIn('payment_status', ['void'])
+                        ->get();
 
                     if ($hasPayment->isEmpty()) {
                         return true;

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccommodationController;
 use App\Http\Controllers\AmenityController;
+use App\Http\Controllers\BookingReminderController;
 use App\Http\Controllers\ContentManagementController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\GalleryController;
@@ -26,13 +27,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('/amenities', [AmenityController::class, 'getAmenities']);
 Route::get('/accommodations', [AccommodationController::class, 'getAccommodations']);
-Route::post('/confirmPayment/{id}', [PaymentConfimationController::class, 'confirm'])->name('payment.confirm');
 Route::get('/testimonials', [TestimonialController::class, 'getTestimonials']);
 
-
+// SMS
+Route::post('/confirmPayment/{id}', [PaymentConfimationController::class, 'confirm'])->name('payment.confirm');
+Route::get('/sendReminder', [BookingReminderController::class, 'sendReminder'])->name('sms.reminder');
 
 // Content Management API
-
 Route::prefix('cms')->group(function () {
     Route::get('/about', [ContentManagementController::class, 'getAbout']);
 });

@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('promotion:status')->daily();
         $schedule->command('on-hold:expiration')->everyMinute();
+        $schedule->command('booking:reminder')->dailyAt(6);
     }
 
     /**
