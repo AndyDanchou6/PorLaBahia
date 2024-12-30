@@ -120,7 +120,7 @@ class AccommodationResource extends Resource
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('booking_fee')
-                    ->prefix('₱ ')
+                    ->prefix('₱')
                     ->sortable()
                     ->searchable(),
             ])

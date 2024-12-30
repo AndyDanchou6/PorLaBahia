@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('page')->nullable();
             $table->integer('section')->nullable();
-            $table->string('background_image')->nullable();
-            $table->text('title')->nullable();
+            $table->string('title_name')->nullable();
+            $table->string('subtitle')->nullable();
             $table->longText('value')->nullable();
+            $table->string('background_image')->nullable();
             $table->json('icons')->nullable();
-            $table->boolean('is_published')->nullable()->default(0);
             $table->softDeletes();
             $table->timestamps();
         });
