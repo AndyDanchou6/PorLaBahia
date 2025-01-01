@@ -112,6 +112,7 @@ class ContactUs extends Page
             \Filament\Forms\Components\Tabs::make('tabs')
                 ->tabs([
                     \Filament\Forms\Components\Tabs\Tab::make('Welcome Section')
+                        ->icon('heroicon-o-sparkles')
                         ->schema([
                             \Filament\Forms\Components\Fieldset::make('Content')
                                 ->schema([

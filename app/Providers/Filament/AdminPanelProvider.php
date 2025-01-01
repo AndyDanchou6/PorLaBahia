@@ -31,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => '#FFA500',
             ])
             ->globalSearch(false)
+            ->unsavedChangesAlerts()
             ->brandLogo(fn() => view('vendor.filament.components.logo'))
             ->brandLogoHeight('2rem')
             // ->brandName('Por La Bahia')

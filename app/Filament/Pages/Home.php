@@ -108,6 +108,7 @@ class Home extends Page implements HasForms
             \Filament\Forms\Components\Tabs::make('tabs')
                 ->tabs([
                     \Filament\Forms\Components\Tabs\Tab::make('Welcome Section')
+                        ->icon('heroicon-o-sparkles')
                         ->schema([
                             \Filament\Forms\Components\Fieldset::make('Content')
                                 ->schema([
@@ -154,6 +155,7 @@ class Home extends Page implements HasForms
                         ])->statePath('welcome_section'),
 
                     \Filament\Forms\Components\Tabs\Tab::make('About Section')
+                        ->icon('heroicon-o-information-circle')
                         ->schema([
                             \Filament\Forms\Components\Fieldset::make('Content')
                                 ->schema([
@@ -203,7 +205,7 @@ class Home extends Page implements HasForms
                                             \Filament\Forms\Components\TextInput::make('icon_name')
                                                 ->label('Name')
                                         ])
-                                        ->label('Icons (Optional)')
+                                        ->label('Features')
                                         ->addActionLabel('Add another Icon')
                                         ->grid(2)
                                         ->maxItems(4)
@@ -214,6 +216,7 @@ class Home extends Page implements HasForms
                         ])->statePath('about_section'),
 
                     \Filament\Forms\Components\Tabs\Tab::make('Resort Houses Section')
+                        ->icon('heroicon-o-home')
                         ->schema([
                             \Filament\Forms\Components\Fieldset::make('Content')
                                 ->schema([
@@ -258,7 +261,8 @@ class Home extends Page implements HasForms
                                 ])
                         ])->statePath('resort_houses_section'),
 
-                    \Filament\Forms\Components\Tabs\Tab::make('Video Section')
+                    \Filament\Forms\Components\Tabs\Tab::make('Quick Video Section')
+                        ->icon('heroicon-o-play-circle')
                         ->schema([
                             \Filament\Forms\Components\Fieldset::make('Content')
                                 ->schema([
@@ -267,6 +271,7 @@ class Home extends Page implements HasForms
                                     \Filament\Forms\Components\Hidden::make('section')
                                         ->default(4),
                                     \Filament\Forms\Components\TextInput::make('title_name')
+                                        ->placeholder('e.g https://www.youtube.com/watch?v=rWXrjsM6ul0')
                                         ->label('Video Url')
                                         ->url()
                                         ->hint('Must be a youtube video link')
