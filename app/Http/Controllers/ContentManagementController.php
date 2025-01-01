@@ -20,7 +20,6 @@ class ContentManagementController extends Controller
     }
 
     public function getContents()
-
     {
         $home = ContentManagementSystem::all();
         return response()->json($home);

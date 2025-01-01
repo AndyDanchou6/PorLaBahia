@@ -18,7 +18,7 @@ class Home extends Page implements HasForms
 
     protected static string $view = 'filament.pages.home';
 
-    protected static ?string $navigationLabel = 'Homes';
+    protected static ?string $navigationLabel = 'Home';
 
     protected static ?int $navigationSort = 1;
 
@@ -102,7 +102,7 @@ class Home extends Page implements HasForms
     public function form(Form $form): Form
     {
         $maxLength = 50;
-        $title = 30;
+        $title = 50;
 
         return $form->schema([
             \Filament\Forms\Components\Tabs::make('tabs')
@@ -111,9 +111,9 @@ class Home extends Page implements HasForms
                         ->schema([
                             \Filament\Forms\Components\Fieldset::make('Content')
                                 ->schema([
-                                    \Filament\Forms\Components\Hidden::make('page_welcome')
+                                    \Filament\Forms\Components\Hidden::make('page')
                                         ->default('home'),
-                                    \Filament\Forms\Components\Hidden::make('section_welcome')
+                                    \Filament\Forms\Components\Hidden::make('section')
                                         ->default(1),
                                     \Filament\Forms\Components\TextInput::make('title_name')
                                         ->label('Title')

@@ -112,7 +112,7 @@ class AboutUs extends Page implements HasForms
     public function form(Form $form): Form
     {
         $maxLength = 50;
-        $title = 30;
+        $title = 50;
 
         return $form->schema([
             \Filament\Forms\Components\Tabs::make('tabs')
@@ -142,7 +142,7 @@ class AboutUs extends Page implements HasForms
                                         ),
 
                                     \Filament\Forms\Components\TextInput::make('subtitle')
-                                        ->label('Subtitle')
+                                        ->label('Tagline')
                                         ->reactive()
                                         ->maxLength($maxLength)
                                         ->afterStateUpdated(function ($state, $set) use ($maxLength) {
