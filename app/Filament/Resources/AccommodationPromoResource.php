@@ -42,47 +42,65 @@ class AccommodationPromoResource extends Resource
                                 Forms\Components\Select::make('accommodation_id')
                                     ->relationship(name: 'accommodation', titleAttribute: 'room_name')
                                     ->required()
-                                    // ->searchable()
                                     ->disabled(fn($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord)
                                     ->live()
                                     ->afterStateUpdated(function ($set, $get) {
                                         static::updateDiscountedPrice($set, $get);
                                     })
-                                    ->columnSpan('full')
                                     ->afterStateUpdated(function ($set) {
                                         $set('promo_start_date', null);
                                         $set('promo_end_date', null);
                                     }),
+                                Forms\Components\TextInput::make('value')
+                                    ->required()
+                                    ->live(debounce: 500)
+                                    ->numeric()
+                                    ->label('Percentage')
+                                    ->suffixIcon('heroicon-o-percent-badge')
+                                    ->suffixIconColor('primary')
+                                    ->afterStateUpdated(function ($set, $get) {
+                                        static::updateDiscountedPrice($set, $get);
+                                    }),
 
                                 Forms\Components\Group::make()
                                     ->schema([
-                                        Forms\Components\TextInput::make('value')
-                                            ->required()
-                                            ->live(debounce: 500)
-                                            ->numeric()
-                                            ->label('Percentage Value')
-                                            ->suffixIcon('heroicon-o-percent-badge')
-                                            ->suffixIconColor('primary')
-                                            ->afterStateUpdated(function ($set, $get) {
-                                                static::updateDiscountedPrice($set, $get);
-                                            }),
-                                        Forms\Components\TextInput::make('discounted_price')
-                                            ->label('Discounted Price')
+                                        Forms\Components\TextInput::make('weekday_promo_price')
+                                            ->label('Weekday Promo Price')
                                             ->required()
                                             ->readOnly()
-                                            ->mask(RawJs::make('$money($input)'))
-                                            ->stripCharacters(',')
-                                            ->live()
                                             ->prefix('₱')
                                             ->numeric()
-                                            ->afterStateUpdated(function ($set, $get) {
-                                                $set('discounted_price', $get('discounted_price'));
-                                            }),
+                                            ->hint(function ($get) {
+                                                $id = $get('accommodation_id');
+                                                $accommodationId = Accommodation::find($id);
+                                                $weekday_price = $accommodationId->weekday_price;
+
+                                                return "Original Price: ₱{$weekday_price}";
+                                            })
+                                            ->hintColor('success')
+                                            ->reactive(),
+
+                                        Forms\Components\TextInput::make('weekend_promo_price')
+                                            ->label('Weekend Promo Price')
+                                            ->required()
+                                            ->readOnly()
+                                            ->prefix('₱')
+                                            ->numeric()
+                                            ->hint(function ($get) {
+                                                $id = $get('accommodation_id');
+                                                $accommodationId = Accommodation::find($id);
+                                                $weekend_price = $accommodationId->weekend_price;
+
+                                                return "Original Price: ₱{$weekend_price}";
+                                            })
+                                            ->hintColor('success')
+                                            ->reactive(),
 
                                         Forms\Components\DatePicker::make('promo_start_date')
                                             ->required()
                                             ->label('Promotion Start')
                                             ->date()
+                                            ->visible(fn($get) => $get('value'))
                                             ->minDate(today())
                                             ->suffixIcon('heroicon-o-calendar-days')
                                             ->suffixIconColor('success')
@@ -195,6 +213,21 @@ class AccommodationPromoResource extends Resource
                                             })
                                             ->visible(fn($get) => $get('promo_start_date')),
 
+                                        Forms\Components\Placeholder::make('Warning!')
+                                            ->content(fn($get, $state) => self::generatePromoValidationMessage($get, $state))
+                                            ->visible(fn($get, $state) => self::generatePromoValidationMessage($get, $state) !== false)
+                                            ->hidden(fn($get) => !$get('promo_end_date'))
+                                            ->columnSpan('full')
+                                            ->extraAttributes([
+                                                'style' => 'color: yellow;',
+                                            ]),
+
+                                        Forms\Components\FileUpload::make('featured_image_promo')
+                                            ->visible(fn($get) => $get('value'))
+                                            ->label('Featured Image')
+                                            ->image()
+                                            ->columnSpan('full'),
+
                                         Forms\Components\Hidden::make('status')
                                             ->reactive()
                                             ->afterStateHydrated(function ($set, $get) {
@@ -203,6 +236,7 @@ class AccommodationPromoResource extends Resource
                                             ->afterStateUpdated(function ($set, $get) {
                                                 self::updateStatus($get, $set);
                                             }),
+
                                     ])
                                     ->visible(fn($get) => $get('accommodation_id'))
                                     ->columnSpan([
@@ -224,18 +258,27 @@ class AccommodationPromoResource extends Resource
                     ->formatStateUsing(fn($state) => ucwords($state))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('value')
-                    ->label('Percentage Value')
+                    ->label('Percentage')
                     ->searchable()
                     ->badge()
                     ->color('gray')
                     ->suffix('%'),
-                Tables\Columns\TextColumn::make('discounted_price')
-                    ->label('Discounted Price')
+
+                Tables\Columns\TextColumn::make('weekday_promo_price')
+                    ->label('Weekday Promo Price')
                     ->prefix('₱')
                     ->numeric()
                     ->badge()
                     ->color('primary')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('weekend_promo_price')
+                    ->label('Weekend Promo Price')
+                    ->prefix('₱')
+                    ->numeric()
+                    ->badge()
+                    ->color('primary')
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('promotion_date')
                     ->label('Promotion Date')
                     ->formatStateUsing(fn($state) => $state ? $state : 'N/A')
@@ -335,13 +378,80 @@ class AccommodationPromoResource extends Resource
 
     private static function updateDiscountedPrice($set, $get)
     {
-        $accommodationId = $get('accommodation_id');
-        $value = (float) $get('value');
+        $id = $get('accommodation_id');
+        $accommodationId = Accommodation::find($id);
 
-        $discountedPrice = AccommodationPromo::calculateDiscountedPrice($value, $accommodationId);
+        if ($accommodationId) {
+            $value = (float) $get('value');
+            $weekday_price = $accommodationId->weekday_price;
+            $weekend_price = $accommodationId->weekend_price;
 
-        $set('discounted_price', $discountedPrice);
+            $weekday_discount_price = $weekday_price - ($weekday_price * $value / 100);
+            $weekend_discount_price = $weekend_price - ($weekend_price * $value / 100);
+
+            $set('weekday_promo_price', max($weekday_discount_price, 0));
+            $set('weekend_promo_price', max($weekend_discount_price, 0));
+        } else {
+            $set('weekday_promo_price', null);
+            $set('weekend_promo_price', null);
+        }
     }
+
+    private static function generatePromoValidationMessage($get, $state): string|false
+    {
+        $validationResult = self::validatePromoDates($get, $state);
+
+        foreach ($validationResult as $error) {
+            return $error;
+        }
+
+        return false;
+    }
+
+
+    private static function validatePromoDates($get, $state): array
+    {
+        $messages = [];
+
+        $startDate = $get('promo_start_date');
+        $endDate = $get('promo_end_date');
+        $accommodationId = $get('accommodation_id'); // Updated to use $get
+
+        $promoId = $get('id');
+
+        if (!$startDate || !$accommodationId) {
+            return $messages;
+        }
+
+        if (!$endDate) {
+            return ["Promotion end date is required."];
+        }
+
+        $query = AccommodationPromo::where('accommodation_id', $accommodationId)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('promo_start_date', [$startDate, $endDate])
+                    ->orWhereBetween('promo_end_date', [$startDate, $endDate])
+                    ->orWhere(function ($query) use ($startDate, $endDate) {
+                        $query->where('promo_start_date', '<=', $startDate)
+                            ->where('promo_end_date', '>=', $endDate);
+                    });
+            })
+            ->where('status', '!=', 'expired')
+            ->when($promoId, fn($query) => $query->where('id', '!=', $promoId))
+            ->orderBy('promo_start_date')
+            ->first();
+
+        if ($query) {
+            $messages[] = sprintf(
+                "The selected promotion end date conflicts with an existing promotion from %s to %s.",
+                Carbon::parse($query->promo_start_date)->format('M d, Y'),
+                Carbon::parse($query->promo_end_date)->format('M d, Y')
+            );
+        }
+
+        return $messages;
+    }
+
 
     protected static function updateStatus($get, $set)
     {
