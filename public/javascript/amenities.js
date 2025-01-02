@@ -45,60 +45,95 @@ $(document).ready(function () {
         url: 'api/amenities',
         method: 'GET',
         success: function(response){
+            
+            let amenityContainer = $('.amenityContainer');
+            amenityContainer.html('');
+            
             response.forEach((amenity) => {
                 const amenityDiv = `
-                <div class="otherAmenityContainer">
-                <div class="amenityMainImage"><img src="/storage/${amenity.main_image}" alt=""></div>
-                </div>`;
-                console.log(amenity);
-            })
-
-
-            // let amenityContainer = $('.otherAmenity');
-            // let amenityDetails = $('.otherAmenityDetails');
-            // amenityContainer.html('');
-            // amenityDetails.html('');
-
-            // response.forEach((amenity) => {
-            //     console.log(amenity);
-                // const amenityDiv = `
-                //         <div class="amenityMainImage"><img src="/storage/${amenity.main_image}" alt=""></div>
-                //         <div class="amenityGalleries">
-                //             <div class="amenityGrid gridImage1"><img src="/" alt=""></div>
-                //             <div class="amenityGrid gridImage2"><img src="/" alt=""></div>
-                //         </div>
-                // `;
-            //     amenityContainer.append(amenityDiv);
+                <div class="amenityContainer">
+                <div class="amenityWrap">
+                    <div class="amenityMainImage">
+                    <img src="/storage/${amenity.main_image}" alt="">
+                    </div>
+                    <div class="amenityGalleries" id="${amenity.id}">
+                    </div>
+                    </div>
+                    <div class="amenityDetails">
+                        <h1>${amenity.amenity_name}</h1>
+                        <div class="icons"> 
+                            <i class="fa fa-table"> </i>
+                            <i class="fa fa-decoration"> </i>
+                        </div>
+                        <p>${amenity.description}</p>
+                    </div>
+                </div>
+                </div>
                 
-                // const amenityDetailsContainer =`
-                //     <h1>${amenity.amenity_name}</h1>
-                //         <div class="icons"> 
-                //         <i class="fa fa-table"> </i>
-                //         <i class="fa fa-decoration"> </i>
-                //     </div>
-                //     <p>${amenity.description}</p>
-                //     `;
-                // amenityDetails.append(amenityDetailsContainer);
+                <div class="lightbox">
+                    <div class="lightbox-content">
+                        <button class="close-btn">X</button>
+                        <img src="" alt="" class="imageLightbox">
+                    </div>
+                </div>`;
+                amenityContainer.append(amenityDiv);
+                
+                const galleriesImage = amenity.galleries;
+                const galleryCont = $(`#${amenity.id}`);
 
-                // const galleriesAmenity = amenity.galleries;
-                // if(galleriesAmenity.length > 0){
-                //     galleriesAmenity.forEach((images, index)=>{
-                //         if(index > 2){
-                //             let itemClass = 'amenityGrid';
-                //             if(index == 0) itemClass += 'gridImage1';
-                //             if(index == 1) itemClass += 'gridImage2';
+                galleriesImage.forEach((images, index) => {
+                    if(images.galleries_id == amenity.id){
+                        if(index == 0){
+                            const imageOne = `
+                            <div class="amenityGrid gridImage1" data->
+                                <img src="/storage/${images.image}" alt="">
+                            </div>`;
+                            galleryCont.append(imageOne);
+                        }
+                        if(index == 1){
+                            const imageTwo = `
+                            <div class="amenityGrid gridImage2">
+                                <img src="/storage/${images.image}" alt="">
+                            </div>`;
+                            galleryCont.append(imageTwo);
+                        }
+                        const extraCount = galleriesImage.length - 2;
+                        if(index >= 2){
+                            const extraImages = `
+                            <div class="amenityGrid gridImage2 extraImages">
+                                <p class="extraCount">+${extraCount}</p>
+                            </div>`;
+                            galleryCont.append(extraImages);
+                        }
 
-                //             const imageGalleryContainer =`
-                //             <div class="${itemClass} ">
-                //                 <img src="/storage/${images.image}" alt="">
-                //             </div>
-                //             `;
-                //             amenityGallery.append(imageGalleries);
-                //         }
-                //         console.log(galleriesAmenity);
-                //     })
-                // }
-    //     });
+                        const lightbox = $(".lightbox");
+                        const lightboxImage = $(".imageLightbox");
+
+                        galleryCont.on("click", ".amenityGrid", function () {
+                            const clickedImageSrc = $(this).find("img").attr("src"); 
+                            lightboxImage.attr("src", clickedImageSrc); 
+                            lightbox.fadeIn(); 
+                        });
+                        galleryCont.on("click", ".extraImages", function () {
+                            const clickedContainer = $(this).closest(".amenityGalleries");
+                            const allImages = [];
+    
+                            clickedContainer.find("img").each(function () {
+                                allImages.push($(this).attr("src"));
+                            }); 
+                        
+                            if (allImages.length >= 2) {
+                                lightboxImage.attr("src", allImages[1]);
+                                lightbox.fadeIn();
+                            }
+                        });
+                        $(".close-btn").click(function() {
+                            lightbox.fadeOut(); 
+                        }); 
+                        
+                    }
+                });
+            });
         }
     })
 })

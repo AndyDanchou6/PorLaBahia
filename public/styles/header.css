@@ -31,7 +31,7 @@ body {
 #preloader img{
     width: 200px;
     height: auto;
-    animation: pulse 1.5s infinite ease-in-out;
+    animation: pulse 1.3s infinite ease-in-out;
 }
 #preloader p{
     font-size: 1rem;

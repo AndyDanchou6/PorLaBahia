@@ -11,7 +11,6 @@
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
         crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-    
 </head>
 <body>
     <div class="background">
@@ -34,15 +33,31 @@
                         </div>                    
                     </div>
                 </div>
-                <div class="otherAmenity">
-                    <div class="otherAmenityContainer">
-                        <div class="amenityMainImage"><img src="/images/home-grid1.jpg" alt=""></div>
+                
+                <div class="lightbox">
+                    <div class="lightbox-content">
+                        <button class="close-btn">x</button>
+                        <img src="/images/circle-arrow-right-02.svg" alt="" class="arrowLeftLightbox">
+                            <img src="" alt="" class="imageLightbox">
+                        <img src="/images/circle-arrow-right-01.svg" alt="" class="arrowRightLightbox">
+                    </div>
+                </div>
+                
+                <div class="amenityContainer">
+                    <div class="amenityWrap">
+                        <div class="amenityMainImage">
+                            <img src="/images/home-grid1.jpg" alt="">
+                        </div>
                         <div class="amenityGalleries">
                             <div class="amenityGrid gridImage1"><img src="/" alt=""></div>
                             <div class="amenityGrid gridImage2"><img src="/" alt=""></div>
+
+                            <div class="amenityGrid gridImage2 extraImages"><img src="/" alt="">
+                                <p class="extraCount"></p>
+                            </div>
                         </div>
                     </div>
-                    <div class="otherAmenityDetails">
+                    <div class="amenityDetails">
                         <h1> </h1>
                         <div class="icons"> 
                             <i class="fa fa-table"> </i>
