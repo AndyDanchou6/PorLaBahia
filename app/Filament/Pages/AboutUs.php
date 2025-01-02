@@ -112,12 +112,13 @@ class AboutUs extends Page implements HasForms
     public function form(Form $form): Form
     {
         $maxLength = 50;
-        $title = 30;
+        $title = 50;
 
         return $form->schema([
             \Filament\Forms\Components\Tabs::make('tabs')
                 ->tabs([
                     \Filament\Forms\Components\Tabs\Tab::make('Welcome Section')
+                        ->icon('heroicon-o-sparkles')
                         ->schema([
                             \Filament\Forms\Components\Fieldset::make('Content')
                                 ->schema([
@@ -142,7 +143,7 @@ class AboutUs extends Page implements HasForms
                                         ),
 
                                     \Filament\Forms\Components\TextInput::make('subtitle')
-                                        ->label('Subtitle')
+                                        ->label('Tagline')
                                         ->reactive()
                                         ->maxLength($maxLength)
                                         ->afterStateUpdated(function ($state, $set) use ($maxLength) {
@@ -166,6 +167,7 @@ class AboutUs extends Page implements HasForms
                         ])->statePath('welcome_section'),
 
                     \Filament\Forms\Components\Tabs\Tab::make('Introduction Section')
+                        ->icon('heroicon-o-light-bulb')
                         ->schema([
                             \Filament\Forms\Components\Fieldset::make('Content')
                                 ->schema([
@@ -203,7 +205,8 @@ class AboutUs extends Page implements HasForms
                                 ])
                         ])->statePath('introduction_section'),
 
-                    \Filament\Forms\Components\Tabs\Tab::make('Feature Section')
+                    \Filament\Forms\Components\Tabs\Tab::make('Features Section')
+                        ->icon('heroicon-o-star')
                         ->schema([
                             \Filament\Forms\Components\Fieldset::make('Content')
                                 ->schema([
@@ -234,6 +237,7 @@ class AboutUs extends Page implements HasForms
                         ])->statePath('feature_section'),
 
                     \Filament\Forms\Components\Tabs\Tab::make('History Section')
+                        ->icon('heroicon-o-clock')
                         ->schema([
                             \Filament\Forms\Components\Fieldset::make('Content')
                                 ->schema([
@@ -271,6 +275,7 @@ class AboutUs extends Page implements HasForms
                         ])->statePath('history_section'),
 
                     \Filament\Forms\Components\Tabs\Tab::make('Highlighted FAQ Section')
+                        ->icon('heroicon-o-question-mark-circle')
                         ->schema([
                             \Filament\Forms\Components\Fieldset::make('Content')
                                 ->schema([
