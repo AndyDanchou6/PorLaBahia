@@ -12,9 +12,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('promotion:status')->daily();
-        $schedule->command('on-hold:expiration')->everyMinute();
-        $schedule->command('booking:reminder')->dailyAt(6);
+        $schedule->command('promotion:status')->daily()->withoutOverlapping();
+        $schedule->command('booking:on_hold-expiration')->everyMinute()->withoutOverlapping();
+        $schedule->command('booking:reminder')->daily()->withoutOverlapping();
+        $schedule->command('booking:finished')->dailyAt(9)->withoutOverlapping();
     }
 
     /**

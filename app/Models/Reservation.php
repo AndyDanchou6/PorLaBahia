@@ -98,15 +98,12 @@ class Reservation extends Model
 
         $bookings = $this->where(function ($query) {
             $query->where('booking_status', '=', 'on_hold')
+                ->orWhere('booking_status', '=', 'pending')
                 ->orWhere('booking_status', '=', 'active');
         })
             ->where(function ($query) use ($checkInDate, $checkOutDate) {
                 $query->whereBetween('check_in_date', [$checkInDate, $checkOutDate])
                     ->orWhereBetween('check_out_date', [$checkInDate, $checkOutDate])
-                    ->orWhere(function ($query) use ($checkInDate, $checkOutDate) {
-                        $query->where('check_in_date', '>', $checkInDate)
-                            ->where('check_out_date', '<', $checkOutDate);
-                    })
                     ->orWhere(function ($query) use ($checkInDate, $checkOutDate) {
                         $query->where('check_in_date', '<', $checkInDate)
                             ->where('check_out_date', '>', $checkOutDate);
