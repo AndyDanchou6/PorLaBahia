@@ -73,6 +73,14 @@ class AccommodationResource extends Resource
                             ]),
                         MarkdownEditor::make('description')
                             ->nullable()
+                            ->disableToolbarButtons([
+                                'blockquote',
+                                'strike',
+                                'codeBlock',
+                                'heading',
+                                'attachFiles',
+                                'table'
+                            ])
                             ->columnSpan([
                                 'sm' => 2,
                                 'md' => 6,

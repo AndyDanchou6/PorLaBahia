@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-        <title>Por La Bahia</title>
-        <link rel="stylesheet" href="{{asset('styles/welcome.css')}}">
-        <link rel="stylesheet" href="{{asset('styles/header.css')}}">
-        <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/x-icon">
-        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
-                integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
-                crossorigin="anonymous"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-        
-    </head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Por La Bahia</title>
+    <link rel="stylesheet" href="{{asset('styles/welcome.css')}}">
+    <link rel="stylesheet" href="{{asset('styles/header.css')}}">
+    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+
+</head>
+
 <body>
     <div class="background">
         <div class="overlay">
@@ -21,14 +23,14 @@
             <main>
                 <h2 class="title">Welcome to Por La Bahia</h2>
                 <h1 class="tagline">Your <span>Home</span> by <br> the Bay.</h1>
-                <button class="explore"><i class="fa fa-home"></i>  Explore Houses</button>
+                <button class="explore"><i class="fa fa-home"></i> Explore Houses</button>
                 <div class="date-section">
-                <div class="choose-date">
-                    <a href="#"><i class="fa fa-calendar"></i> Check-in</a>
-                    <a href="#"><i class="fa fa-calendar"></i> Check-Out</a>
-                    <a href="#"><i class="fa fa-user"></i> Guests</a>
-                </div>
-                <div class="check-availability">Check Availability</div>
+                    <div class="choose-date">
+                        <a href="#"><i class="fa fa-calendar"></i> Check-in</a>
+                        <a href="#"><i class="fa fa-calendar"></i> Check-Out</a>
+                        <a href="#"><i class="fa fa-user"></i> Guests</a>
+                    </div>
+                    <div class="check-availability">Check Availability</div>
                 </div>
             </main>
         </div>
@@ -38,11 +40,11 @@
             <h1>Por La Bahia</h1>
             <h4> </h4>
             <p> </p>
-             <div class="icon-name">
-                <div> <img src="/images/home-09.svg" alt="" > Accommodations </div>
-                <div> <img src="/images/wifi-square.svg" alt="" > Enjoy Free Wifi</div>
-                <div> <img src="/images/car-parking-02.svg" alt="" > Parking Space </div>
-                <div> <img src="/images/pool.svg" alt="" > Swimming Pool </div>
+            <div class="icon-name">
+                <div> <img src="/images/home-09.svg" alt=""> Accommodations </div>
+                <div> <img src="/images/wifi-square.svg" alt=""> Enjoy Free Wifi</div>
+                <div> <img src="/images/car-parking-02.svg" alt=""> Parking Space </div>
+                <div> <img src="/images/pool.svg" alt=""> Swimming Pool </div>
             </div>
             <button class="readmore"><img src="/images/book.svg" alt="" class="readmoreImage"> <a href="/about">Read More</a></button>
         </div>
@@ -56,7 +58,7 @@
         </div>
         <div class="lightboxContainer">
             <div class="lightbox-content">
-            <button class="close-btn">X</button>
+                <button class="close-btn">X</button>
                 <img src="" alt="" class="lightboxFeaturedImage">
             </div>
         </div>
@@ -115,17 +117,17 @@
         </div>
         <div class="resort-houses-image">
             <img id="large-image" src=" " alt="">
-                <h1> </h1>
-                <h6> <i class="fa fa-bed"> </i> 2</h6>
-                <p> </p>
-                <hr>
-                <div class="priceBookContainer">
-                    <div class="price"> ₱</div>
-                    <button class="book-this"><img src="/images/Icon.svg" alt="" class="bookImage"> Book This</button>
-                </div>
+            <h1> </h1>
+            <h6> <i class="fa fa-bed"> </i> 2</h6>
+            <p> </p>
+            <hr>
+            <div class="priceBookContainer">
+                <div class="price"> ₱</div>
+                <button class="book-this"><img src="/images/Icon.svg" alt="" class="bookImage"> Book This</button>
+            </div>
         </div>
     </section>
-   <section class="quick-video">
+    <section class="quick-video">
         <div class="video-title">
             <img src="/images/lineLeft.svg" alt="" class="lineLeft">
             <h1>Quick Video</h1>
@@ -137,17 +139,17 @@
             <video id="video" src="/video/PorLaBahia.mp4" width="500" height="300"></video>
             <button id="playPauseBtn" class="play-pause-btn"> <i class="fa fa-youtube-play"></i> </button>
         </div>
-   </section>
+    </section>
 
-   <section class="testimonials"> 
+    <section class="testimonials">
         <div class="testimonialsTitle">
             <img src="/images/redLineLeft.svg" alt="" class="lineLeft">
-                <h1>Our Guest's Testimonials</h1>
-                <img src="/images/redLineRight.svg" alt="" class="lineRight">
+            <h1>Our Guest's Testimonials</h1>
+            <img src="/images/redLineRight.svg" alt="" class="lineRight">
         </div>
-            
-            <img src="/images/redArrowLeft.svg" alt="" class="redArrowLeft">
-            <img src="/images/redArrowRight.svg" alt="" class="redArrowRight">
+
+        <img src="/images/redArrowLeft.svg" alt="" class="redArrowLeft">
+        <img src="/images/redArrowRight.svg" alt="" class="redArrowRight">
         <div class="testimonialSlider">
             <div class="testimonial-container">
                 <div class="profile-name">
@@ -159,7 +161,7 @@
                 <p> </p>
             </div>
         </div>
-   </section>
+    </section>
 
     <section class="location">
         <div class="location-image">
@@ -175,11 +177,11 @@
         <div class="get-in-touch">
             <div class="get-in-touch-title">
                 <img src="/images/lineLeft.svg" alt="" class="getLineLeft">
-                    <h1> Get in Touch</h1>
+                <h1> Get in Touch</h1>
                 <img src="/images/lineRight.svg" alt="" class="getLineRight">
-            </div> 
-            
-        <h4>CONNECT TO US IF YOU HAVE PROBLEM</h4>
+            </div>
+
+            <h4>CONNECT TO US IF YOU HAVE PROBLEM</h4>
             <form action="" id="form">
                 <div class="input-container" id="input_name">
                     <i class="fa fa-user"></i>

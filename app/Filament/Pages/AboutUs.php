@@ -193,6 +193,14 @@ class AboutUs extends Page implements HasForms
                                         ),
                                     \Filament\Forms\Components\MarkdownEditor::make('value')
                                         ->label('Description')
+                                        ->disableToolbarButtons([
+                                            'blockquote',
+                                            'strike',
+                                            'codeBlock',
+                                            'heading',
+                                            'attachFiles',
+                                            'table'
+                                        ])
                                         ->placeholder('Enter Description Here')
                                         ->columnSpan('full'),
 
@@ -223,6 +231,14 @@ class AboutUs extends Page implements HasForms
                                                 ->label('Feature Name'),
                                             \Filament\Forms\Components\MarkdownEditor::make('value')
                                                 ->label('Description')
+                                                ->disableToolbarButtons([
+                                                    'blockquote',
+                                                    'strike',
+                                                    'codeBlock',
+                                                    'heading',
+                                                    'attachFiles',
+                                                    'table'
+                                                ])
                                                 ->placeholder('Enter Description Here')
                                                 ->columnSpan('full'),
                                         ])
@@ -263,6 +279,14 @@ class AboutUs extends Page implements HasForms
                                         ),
                                     \Filament\Forms\Components\MarkdownEditor::make('value')
                                         ->label('Description')
+                                        ->disableToolbarButtons([
+                                            'blockquote',
+                                            'strike',
+                                            'codeBlock',
+                                            'heading',
+                                            'attachFiles',
+                                            'table'
+                                        ])
                                         ->placeholder('Enter Description Here')
                                         ->columnSpan('full'),
 
@@ -290,6 +314,14 @@ class AboutUs extends Page implements HasForms
 
                                     \Filament\Forms\Components\MarkdownEditor::make('value')
                                         ->label('Description')
+                                        ->disableToolbarButtons([
+                                            'blockquote',
+                                            'strike',
+                                            'codeBlock',
+                                            'heading',
+                                            'attachFiles',
+                                            'table'
+                                        ])
                                         ->placeholder('Enter Answer Here')
                                         ->columnSpan('full'),
                                 ])
