@@ -51,35 +51,34 @@ $(document).ready(function () {
             
             response.forEach((amenity) => {
                 const amenityDiv = `
-                <div class="amenityContainer">
                 <div class="amenityWrap">
                     <div class="amenityMainImage">
                     <img src="/storage/${amenity.main_image}" alt="">
                     </div>
                     <div class="amenityGalleries" id="${amenity.id}">
+                     
                     </div>
                     </div>
                     <div class="amenityDetails">
                         <h1>${amenity.amenity_name}</h1>
-                        <div class="icons"> 
-                            <i class="fa fa-table"> </i>
-                            <i class="fa fa-decoration"> </i>
-                        </div>
+                        
                         <p>${amenity.description}</p>
                     </div>
-                </div>
                 </div>
                 
                 <div class="lightbox">
                     <div class="lightbox-content">
-                        <button class="close-btn">X</button>
+                        <button class="close-btn">&times;</button>
+                        <button class="prevButton">&#8249;</button>
                         <img src="" alt="" class="imageLightbox">
+                        <button class="nextButton">&#8250;</button>
                     </div>
                 </div>`;
                 amenityContainer.append(amenityDiv);
                 
                 const galleriesImage = amenity.galleries;
                 const galleryCont = $(`#${amenity.id}`);
+                var allImages = [];
 
                 galleriesImage.forEach((images, index) => {
                     if(images.galleries_id == amenity.id){
@@ -89,50 +88,70 @@ $(document).ready(function () {
                                 <img src="/storage/${images.image}" alt="">
                             </div>`;
                             galleryCont.append(imageOne);
-                        }
-                        if(index == 1){
+                        }else if(index == 1){
                             const imageTwo = `
                             <div class="amenityGrid gridImage2">
                                 <img src="/storage/${images.image}" alt="">
                             </div>`;
                             galleryCont.append(imageTwo);
-                        }
-                        const extraCount = galleriesImage.length - 2;
-                        if(index >= 2){
+                        }else if (index >= 2) {
+                            const extraCount = galleriesImage.length - 2;
                             const extraImages = `
                             <div class="amenityGrid gridImage2 extraImages">
                                 <p class="extraCount">+${extraCount}</p>
                             </div>`;
                             galleryCont.append(extraImages);
                         }
-
-                        const lightbox = $(".lightbox");
-                        const lightboxImage = $(".imageLightbox");
-
-                        galleryCont.on("click", ".amenityGrid", function () {
-                            const clickedImageSrc = $(this).find("img").attr("src"); 
-                            lightboxImage.attr("src", clickedImageSrc); 
-                            lightbox.fadeIn(); 
-                        });
-                        galleryCont.on("click", ".extraImages", function () {
-                            const clickedContainer = $(this).closest(".amenityGalleries");
-                            const allImages = [];
-    
-                            clickedContainer.find("img").each(function () {
-                                allImages.push($(this).attr("src"));
-                            }); 
-                        
-                            if (allImages.length >= 2) {
-                                lightboxImage.attr("src", allImages[1]);
-                                lightbox.fadeIn();
-                            }
-                        });
-                        $(".close-btn").click(function() {
-                            lightbox.fadeOut(); 
-                        }); 
-                        
+                        allImages.push(images.image);
                     }
                 });
+                const lightbox = $(".lightbox");
+                const lightboxImage = $(".imageLightbox");
+                const prevButton = $(".prevButton");
+                const nextButton = $(".nextButton");
+
+                galleryCont.on("click", ".amenityGrid", function () {
+                    const clickedImageSrc = $(this).find("img").attr("src"); 
+                    lightboxImage.attr("src", clickedImageSrc); 
+                    lightbox.fadeIn();
+
+                    var currentIndex = 1;
+
+                    if (clickedImageSrc) {
+                        var currentImageUrl = clickedImageSrc.slice(9, clickedImageSrc.length);
+                        currentIndex = allImages.indexOf(currentImageUrl);
+                    }
+                    prevButton.click(function(){
+                        if(currentIndex == 0){
+                            currentIndex = allImages.length - 1;
+                        }else{
+                            currentIndex--;
+                        }
+                        lightboxImage.attr("src", allImages[currentIndex]);
+                        console.log(currentIndex);
+                    });
+                    nextButton.click(function(){
+                        if(currentIndex == allImages.length - 1){
+                            currentIndex = 0;
+                        } else {
+                            currentIndex++;
+                        }
+                        lightboxImage.attr("src", allImages[currentIndex]);
+                        console.log(currentIndex);
+                    }); 
+                });
+
+                galleryCont.on("click", ".extraImages", function(){
+                    if(allImages.length >= 2){
+                        lightboxImage.attr("src", allImages[1]);
+                        lightbox.fadeIn();
+                    }   
+                });
+                        
+                $(".close-btn").click(function() {
+                    lightbox.fadeOut(); 
+                });                
+  
             });
         }
     })

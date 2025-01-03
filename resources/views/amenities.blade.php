@@ -33,16 +33,7 @@
                         </div>                    
                     </div>
                 </div>
-                
-                <div class="lightbox">
-                    <div class="lightbox-content">
-                        <button class="close-btn">x</button>
-                        <img src="/images/circle-arrow-right-02.svg" alt="" class="arrowLeftLightbox">
-                            <img src="" alt="" class="imageLightbox">
-                        <img src="/images/circle-arrow-right-01.svg" alt="" class="arrowRightLightbox">
-                    </div>
-                </div>
-                
+
                 <div class="amenityContainer">
                     <div class="amenityWrap">
                         <div class="amenityMainImage">
@@ -52,7 +43,7 @@
                             <div class="amenityGrid gridImage1"><img src="/" alt=""></div>
                             <div class="amenityGrid gridImage2"><img src="/" alt=""></div>
 
-                            <div class="amenityGrid gridImage2 extraImages"><img src="/" alt="">
+                            <div class="amenityGrid gridImage2 extraImages">
                                 <p class="extraCount"></p>
                             </div>
                         </div>
