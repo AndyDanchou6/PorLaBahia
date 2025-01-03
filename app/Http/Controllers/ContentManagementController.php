@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ContentManagementSystem;
 use Illuminate\Http\Request;
+use League\CommonMark\CommonMarkConverter;
 
 class ContentManagementController extends Controller
 {
@@ -22,6 +23,15 @@ class ContentManagementController extends Controller
     public function getContents()
     {
         $home = ContentManagementSystem::all();
+
+        $convertTools = new CommonMarkConverter();
+
+        $home->transform(function ($description) use ($convertTools) {
+            $description['value'] = nl2br($description['value']);
+            $description['value'] = $convertTools->convert($description['value'])->getContent();
+            return $description;
+        });
+
         return response()->json($home);
     }
 }

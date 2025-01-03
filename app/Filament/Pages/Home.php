@@ -195,6 +195,14 @@ class Home extends Page implements HasForms
                                         ),
                                     \Filament\Forms\Components\MarkdownEditor::make('value')
                                         ->label('Description')
+                                        ->disableToolbarButtons([
+                                            'blockquote',
+                                            'strike',
+                                            'codeBlock',
+                                            'heading',
+                                            'attachFiles',
+                                            'table'
+                                        ])
                                         ->placeholder('Enter Description Here')
                                         ->columnSpan('full'),
                                     \Filament\Forms\Components\Repeater::make('icons')
@@ -256,6 +264,14 @@ class Home extends Page implements HasForms
                                         ),
                                     \Filament\Forms\Components\MarkdownEditor::make('value')
                                         ->label('Description')
+                                        ->disableToolbarButtons([
+                                            'blockquote',
+                                            'strike',
+                                            'codeBlock',
+                                            'heading',
+                                            'attachFiles',
+                                            'table'
+                                        ])
                                         ->placeholder('Enter Description Here')
                                         ->columnSpan('full'),
                                 ])
