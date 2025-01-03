@@ -55,8 +55,9 @@
             </div>
         </div>
         <div class="lightboxContainer">
-            <div class="lightbox">
-                <img src="" alt="">
+            <div class="lightbox-content">
+            <button class="close-btn">X</button>
+                <img src="" alt="" class="lightboxFeaturedImage">
             </div>
         </div>
 

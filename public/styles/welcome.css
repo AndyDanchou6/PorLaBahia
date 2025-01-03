@@ -261,7 +261,7 @@ span {
     height: 150px;
 }
 .extraImages{
-    background-color: rgba(101, 101, 101, 0.5);
+    background-color: rgba(0, 0, 0, 0.3);
     cursor: pointer;
 }
 .lightboxContainer{
@@ -270,8 +270,35 @@ span {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.8);
     display: none;
+    z-index: 1200;
+}
+.lightbox-content{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.lightbox-content img{
+    width: 90vw;
+    height: 90vh;
+    object-fit: cover;
+}
+.close-btn{
+    position: absolute;
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 18px;
+    top: 15px;
+    right: 15px;
+}.close-btn:hover{
+    background-color: rgba(0, 0, 0, 0.8);
+    opacity: 0.5;
 }
 .resort-facilities{
     position: absolute;

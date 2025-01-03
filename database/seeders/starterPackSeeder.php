@@ -15,7 +15,7 @@ class starterPackSeeder extends Seeder
     public function run(): void
     {
         //
-        $accommodationPhoto = "background.jpg";
+        $accommodationPhoto = "meow.png";
 
         Accommodation::create([
             'room_name' => "Adrians House",

@@ -18,34 +18,17 @@ class AccommodationPromo extends Model
         'accommodation_id',
         'discount_type',
         'value',
-        'discounted_price',
+        'weekday_promo_price',
+        'weekend_promo_price',
         'promo_start_date',
         'promo_end_date',
+        'featured_image_promo',
         'status',
     ];
 
     public function accommodation(): BelongsTo
     {
         return $this->belongsTo(Accommodation::class, 'accommodation_id');
-    }
-
-    public static function calculateDiscountedPrice($value, $accommodationId)
-    {
-        $accommodation = \App\Models\Accommodation::find($accommodationId);
-
-        if ($accommodation) {
-            $weekday_price = $accommodation->weekday_price;
-            $weekend_price = $accommodation->weekend_price;
-
-            if (Carbon::now()->isWeekday()) {
-                $discounted_price = max($weekday_price - ($weekday_price * $value / 100), 0);
-            } elseif (Carbon::now()->isWeekend()) {
-                $discounted_price = max($weekend_price - ($weekend_price * $value / 100), 0);
-            }
-            return $discounted_price;
-        }
-
-        return null;
     }
 
     public function getPromotionDateAttribute()

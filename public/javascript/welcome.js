@@ -238,7 +238,6 @@ $(document).ready(function () {
 
         const getAccommodation = data.find(context => context.page == "home" && context.section == 3);
         if (getAccommodation) {
-            // console.log(getAccommodation);
             let accommodationContent = `
                     <div class="resort-houses-title">
                         <img src="/images/lineLeft.svg" alt="" class="lineLeft">
@@ -268,27 +267,62 @@ $(document).ready(function () {
     
             if (data.length > 0) {
                 data.forEach(function (image, index) {
-                    if (index < 3) {
-                        let itemClass = 'item';
-                        if (index == 0) itemClass += ' item1';
-                        else if (index == 1) itemClass += ' item2';
-                        else if (index == 2) itemClass += ' item3';
-    
-                        const imageHtml = `
-                            <div class="${itemClass}">
-                                <img src="/storage/${image.image}" alt="">
-                            </div>
-                        `;
-                        gridContainer.append(imageHtml);
-                    } else {
-                        const extraCount = data.length - 3;
-                        const extraHtml = `
-                            <div class="item item3 extraImages">
-                                <p class="extraCount">+${extraCount}</p>
-                            </div>
-                        `;
-                        gridContainer.append(extraHtml);
+                    if(index == 0){
+                        const featuredImageOne = `
+                        <div class="item item1">
+                            <img src="/storage/${image.image}" alt="">
+                        </div>`;
+                        gridContainer.append(featuredImageOne);
                     }
+                    if(index == 1){
+                        const featuredImageTwo =`
+                        <div class="item item2">
+                            <img src="/storage/${image.image}" alt="">
+                        </div>`;
+                        gridContainer.append(featuredImageTwo);
+                    }
+                    if(index == 2){
+                        const featuredImageThree =`
+                        <div class="item item3">
+                            <img src="/storage/${image.image}" alt="">
+                        </div>`;
+                        gridContainer.append(featuredImageThree);
+                    }
+                    const extraCount = data.length - 3;
+                    if(index >= 3){
+                        const extraFeaturedImages =`
+                        <div class="item item3 extraImages">
+                            <p class="extraCount">+${extraCount}</p>
+                        </div>`;
+                        gridContainer.append(extraFeaturedImages);
+                    }
+                    
+                    const lightboxCont = $('.lightboxContainer');
+                    const lightboxFeaturedImage = $('.lightboxFeaturedImage');
+                    const featuredImages = $('.grid-images');
+
+                    featuredImages.on('click', '.item', function(){
+                        const featuredImageSRC = $(this).find('img').attr('src');
+                        lightboxFeaturedImage.attr("src", featuredImageSRC);
+                        lightboxCont.fadeIn();
+                    });
+                    featuredImages.on("click", ".extraImages", function () {
+                        const clickedContainer = $(this).closest(".grid-images");
+                        const allImages = [];
+
+                        clickedContainer.find("img").each(function () {
+                            allImages.push($(this).attr("src"));
+                        }); 
+                    
+                        if (allImages.length >= 3) {
+                            lightboxFeaturedImage.attr("src", allImages[2]);
+                            lightboxCont.fadeIn();
+                        }
+                    });
+                    $(".close-btn").click(function() {
+                        lightboxCont.fadeOut(); 
+                    });
+                    
                 });
                 // console.log(data);
             } else {

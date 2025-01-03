@@ -84,7 +84,7 @@ span{
     color: #fff;
     text-decoration: none;
 }
-.otherAmenity{
+.amenityContainer{
     width: 1100px;
     height: 800px;
     background-color: rgb(255, 255, 255);
@@ -103,15 +103,18 @@ span{
     object-fit: cover;
     border-radius: 20px;
 }
-.otherAmenityDetails{
+.amenityWrap{
+    display: flex;
+}
+.amenityDetails{
     padding: 20px;
 }
-.otherAmenityDetails h1{
+.amenityDetails h1{
     margin: 0;
     font-size: 2rem;
     color: rgb(22, 22, 22);
 }
-.otherAmenityDetails p{
+.amenityDetails p{
     margin: 30px 0;
     font-size: 1rem;
 }
@@ -121,22 +124,12 @@ span{
     align-items: center;
     gap: 10px;
 }
-.otherAmenity{
-    width: 1100px;
-    height: 800px;
-    background-color: rgb(195, 195, 195);
-    margin-top: 70px;
-    border-radius: 20px;
-    box-shadow: rgb(213, 213, 213) 3px 3px 10px;
-}
-.otherAmenityContainer{
-    display: flex;
-}
 .amenityGalleries{
     display: grid;
     grid-template-columns: 400px;
     grid-template-rows: repeat(2, 250px);
     margin-top: 30px;
+    position: relative;
 }
 .gridImage1{
     grid-column: 1/2;
@@ -151,4 +144,75 @@ span{
     height: 90%;
     object-fit: cover;
     border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+.amenityGrid img:hover{
+    box-shadow: #616161 2px 3px 10px;
+}
+.extraImages{
+    background-color: rgb(0, 0, 0, 0.3);
+    position: absolute;
+    z-index: 99;
+    top: 0;
+    width: 100%;
+    height: 225px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+.extraImages:hover{
+    box-shadow: #616161 2px 3px 10px;
+}
+.extraImages p{
+    font-size: 2rem;
+    color: #fff;
+}
+.lightbox {
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 100vw;
+    height: 100vh;
+    z-index: 1200;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+.lightbox-content {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+.lightbox-content img {
+    width: 90vw;
+    height: 90vh;
+    object-fit: cover;
+}
+.close-btn {
+    position: absolute;
+    background: transparent;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 18px;
+    top: 10px;
+    right: 10px;
+}
+.close-btn:hover{
+    opacity: 0.5;
+    background-color: black;
+}
+.arrowLeftLightbox, .arrowRightLightbox{
+    width: 35px !important;
+    height: 35px !important;
+    cursor: pointer;
 }
