@@ -179,7 +179,12 @@ class PaymentsRelationManager extends RelationManager
                         Notification::make()
                             ->title('Payment Voided Successfully')
                             ->body('Payment record has been marked as void.')
-                            ->success()
+                            ->icon('heroicon-o-minus-circle')
+                            ->iconColor('danger')
+                            ->actions([
+                                \Filament\Notifications\Actions\Action::make('view')
+                                    ->url(ReservationResource::getUrl('view', ['record' => $this->record->id])),
+                            ])
                             ->sendToDatabase(auth()->user())
                             ->broadcast(auth()->user());
 
