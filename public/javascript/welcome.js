@@ -430,9 +430,8 @@ $(document).ready(function () {
                         lightboxFeaturedImage.attr("src", featuredImageSRC);
                         lightboxCont.fadeIn();
                     });
-                    featuredImages.on("click", ".extraImages", function () {
-                        const clickedContainer =
-                            $(this).closest(".grid-images");
+                    featuredImages.on("click", ".extraImages", function() {
+                        const clickedContainer = $(this).closest(".grid-images");
                         const allImages = [];
 
                         clickedContainer.find("img").each(function () {
@@ -448,7 +447,6 @@ $(document).ready(function () {
                         lightboxCont.fadeOut();
                     });
                 });
-                // console.log(data);
             } else {
                 gridContainer
                     .html("<i>No featured images at the moment.</i>")

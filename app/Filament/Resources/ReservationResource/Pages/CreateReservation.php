@@ -69,9 +69,14 @@ class CreateReservation extends CreateRecord
         $check_out_date = Carbon::parse($this->record->check_out_date)->format('M d, Y');
 
         return Notification::make()
-            ->success()
             ->title('New Booking Created')
             ->body("$guest has booked $accommodation on $check_in_date to $check_out_date")
+            ->icon('heroicon-o-document-text')
+            ->iconColor('success')
+            ->actions([
+                \Filament\Notifications\Actions\Action::make('view')
+                    ->url(ReservationResource::getUrl('view', ['record' => $this->record->id])),
+            ])
             ->sendToDatabase(auth()->user());
     }
 }

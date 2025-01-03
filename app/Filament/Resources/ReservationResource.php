@@ -340,9 +340,14 @@ class ReservationResource extends Resource
                             ->getKey();
 
                         \Filament\Notifications\Notification::make()
-                            ->success()
                             ->title('New Guest Registered!')
                             ->body($data['first_name'] . ' ' . $data['last_name'] . ' has registered')
+                            ->icon('heroicon-o-user-plus')
+                            ->iconColor('success')
+                            ->actions([
+                                \Filament\Notifications\Actions\Action::make('view')
+                                    ->url(GuestInfoResource::getUrl('view', ['record' => $guestId])),
+                            ])
                             ->sendToDatabase(auth()->user())
                             ->broadcast(auth()->user());
 

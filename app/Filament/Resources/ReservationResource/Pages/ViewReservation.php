@@ -400,9 +400,14 @@ class ViewReservation extends ViewRecord
 
                         if ($response->successful()) {
                             Notification::make()
-                                ->success()
                                 ->title('Payment Success')
                                 ->body('Full payment has been successfully recorded and SMS sent.')
+                                ->icon('heroicon-o-banknotes')
+                                ->iconColor('success')
+                                ->actions([
+                                    \Filament\Notifications\Actions\Action::make('view')
+                                        ->url(ReservationResource::getUrl('view', ['record' => $this->record->id])),
+                                ])
                                 ->sendToDatabase(auth()->user())
                                 ->broadcast(auth()->user());
                         } else {
@@ -415,9 +420,14 @@ class ViewReservation extends ViewRecord
                         }
                     } else {
                         Notification::make()
-                            ->success()
                             ->title('Payment Success')
                             ->body('Payment has been successfully recorded.')
+                            ->icon('heroicon-o-banknotes')
+                            ->iconColor('success')
+                            ->actions([
+                                \Filament\Notifications\Actions\Action::make('view')
+                                    ->url(ReservationResource::getUrl('view', ['record' => $this->record->id])),
+                            ])
                             ->sendToDatabase(auth()->user())
                             ->broadcast(auth()->user());
                     }
@@ -522,14 +532,24 @@ class ViewReservation extends ViewRecord
                         \Filament\Notifications\Notification::make()
                             ->title("Booking cancelled and credits been recorded")
                             ->body("$guest cancelled their booking #$record->booking_reference_no and Php $totalCredits payment have been moved to guest credits.")
-                            ->info()
+                            ->icon('heroicon-o-credit-card')
+                            ->iconColor('success')
+                            ->actions([
+                                \Filament\Notifications\Actions\Action::make('view')
+                                    ->url(ReservationResource::getUrl('view', ['record' => $this->record->id])),
+                            ])
                             ->duration(5000)
                             ->sendToDatabase(auth()->user())
                             ->broadcast(auth()->user());
                     } else {
                         \Filament\Notifications\Notification::make()
                             ->title($record->booking_reference_no . ' has been cancelled')
-                            ->danger()
+                            ->icon('heroicon-o-trash')
+                            ->iconColor('danger')
+                            ->actions([
+                                \Filament\Notifications\Actions\Action::make('view')
+                                    ->url(ReservationResource::getUrl('view', ['record' => $this->record->id])),
+                            ])
                             ->duration(5000)
                             ->sendToDatabase(auth()->user())
                             ->broadcast(auth()->user());

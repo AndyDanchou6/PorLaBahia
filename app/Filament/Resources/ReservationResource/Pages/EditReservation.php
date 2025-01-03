@@ -48,9 +48,14 @@ class EditReservation extends EditRecord
         $guest = $this->record->guest->full_name;
 
         return Notification::make()
-            ->success()
             ->title('Booking has been updated')
             ->body("$guest updated his booking $bookingReferenceNo")
+            ->icon('heroicon-o-pencil-square')
+            ->iconColor('info')
+            ->actions([
+                \Filament\Notifications\Actions\Action::make('view')
+                    ->url(ReservationResource::getUrl('view', ['record' => $this->record->id])),
+            ])
             ->sendToDatabase(auth()->user());
     }
 
