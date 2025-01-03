@@ -282,8 +282,8 @@ span {
     align-items: center;
 }
 .lightbox-content img{
-    width: 90vw;
-    height: 90vh;
+    width: 70vw;
+    height: 70vh;
     object-fit: cover;
 }
 .close-btn{
@@ -294,9 +294,11 @@ span {
     padding: 10px 20px;
     cursor: pointer;
     font-size: 18px;
-    top: 15px;
-    right: 15px;
-}.close-btn:hover{
+    top: 50px;
+    right: 50px;
+    transition: all 0.5s ease;
+}
+.close-btn:hover{
     background-color: rgba(0, 0, 0, 0.8);
     opacity: 0.5;
 }
