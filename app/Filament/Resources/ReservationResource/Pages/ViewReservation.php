@@ -445,7 +445,7 @@ class ViewReservation extends ViewRecord
                         return false;
                     }
 
-                    if ($record->booking_status == 'cancelled') {
+                    if ($record->booking_status == 'cancelled' || $record->booking_status == 'expired' || $record->booking_status == 'finished') {
                         return false;
                     }
 

@@ -14,7 +14,7 @@ class OnHoldExpirationChecker extends Command
      *
      * @var string
      */
-    protected $signature = 'on-hold:expiration';
+    protected $signature = 'booking:on_hold-expiration';
 
     /**
      * The console command description.
@@ -31,16 +31,94 @@ class OnHoldExpirationChecker extends Command
         $now = Carbon::now()->startOfMinute();
 
         $expiredReservations = Reservation::where('on_hold_expiration_date', $now)
-            ->where('booking_status', 'on_hold')
+            ->where(function ($query) {
+                $query->where('booking_status', 'on_hold')
+                    ->orWhere('booking_status', 'pending');
+            })
             ->get();
 
-        if (!$expiredReservations->isEmpty()) {
+        if ($expiredReservations->count() > 0) {
             foreach ($expiredReservations as $expired) {
+                $reservationStatus = 'Unknown Status';
+
+                if ($expired->booking_status == 'pending') {
+                    $reservationStatus = 'Pending';
+                } elseif ($expired->booking_status == 'on_hold') {
+                    $reservationStatus = 'On Hold';
+                }
+
                 $expired->booking_status = 'expired';
                 $expired->save();
 
-                Log::info("Expired reservation updated: ID {$expired->id}, Status: {$expired->booking_status}");
+                $checkIn = Carbon::parse($expired->check_in_date)->startOfDay();
+                $today = Carbon::today();
+
+                $payments = \App\Models\Payment::where('reservation_id', $expired->id)
+                    ->where('payment_status', 'paid')
+                    ->get();
+
+                $creditable = $today->diffInDays($checkIn);
+                $creditAmount = 0;
+                $bookingSuffix = substr($expired->booking_reference_no, 13);
+                $expirationDate = Carbon::now()->addYear();
+                $coupon = \App\Models\GuestCredit::generateCoupon($bookingSuffix);
+
+                // void payments and record creditable
+                if ($payments->count() > 0 && $creditable > 10) {
+                    foreach ($payments as $payment) {
+                        $creditAmount += $payment->amount;
+                        $payment->update([
+                            'payment_status' => 'void'
+                        ]);
+                    }
+                }
+
+                $guestCredit = \App\Models\GuestCredit::create([
+                    'guest_id' => $expired->guest_id,
+                    'coupon' => $coupon,
+                    'amount' => $creditAmount,
+                    'status' => 'active',
+                    'expiration_date' => $expirationDate,
+                ]);
+
+                Log::info("Expired reservation updated: ID {$expired->booking_reference_no}, Status: {$expired->booking_status}, Credit: {$creditAmount}");
+
+                // Send notification about expiration whether they have credits or not
+                $admins = \App\Models\User::where('role', 1)
+                    ->get();
+
+                if ($admins->count() > 0) {
+                    foreach ($admins as $admin) {
+                        if ($creditAmount > 0) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Payment Credited')
+                                ->body("$reservationStatus booking $expired->booking_reference_no has expired. PHP $creditAmount payment amount had been credited. Credit coupon: $coupon")
+                                ->icon('heroicon-o-archive-box-x-mark')
+                                ->iconColor('danger')
+                                ->actions([
+                                    \Filament\Notifications\Actions\Action::make('view')
+                                        ->url(\App\Filament\Resources\ReservationResource::getUrl('view', ['record' => $expired->id])),
+                                ])
+                                ->sendToDatabase($admin)
+                                ->broadcast($admin);
+                        } else {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Booking Expired')
+                                ->body("$reservationStatus booking $expired->booking_reference_no has expired.")
+                                ->icon('heroicon-o-archive-box-x-mark')
+                                ->iconColor('danger')
+                                ->actions([
+                                    \Filament\Notifications\Actions\Action::make('view')
+                                        ->url(\App\Filament\Resources\ReservationResource::getUrl('view', ['record' => $expired->id])),
+                                ])
+                                ->sendToDatabase($admin)
+                                ->broadcast($admin);
+                        }
+                    }
+                }
             }
+        } else {
+            Log::info("No expired bookings today");
         }
     }
 }

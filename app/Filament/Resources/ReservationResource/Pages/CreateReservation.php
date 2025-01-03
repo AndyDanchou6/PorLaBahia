@@ -18,7 +18,7 @@ class CreateReservation extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $data['on_hold_expiration_date'] = Carbon::now()->addHours(12);
+        $data['on_hold_expiration_date'] = Carbon::now()->startOfMinute()->addHours(12);
         $data['booking_status'] = 'on_hold';
 
         // $checkIn = $data['check_in_date'];

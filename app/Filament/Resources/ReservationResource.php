@@ -205,7 +205,6 @@ class ReservationResource extends Resource
                     }),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
                 Filter::make('created_at')
                     ->form([
                         Forms\Components\DatePicker::make('checked_in')
@@ -223,11 +222,18 @@ class ReservationResource extends Resource
                                 fn(Builder $query, $date): Builder => $query->whereDate('check_out_date', '<=', Carbon::parse($date)->toDateString()),
                             );
                     }),
+
                 SelectFilter::make('payment_type')
                     ->options([
                         'straight_payment' => 'Straight Payment',
                         'split_payment' => 'Split Payment',
                     ]),
+
+                SelectFilter::make('accommodation_id')
+                    ->label('Accommodation')
+                    ->relationship(name: 'accommodation', titleAttribute: 'room_name'),
+
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -266,7 +272,8 @@ class ReservationResource extends Resource
                             return auth()->check() && auth()->user()->role === 1;
                         }),
                 ]),
-            ]);
+            ])
+            ->checkIfRecordIsSelectableUsing(fn($record) => $record->booking_status === 'finished' || $record->booking_status === 'expired' || $record->booking_status === 'cancelled');
     }
 
     public static function getRelations(): array
